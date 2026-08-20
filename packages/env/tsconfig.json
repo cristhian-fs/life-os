@@ -1,0 +1,12 @@
+{
+  "extends": "@life-os/tsconfig/library.json",
+  "include": [
+    "index.ts"
+  ],
+	"compilerOptions": {
+		"types": [
+			"node"
+		]
+	}
+
+}

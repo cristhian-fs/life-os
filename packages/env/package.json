@@ -1,0 +1,25 @@
+{
+  "name": "@life-os/env",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "devDependencies": {
+    "@life-os/eslint-config": "workspace:*",
+    "@life-os/prettier": "workspace:*",
+    "@life-os/tsconfig": "workspace:*",
+    "@types/node": "^20.12.6",
+    "dotenv": "^17.4.2",
+    "dotenv-expand": "^1000.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@life-os/eslint-config/library"
+    ]
+  },
+  "prettier": "@life-os/prettier",
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}
