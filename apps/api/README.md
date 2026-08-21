@@ -19,7 +19,7 @@ This projects contains a personal life organizer API and frontend
 
 ### Entries
 
-- [ ] It should be able to create an entry for a habit
-- [ ] It should not be able to create an entry for a archived habit
-- [ ] It should be able to delete an entry
-- [ ] It should be able to update an entry
+- [x] It should be able to create an entry for a habit
+- [x] It should not be able to create an entry for a archived habit
+- [x] It should be able to delete an entry
+- [x] It should be able to update an entry
