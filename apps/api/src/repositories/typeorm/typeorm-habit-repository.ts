@@ -15,7 +15,9 @@ export class TypeORMHabitRepository implements HabitRepository {
     await this.repo.delete({ id: habitId });
   }
   async create(habit: CreateHabitInput): Promise<Habit> {
-    const data = await this.repo.save(this.repo.create(habit));
+    const data = await this.repo.save(
+      this.repo.create({ ...habit, status: HabitStatus.ACTIVE }),
+    );
 
     return data;
   }
