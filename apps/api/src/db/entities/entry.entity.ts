@@ -33,8 +33,8 @@ export class Entry {
     type: "date",
     name: "date",
     transformer: {
-      to: (value: Date) => value,
-      from: (value: string) => new Date(value),
+      to: (value: Date) => value.toISOString().slice(0, 10),
+      from: (value: string) => new Date(`${value}T00:00:00.000Z`),
     },
   })
   date: Date;

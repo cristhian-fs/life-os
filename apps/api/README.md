@@ -15,7 +15,7 @@ This projects contains a personal life organizer API and frontend
 - [ ] It should be able to get a score history for each habit
 - [ ] It should be able to get a history bar graph for each habit
 - [ ] It should be able to get a calendar map graph for each habit
-- [ ] It should be able to get a best streaks horizontal graph for each habit
+- [x] It should be able to get a best streaks horizontal graph for each habit
 
 ### Entries
 

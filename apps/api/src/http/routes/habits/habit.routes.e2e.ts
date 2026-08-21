@@ -9,7 +9,8 @@ import {
   HabitStatus,
   HabitType,
 } from "@/db/entities/habit.entity";
-import { makeHabit, makeHabitEntity } from "@/test/factories";
+import { Entry } from "@/db/entities/entry.entity";
+import { makeEntryEntity, makeHabit, makeHabitEntity } from "@/test/factories";
 
 describe("[E2E] Habits Routes", () => {
   let test: TestHelpers;
@@ -237,6 +238,63 @@ describe("[E2E] Habits Routes", () => {
       }),
     );
     expect(archived.archived_at).not.toBeNull();
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return the habit's best streaks on GET", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create({
+        ...makeHabit({ user_id: user.id, type: HabitType.BOOLEAN }),
+        status: HabitStatus.ACTIVE,
+        // pin the report window so the test doesn't depend on "now"
+        created_at: new Date("2026-01-01"),
+        archived_at: new Date("2026-01-05"),
+      }),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create(
+        [1, 2, 3].map((day) =>
+          makeEntryEntity({
+            user_id: user.id,
+            habit_id: habit.id,
+            date: new Date(`2026-01-0${day}`),
+            value_boolean: true,
+          }),
+        ),
+      ),
+    );
+
+    const res = await app.request(`/api/habits/${habit.id}/best-streaks`, {
+      headers,
+    });
+    const streaks = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(streaks).toEqual([
+      expect.objectContaining({ streak_num: 3 }),
+    ]);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 404 for best streaks of a habit that does not exist", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/habits/00000000-0000-0000-0000-000000000000/best-streaks",
+      { headers },
+    );
+
+    expect(res.status).toBe(404);
 
     await test.deleteUser(user.id);
   });

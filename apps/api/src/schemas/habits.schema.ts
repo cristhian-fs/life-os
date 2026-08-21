@@ -44,3 +44,13 @@ export const UpdateHabitSchema = HabitsResponseSchema.pick({
 }).partial();
 
 export type UpdateHabitInput = z.infer<typeof UpdateHabitSchema>;
+
+export const StreakSchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+  streak_num: z.number(),
+});
+
+export const BestStreaksResponseSchema = z.array(StreakSchema);
+
+export type StreakResponse = z.infer<typeof StreakSchema>;

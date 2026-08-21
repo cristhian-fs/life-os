@@ -4,6 +4,7 @@ import { ensureInitialized } from "@/lib/utils";
 import type { AppRouteHandler } from "@/lib/types";
 import type {
   ArchiveHabitRoute,
+  BestStreaksRoute,
   CreateHabitRoute,
   DeleteHabitRoute,
   ListHabitsRoute,
@@ -12,10 +13,13 @@ import type {
 import { GetUserHabitsUseCase } from "@/use-cases/get-user-habits";
 import { UpdateUserHabitUseCase } from "@/use-cases/update-user-habit";
 import { TypeORMHabitRepository } from "@/repositories/typeorm/typeorm-habit-repository";
+import { TypeORMEntryRepository } from "@/repositories/typeorm/typeorm-entry-repository";
 import { HabitPresenter } from "@/presenters/habit-presenter";
+import { StreakPresenter } from "@/presenters/streak-presenter";
 import { DeleteUserHabitUseCase } from "@/use-cases/delete-user-habit";
 import { CreateUserHabitUseCase } from "@/use-cases/create-user-habit";
 import { ArchiveUserHabitUseCase } from "@/use-cases/archive-user-habit";
+import { BestStreaksUseCase } from "@/use-cases/best-streaks-use-case";
 
 export const create: AppRouteHandler<CreateHabitRoute> = async (c) => {
   const dataSource = await ensureInitialized();
@@ -142,4 +146,31 @@ export const archiveHabit: AppRouteHandler<ArchiveHabitRoute> = async (c) => {
   }
 
   return c.json(HabitPresenter.toHTTP(result.data), HttpStatusCodes.OK);
+};
+
+export const bestStreaks: AppRouteHandler<BestStreaksRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const habit = await habitsRepository.findById(id);
+
+  if (!habit || habit.user_id !== user.id) {
+    return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const entriesRepository = new TypeORMEntryRepository(dataSource);
+  const useCase = new BestStreaksUseCase(entriesRepository);
+
+  const { streaks } = await useCase.execute(habit);
+
+  return c.json(StreakPresenter.toHTTPList(streaks), HttpStatusCodes.OK);
 };

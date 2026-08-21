@@ -4,6 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { IdUUIDParamsSchema } from "stoker/openapi/schemas";
 import { NotFoundSchema } from "@/schemas/common.schema";
 import {
+  BestStreaksResponseSchema,
   CreateHabitSchema,
   DeleteHabitResponseSchema,
   HabitsResponseSchema,
@@ -99,3 +100,22 @@ export const archiveHabit = createRoute({
 });
 
 export type ArchiveHabitRoute = typeof archiveHabit;
+
+export const bestStreaks = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/{id}/best-streaks",
+  summary: "Get a habit's best streaks",
+  request: {
+    params: IdUUIDParamsSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      BestStreaksResponseSchema,
+      "The habit's streaks, longest first",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Habit not found"),
+  },
+});
+
+export type BestStreaksRoute = typeof bestStreaks;

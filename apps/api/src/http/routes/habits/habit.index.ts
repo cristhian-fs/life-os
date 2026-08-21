@@ -12,4 +12,5 @@ export default router
   .openapi(routes.update, handlers.update)
   .openapi(routes.create, handlers.create)
   .openapi(routes.deleteHabit, handlers.deleteHabit)
-  .openapi(routes.archiveHabit, handlers.archiveHabit);
+  .openapi(routes.archiveHabit, handlers.archiveHabit)
+  .openapi(routes.bestStreaks, handlers.bestStreaks);
