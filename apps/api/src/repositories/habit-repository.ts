@@ -18,7 +18,6 @@ export interface HabitRepository {
   create(habit: CreateHabitInput): Promise<Habit>;
   findById(habitId: string): Promise<Habit | null>;
   findManyByUserId(userId: string): Promise<Habit[]>;
-  save(habit: Habit): Promise<Habit | null>;
+  save(habit: Habit): Promise<Habit>;
   delete(habitId: string): Promise<void>;
-  archive(habitId: string): Promise<Habit | null>;
 }

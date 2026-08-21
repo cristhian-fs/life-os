@@ -14,14 +14,6 @@ export class TypeORMHabitRepository implements HabitRepository {
   async delete(habitId: string): Promise<void> {
     await this.repo.delete({ id: habitId });
   }
-  async archive(habitId: string): Promise<Habit | null> {
-    const existing = await this.findById(habitId);
-    if (!existing) return null;
-
-    existing.status = HabitStatus.ARCHIVED;
-    const data = await this.repo.save(existing);
-    return data;
-  }
   async create(habit: CreateHabitInput): Promise<Habit> {
     const data = await this.repo.save(this.repo.create(habit));
 
@@ -39,9 +31,11 @@ export class TypeORMHabitRepository implements HabitRepository {
 
     return data;
   }
-  async save(habit: Habit): Promise<Habit | null> {
+  async save(habit: Habit): Promise<Habit> {
     const existing = await this.findById(habit.id);
-    if (!existing) return null;
+    if (!existing) {
+      throw new Error(`Cannot save habit ${habit.id}: not found in repository`);
+    }
     const merged = this.repo.merge(existing, habit as DeepPartial<Habit>);
     return this.repo.save(merged);
   }

@@ -28,18 +28,6 @@ export class InMemoryHabitsRepository implements HabitRepository {
     return habit;
   }
 
-  async archive(habitId: string): Promise<Habit | null> {
-    const habitIndex = this.items.findIndex((item) => item.id === habitId);
-
-    if (habitIndex === -1) return null;
-
-    const data = this.items[habitIndex];
-    data.status = HabitStatus.ARCHIVED;
-    data.archived_at = new Date();
-
-    return data;
-  }
-
   async delete(habitId: string): Promise<void> {
     const habitIndex = this.items.findIndex((item) => item.id === habitId);
     if (habitIndex === -1) return;
@@ -62,10 +50,11 @@ export class InMemoryHabitsRepository implements HabitRepository {
     return habits;
   }
 
-  async save(habit: Habit): Promise<Habit | null> {
+  async save(habit: Habit): Promise<Habit> {
     const habitIndex = this.items.findIndex((item) => item.id === habit.id);
 
-    if (habitIndex === -1) return null;
+    if (habitIndex === -1)
+      throw new Error(`Cannot save habit ${habit.id}: not found in repository`);
 
     this.items[habitIndex] = habit;
     return habit;
