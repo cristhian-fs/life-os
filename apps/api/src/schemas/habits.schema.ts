@@ -68,3 +68,14 @@ export const ScorePointSchema = z.object({
 export const ScoreHistoryResponseSchema = z.array(ScorePointSchema);
 
 export type ScorePointResponse = z.infer<typeof ScorePointSchema>;
+
+export const CalendarMapResponseSchema = z.array(ScorePointSchema);
+
+export const HistoryBarPointSchema = z.object({
+  date: z.string().datetime(),
+  count: z.number(),
+});
+
+export const HistoryBarResponseSchema = z.array(HistoryBarPointSchema);
+
+export type HistoryBarPointResponse = z.infer<typeof HistoryBarPointSchema>;

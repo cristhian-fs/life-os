@@ -11,7 +11,7 @@ export type Streak = {
 
 const toDateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
-const isSuccess = (entry: Entry, habit: Habit): boolean => {
+export const isSuccess = (entry: Entry, habit: Habit): boolean => {
   if (
     habit.type === HabitType.NUMERIC &&
     (entry.value_numeric ?? 0) >= habit.goal_value!

@@ -5,9 +5,11 @@ import { IdUUIDParamsSchema } from "stoker/openapi/schemas";
 import { NotFoundSchema } from "@/schemas/common.schema";
 import {
   BestStreaksResponseSchema,
+  CalendarMapResponseSchema,
   CreateHabitSchema,
   DeleteHabitResponseSchema,
   HabitsResponseSchema,
+  HistoryBarResponseSchema,
   ScoreHistoryQuerySchema,
   ScoreHistoryResponseSchema,
   UpdateHabitSchema,
@@ -141,3 +143,42 @@ export const scoreHistory = createRoute({
 });
 
 export type ScoreHistoryRoute = typeof scoreHistory;
+
+export const historyBar = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/{id}/history-bar",
+  summary: "Get a habit's history bar graph (accomplished-day count per bucket)",
+  request: {
+    params: IdUUIDParamsSchema,
+    query: ScoreHistoryQuerySchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      HistoryBarResponseSchema,
+      "The habit's accomplished-day counts, bucketed by period",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Habit not found"),
+  },
+});
+
+export type HistoryBarRoute = typeof historyBar;
+
+export const calendarMap = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/{id}/calendar-map",
+  summary: "Get a habit's calendar map (one score per day, full lifetime)",
+  request: {
+    params: IdUUIDParamsSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      CalendarMapResponseSchema,
+      "The habit's day-by-day scores across its full lifetime",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Habit not found"),
+  },
+});
+
+export type CalendarMapRoute = typeof calendarMap;

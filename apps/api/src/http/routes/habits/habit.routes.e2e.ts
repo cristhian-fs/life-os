@@ -377,4 +377,123 @@ describe("[E2E] Habits Routes", () => {
 
     await test.deleteUser(user.id);
   });
+
+  it("should return the habit's calendar map on GET", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create({
+        ...makeHabit({ user_id: user.id, type: HabitType.BOOLEAN }),
+        status: HabitStatus.ACTIVE,
+        // pin the report window so the test doesn't depend on "now"
+        created_at: new Date("2026-01-01"),
+        archived_at: new Date("2026-01-03"),
+      }),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create(
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: habit.id,
+          date: new Date("2026-01-02"),
+          value_boolean: true,
+        }),
+      ),
+    );
+
+    const res = await app.request(`/api/habits/${habit.id}/calendar-map`, {
+      headers,
+    });
+    const days = await res.json();
+
+    expect(res.status).toBe(200);
+    // never bucketed: one point per day across the full lifetime, unlike score-history
+    expect(days).toEqual([
+      expect.objectContaining({ date: "2026-01-01T00:00:00.000Z", percentage: 0 }),
+      expect.objectContaining({ date: "2026-01-02T00:00:00.000Z", percentage: 100 }),
+      expect.objectContaining({ date: "2026-01-03T00:00:00.000Z", percentage: 0 }),
+    ]);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 404 for the calendar map of a habit that does not exist", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/habits/00000000-0000-0000-0000-000000000000/calendar-map",
+      { headers },
+    );
+
+    expect(res.status).toBe(404);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return the habit's history bar counts on GET", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create({
+        ...makeHabit({ user_id: user.id, type: HabitType.BOOLEAN }),
+        status: HabitStatus.ACTIVE,
+        // pin the report window so the test doesn't depend on "now"
+        created_at: new Date("2026-01-01"),
+        archived_at: new Date("2026-01-03"),
+      }),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create([
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: habit.id,
+          date: new Date("2026-01-01"),
+          value_boolean: true,
+        }),
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: habit.id,
+          date: new Date("2026-01-02"),
+          value_boolean: true,
+        }),
+      ]),
+    );
+
+    const res = await app.request(
+      `/api/habits/${habit.id}/history-bar?period=all`,
+      { headers },
+    );
+    const points = await res.json();
+
+    expect(res.status).toBe(200);
+    // "all" buckets by month: 2 accomplished days out of 3, as a count not a percentage
+    expect(points).toEqual([expect.objectContaining({ count: 2 })]);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 404 for the history bar of a habit that does not exist", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/habits/00000000-0000-0000-0000-000000000000/history-bar?period=all",
+      { headers },
+    );
+
+    expect(res.status).toBe(404);
+
+    await test.deleteUser(user.id);
+  });
 });
