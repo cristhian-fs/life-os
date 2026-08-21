@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
-import type { Entry } from "@/db/entities/entry.entity";
-import { HabitGoalPeriod, HabitStatus, HabitType } from "@/db/entities/habit.entity";
+import {
+  HabitGoalPeriod,
+  HabitStatus,
+  HabitType,
+} from "@/db/entities/habit.entity";
+import type { CreateEntryInput } from "@/repositories/entry-repository";
 import type { CreateHabitInput } from "@/repositories/habit-repository";
 
 // ponytail: hand-rolled random picks instead of pulling in @faker-js/faker for two fields
@@ -37,18 +41,26 @@ export function makeHabitEntity(overrides: Partial<CreateHabitInput> = {}) {
   };
 }
 
-/** Builds a full Entry with randomized data. Pass user_id/habit_id to link it to a real habit. */
-export function makeEntry(overrides: Partial<Entry> = {}): Entry {
+/** Builds a valid CreateEntryInput with randomized data. Pass overrides for anything a test cares about. */
+export function makeEntry(
+  overrides: Partial<CreateEntryInput> = {},
+): CreateEntryInput {
   return {
-    id: randomUUID(),
     user_id: randomUUID(),
     habit_id: randomUUID(),
     date: new Date(),
     value_boolean: null,
     value_numeric: randomInt(100),
     note: null,
+    ...overrides,
+  };
+}
+
+/** Builds row data for seeding the Entry table directly via TypeORM (bypassing the repository/use-case layer). */
+export function makeEntryEntity(overrides: Partial<CreateEntryInput> = {}) {
+  return {
+    ...makeEntry(overrides),
     created_at: new Date(),
     updated_at: new Date(),
-    ...overrides,
-  } as Entry;
+  };
 }
