@@ -8,7 +8,16 @@ export async function ensureInitialized() {
   return AppDataSource;
 }
 
-export type Period = "week" | "month" | "3months" | "6months" | "year" | "all";
+export const PERIODS = [
+  "week",
+  "month",
+  "3months",
+  "6months",
+  "year",
+  "all",
+] as const;
+
+export type Period = (typeof PERIODS)[number];
 
 export function resolveDateRange(
   period: Period,

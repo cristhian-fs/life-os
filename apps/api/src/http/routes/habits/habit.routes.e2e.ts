@@ -298,4 +298,83 @@ describe("[E2E] Habits Routes", () => {
 
     await test.deleteUser(user.id);
   });
+
+  it("should return the habit's score history on GET", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create({
+        ...makeHabit({ user_id: user.id, type: HabitType.BOOLEAN }),
+        status: HabitStatus.ACTIVE,
+        // pin the report window so the test doesn't depend on "now"
+        created_at: new Date("2026-01-01"),
+        archived_at: new Date("2026-01-03"),
+      }),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create(
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: habit.id,
+          date: new Date("2026-01-01"),
+          value_boolean: true,
+        }),
+      ),
+    );
+
+    const res = await app.request(
+      `/api/habits/${habit.id}/score-history?period=all`,
+      { headers },
+    );
+    const points = await res.json();
+
+    expect(res.status).toBe(200);
+    // "all" buckets by month: 1 success / 3 days -> round(100/3) = 33
+    expect(points).toEqual([
+      expect.objectContaining({ percentage: 33 }),
+    ]);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 404 for score history of a habit that does not exist", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/habits/00000000-0000-0000-0000-000000000000/score-history?period=all",
+      { headers },
+    );
+
+    expect(res.status).toBe(404);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 422 for score history with an invalid period", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create(
+        makeHabitEntity({ user_id: user.id }),
+      ),
+    );
+
+    const res = await app.request(
+      `/api/habits/${habit.id}/score-history?period=decade`,
+      { headers },
+    );
+
+    expect(res.status).toBe(422);
+
+    await test.deleteUser(user.id);
+  });
 });

@@ -8,6 +8,8 @@ import {
   CreateHabitSchema,
   DeleteHabitResponseSchema,
   HabitsResponseSchema,
+  ScoreHistoryQuerySchema,
+  ScoreHistoryResponseSchema,
   UpdateHabitSchema,
 } from "@/schemas/habits.schema";
 
@@ -119,3 +121,23 @@ export const bestStreaks = createRoute({
 });
 
 export type BestStreaksRoute = typeof bestStreaks;
+
+export const scoreHistory = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/{id}/score-history",
+  summary: "Get a habit's score history",
+  request: {
+    params: IdUUIDParamsSchema,
+    query: ScoreHistoryQuerySchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      ScoreHistoryResponseSchema,
+      "The habit's score history, bucketed by period",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Habit not found"),
+  },
+});
+
+export type ScoreHistoryRoute = typeof scoreHistory;

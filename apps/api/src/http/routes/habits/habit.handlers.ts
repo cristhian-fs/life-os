@@ -8,6 +8,7 @@ import type {
   CreateHabitRoute,
   DeleteHabitRoute,
   ListHabitsRoute,
+  ScoreHistoryRoute,
   UpdateHabitRoute,
 } from "./habit.routes";
 import { GetUserHabitsUseCase } from "@/use-cases/get-user-habits";
@@ -16,10 +17,12 @@ import { TypeORMHabitRepository } from "@/repositories/typeorm/typeorm-habit-rep
 import { TypeORMEntryRepository } from "@/repositories/typeorm/typeorm-entry-repository";
 import { HabitPresenter } from "@/presenters/habit-presenter";
 import { StreakPresenter } from "@/presenters/streak-presenter";
+import { ScorePresenter } from "@/presenters/score-presenter";
 import { DeleteUserHabitUseCase } from "@/use-cases/delete-user-habit";
 import { CreateUserHabitUseCase } from "@/use-cases/create-user-habit";
 import { ArchiveUserHabitUseCase } from "@/use-cases/archive-user-habit";
 import { BestStreaksUseCase } from "@/use-cases/best-streaks-use-case";
+import { ScoreHistoryUseCase } from "@/use-cases/score-history-use-case";
 
 export const create: AppRouteHandler<CreateHabitRoute> = async (c) => {
   const dataSource = await ensureInitialized();
@@ -171,4 +174,30 @@ export const bestStreaks: AppRouteHandler<BestStreaksRoute> = async (c) => {
   }
 
   return c.json(StreakPresenter.toHTTPList(result.data), HttpStatusCodes.OK);
+};
+
+export const scoreHistory: AppRouteHandler<ScoreHistoryRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+  const { period } = c.req.valid("query");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const entriesRepository = new TypeORMEntryRepository(dataSource);
+  const useCase = new ScoreHistoryUseCase(habitsRepository, entriesRepository);
+
+  const result = await useCase.execute({ userId: user.id, habitId: id, period });
+
+  if (!result.success) {
+    return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(ScorePresenter.toHTTPList(result.data), HttpStatusCodes.OK);
 };

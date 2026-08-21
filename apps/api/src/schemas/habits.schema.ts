@@ -4,6 +4,7 @@ import {
   HabitStatus,
   HabitType,
 } from "@/db/entities/habit.entity";
+import { PERIODS } from "@/lib/utils";
 
 export const HabitsResponseSchema = z.object({
   id: z.string(),
@@ -54,3 +55,16 @@ export const StreakSchema = z.object({
 export const BestStreaksResponseSchema = z.array(StreakSchema);
 
 export type StreakResponse = z.infer<typeof StreakSchema>;
+
+export const ScoreHistoryQuerySchema = z.object({
+  period: z.enum(PERIODS),
+});
+
+export const ScorePointSchema = z.object({
+  date: z.string().datetime(),
+  percentage: z.number(),
+});
+
+export const ScoreHistoryResponseSchema = z.array(ScorePointSchema);
+
+export type ScorePointResponse = z.infer<typeof ScorePointSchema>;
