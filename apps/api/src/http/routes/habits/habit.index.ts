@@ -7,4 +7,9 @@ import * as routes from "./habit.routes";
 const router = createRouter();
 router.use("*", loggedIn);
 
-export default router.openapi(routes.list, handlers.list);
+export default router
+  .openapi(routes.list, handlers.list)
+  .openapi(routes.update, handlers.update)
+  .openapi(routes.create, handlers.create)
+  .openapi(routes.deleteHabit, handlers.deleteHabit)
+  .openapi(routes.archiveHabit, handlers.archiveHabit);

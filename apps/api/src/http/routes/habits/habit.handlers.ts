@@ -2,10 +2,43 @@ import { HTTPException } from "hono/http-exception";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { ensureInitialized } from "@/lib/utils";
 import type { AppRouteHandler } from "@/lib/types";
-import type { ListHabitsRoute } from "./habit.routes";
+import type {
+  ArchiveHabitRoute,
+  CreateHabitRoute,
+  DeleteHabitRoute,
+  ListHabitsRoute,
+  UpdateHabitRoute,
+} from "./habit.routes";
 import { GetUserHabitsUseCase } from "@/use-cases/get-user-habits";
+import { UpdateUserHabitUseCase } from "@/use-cases/update-user-habit";
 import { TypeORMHabitRepository } from "@/repositories/typeorm/typeorm-habit-repository";
 import { HabitPresenter } from "@/presenters/habit-presenter";
+import { DeleteUserHabitUseCase } from "@/use-cases/delete-user-habit";
+import { CreateUserHabitUseCase } from "@/use-cases/create-user-habit";
+import { ArchiveUserHabitUseCase } from "@/use-cases/archive-user-habit";
+
+export const create: AppRouteHandler<CreateHabitRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const payload = c.req.valid("json");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const useCase = new CreateUserHabitUseCase(habitsRepository);
+
+  const habit = await useCase.execute({
+    payload,
+    userId: user.id,
+  });
+
+  return c.json(HabitPresenter.toHTTP(habit.habit), HttpStatusCodes.OK);
+};
 
 export const list: AppRouteHandler<ListHabitsRoute> = async (c) => {
   const dataSource = await ensureInitialized();
@@ -23,4 +56,90 @@ export const list: AppRouteHandler<ListHabitsRoute> = async (c) => {
   const habits = await useCase.execute({ userId: user.id });
 
   return c.json(HabitPresenter.toHTTPList(habits.habits), HttpStatusCodes.OK);
+};
+
+export const update: AppRouteHandler<UpdateHabitRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+  const payload = c.req.valid("json");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const useCase = new UpdateUserHabitUseCase(habitsRepository);
+
+  const { habit } = await useCase.execute({
+    userId: user.id,
+    habitId: id,
+    payload,
+  });
+
+  if (!habit) {
+    return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(HabitPresenter.toHTTP(habit), HttpStatusCodes.OK);
+};
+
+export const deleteHabit: AppRouteHandler<DeleteHabitRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const useCase = new DeleteUserHabitUseCase(habitsRepository);
+
+  const { success } = await useCase.execute({
+    userId: user.id,
+    habitId: id,
+  });
+
+  if (!success) {
+    return c.json(
+      { success, message: "Habit not found" },
+      HttpStatusCodes.NOT_FOUND,
+    );
+  }
+
+  return c.json({ success, message: "Habit deleted" }, HttpStatusCodes.OK);
+};
+
+export const archiveHabit: AppRouteHandler<ArchiveHabitRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const useCase = new ArchiveUserHabitUseCase(habitsRepository);
+
+  const result = await useCase.execute({
+    userId: user.id,
+    habitId: id,
+  });
+
+  if (!result.success) {
+    return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(HabitPresenter.toHTTP(result.data), HttpStatusCodes.OK);
 };
