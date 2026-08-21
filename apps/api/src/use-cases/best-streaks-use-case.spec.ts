@@ -15,7 +15,7 @@ describe("Best Streaks Use Case", () => {
   beforeEach(async () => {
     entriesRepository = new InMemoryEntryRepository();
     habitsRepository = new InMemoryHabitsRepository();
-    sut = new BestStreaksUseCase(entriesRepository);
+    sut = new BestStreaksUseCase(habitsRepository, entriesRepository);
   });
 
   it("finds the longest streak and ranks streaks longest-first, breaking on missed/failed days", async () => {
@@ -50,9 +50,11 @@ describe("Best Streaks Use Case", () => {
     );
     // Jan 8 intentionally left without an entry
 
-    const { streaks } = await sut.execute(habit);
+    const result = await sut.execute({ userId: "user_01", habitId: habit.id });
 
-    expect(streaks).toEqual([
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data).toEqual([
       { from: day(4), to: day(7), streak_num: 4 },
       { from: day(1), to: day(2), streak_num: 2 },
       { from: day(9), to: day(10), streak_num: 2 },
@@ -83,8 +85,20 @@ describe("Best Streaks Use Case", () => {
       }),
     );
 
-    const { streaks } = await sut.execute(habit);
+    const result = await sut.execute({ userId: "user_01", habitId: habit.id });
 
-    expect(streaks).toEqual([{ from: day(1), to: day(1), streak_num: 1 }]);
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data).toEqual([{ from: day(1), to: day(1), streak_num: 1 }]);
+  });
+
+  it("does not return data for a habit that belongs to another user", async () => {
+    const habit = await habitsRepository.create(
+      makeHabit({ user_id: "user_01" }),
+    );
+
+    const result = await sut.execute({ userId: "user_02", habitId: habit.id });
+
+    expect(result).toEqual({ success: false, reason: "forbidden" });
   });
 });
