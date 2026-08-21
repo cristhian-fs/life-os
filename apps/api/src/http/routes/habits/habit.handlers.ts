@@ -161,16 +161,14 @@ export const bestStreaks: AppRouteHandler<BestStreaksRoute> = async (c) => {
   const { id } = c.req.valid("param");
 
   const habitsRepository = new TypeORMHabitRepository(dataSource);
-  const habit = await habitsRepository.findById(id);
+  const entriesRepository = new TypeORMEntryRepository(dataSource);
+  const useCase = new BestStreaksUseCase(habitsRepository, entriesRepository);
 
-  if (!habit || habit.user_id !== user.id) {
+  const result = await useCase.execute({ userId: user.id, habitId: id });
+
+  if (!result.success) {
     return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
-  const entriesRepository = new TypeORMEntryRepository(dataSource);
-  const useCase = new BestStreaksUseCase(entriesRepository);
-
-  const { streaks } = await useCase.execute(habit);
-
-  return c.json(StreakPresenter.toHTTPList(streaks), HttpStatusCodes.OK);
+  return c.json(StreakPresenter.toHTTPList(result.data), HttpStatusCodes.OK);
 };

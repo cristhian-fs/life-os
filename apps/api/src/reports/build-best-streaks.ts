@@ -2,10 +2,6 @@ import { Entry } from "@/db/entities/entry.entity";
 import { HabitType, type Habit } from "@/db/entities/habit.entity";
 import { addDays, differenceInDays, format, subDays } from "date-fns";
 
-interface BestStreaksProps {
-  period: "week" | "month" | "trimestral" | "semester" | "yearly";
-  entries: Entry[];
-}
 
 export type Streak = {
   from: Date;
