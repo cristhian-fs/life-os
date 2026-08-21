@@ -10,7 +10,6 @@ export type CreateEntryInput = {
 };
 
 export type FindByHabitAndDateRangeProps = {
-  userId: string;
   startDate: Date;
   endDate: Date;
 };

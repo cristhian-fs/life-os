@@ -27,7 +27,6 @@ export class TypeORMEntryRepository implements EntryRepository {
     const data = await this.repo
       .createQueryBuilder("entry")
       .where("entry.habit_id = :habitId", { habitId })
-      .andWhere("entry.user_id = :userId", { userId: props.userId })
       .andWhere("entry.date BETWEEN :startDate AND :endDate", {
         startDate: props.startDate,
         endDate: props.endDate,

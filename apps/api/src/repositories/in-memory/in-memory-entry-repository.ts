@@ -48,7 +48,6 @@ export class InMemoryEntryRepository implements EntryRepository {
     return this.items.filter(
       (item) =>
         item.habit_id === habitId &&
-        item.user_id === props.userId &&
         item.date.getTime() >= props.startDate.getTime() &&
         item.date.getTime() <= props.endDate.getTime(),
     );

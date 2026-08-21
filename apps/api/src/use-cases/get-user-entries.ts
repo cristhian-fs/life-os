@@ -36,7 +36,7 @@ export class GetUserEntriesUseCase {
 
     const entries = await this.entriesRepository.findByHabitAndDateRange(
       habitId,
-      { userId, startDate, endDate },
+      { startDate, endDate },
     );
 
     return { success: true, data: entries };
