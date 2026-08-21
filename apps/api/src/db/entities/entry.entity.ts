@@ -29,7 +29,14 @@ export class Entry {
   @JoinColumn({ name: "habit_id" })
   habit: Habit;
 
-  @Column({ type: "date", name: "date" })
+  @Column({
+    type: "date",
+    name: "date",
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: string) => new Date(value),
+    },
+  })
   date: Date;
 
   @Column({ type: "boolean", name: "value_boolean", nullable: true })
