@@ -1,6 +1,10 @@
 import type { Repository, DataSource, DeepPartial } from "typeorm";
 import { Entry } from "@/db/entities/entry.entity";
-import type { EntryRepository } from "@/repositories/entry-repository";
+import type {
+  CreateEntryInput,
+  EntryRepository,
+  FindByHabitAndDateRangeProps,
+} from "@/repositories/entry-repository";
 
 export class TypeORMEntryRepository implements EntryRepository {
   protected readonly repo: Repository<Entry>;
@@ -8,7 +12,7 @@ export class TypeORMEntryRepository implements EntryRepository {
   constructor(dataSource: DataSource) {
     this.repo = dataSource.getRepository(Entry);
   }
-  async create(entry: Entry): Promise<Entry> {
+  async create(entry: CreateEntryInput): Promise<Entry> {
     const data = await this.repo.save(this.repo.create(entry));
 
     return data;
@@ -18,11 +22,12 @@ export class TypeORMEntryRepository implements EntryRepository {
   }
   async findByHabitAndDateRange(
     habitId: string,
-    props: { startDate: Date; endDate: Date },
+    props: FindByHabitAndDateRangeProps,
   ): Promise<Entry[]> {
     const data = await this.repo
       .createQueryBuilder("entry")
-      .where("entry.habit_id = :id", { id: habitId })
+      .where("entry.habit_id = :habitId", { habitId })
+      .andWhere("entry.user_id = :userId", { userId: props.userId })
       .andWhere("entry.date BETWEEN :startDate AND :endDate", {
         startDate: props.startDate,
         endDate: props.endDate,

@@ -1,23 +1,26 @@
 import { randomUUID } from "node:crypto";
 import type { Entry } from "@/db/entities/entry.entity";
-import type { EntryRepository } from "@/repositories/entry-repository";
+import type {
+  CreateEntryInput,
+  EntryRepository,
+  FindByHabitAndDateRangeProps,
+} from "@/repositories/entry-repository";
 
 export class InMemoryEntryRepository implements EntryRepository {
   public items: Entry[] = [];
-  async create(data: Entry): Promise<Entry> {
+
+  async create(data: CreateEntryInput): Promise<Entry> {
     const entry: Entry = {
       id: randomUUID(),
       user_id: data.user_id,
-      date: new Date(),
       habit_id: data.habit_id,
-      note: data.note,
+      date: data.date,
+      value_boolean: data.value_boolean ?? null,
+      value_numeric: data.value_numeric ?? null,
+      note: data.note ?? null,
       created_at: new Date(),
       updated_at: new Date(),
-      value_boolean: data.value_boolean,
-      value_numeric: data.value_numeric,
-      habit: data.habit,
-      user: data.user,
-    };
+    } as Entry;
 
     this.items.push(entry);
 
@@ -26,7 +29,8 @@ export class InMemoryEntryRepository implements EntryRepository {
 
   async delete(entryId: string): Promise<void> {
     const entryIndex = this.items.findIndex((item) => item.id === entryId);
-    this.items.slice(entryIndex, 1);
+    if (entryIndex === -1) return;
+    this.items.splice(entryIndex, 1);
   }
 
   async findById(entryId: string): Promise<Entry | null> {
@@ -39,18 +43,20 @@ export class InMemoryEntryRepository implements EntryRepository {
 
   async findByHabitAndDateRange(
     habitId: string,
-    props: { startDate: Date; endDate: Date },
+    props: FindByHabitAndDateRangeProps,
   ): Promise<Entry[]> {
     return this.items.filter(
       (item) =>
-        item.id === habitId &&
-        item.date.toTimeString() >= props.startDate.toTimeString() &&
-        item.date.toTimeString() <= props.endDate.toTimeString(),
+        item.habit_id === habitId &&
+        item.user_id === props.userId &&
+        item.date.getTime() >= props.startDate.getTime() &&
+        item.date.getTime() <= props.endDate.getTime(),
     );
   }
 
-  async update(entry: Entry): Promise<Entry> {
+  async update(entry: Entry): Promise<Entry | null> {
     const entryIndex = this.items.findIndex((item) => item.id === entry.id);
+    if (entryIndex === -1) return null;
 
     this.items[entryIndex] = entry;
     return entry;
