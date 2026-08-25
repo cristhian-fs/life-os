@@ -7,6 +7,8 @@ import { AppDataSource } from "../db/data-source";
 
 export const auth = betterAuth({
   database: typeormAdapter(AppDataSource),
+  baseURL: env.BETTER_AUTH_URL,
+  trustedOrigins: [env.CORS_ORIGIN],
   emailAndPassword: { enabled: true },
   plugins: [
     openAPI({ disableDefaultReference: true }),
