@@ -8,12 +8,14 @@ import type {
   CalendarMapRoute,
   CreateHabitRoute,
   DeleteHabitRoute,
+  GetHabitRoute,
   HistoryBarRoute,
   ListHabitsRoute,
   ScoreHistoryRoute,
   UpdateHabitRoute,
 } from "./habit.routes";
 import { GetUserHabitsUseCase } from "@/use-cases/get-user-habits";
+import { GetUserHabitUseCase } from "@/use-cases/get-user-habit";
 import { UpdateUserHabitUseCase } from "@/use-cases/update-user-habit";
 import { TypeORMHabitRepository } from "@/repositories/typeorm/typeorm-habit-repository";
 import { TypeORMEntryRepository } from "@/repositories/typeorm/typeorm-entry-repository";
@@ -68,6 +70,30 @@ export const list: AppRouteHandler<ListHabitsRoute> = async (c) => {
   const habits = await useCase.execute({ userId: user.id });
 
   return c.json(HabitPresenter.toHTTPList(habits.habits), HttpStatusCodes.OK);
+};
+
+export const get: AppRouteHandler<GetHabitRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const { id } = c.req.valid("param");
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const useCase = new GetUserHabitUseCase(habitsRepository);
+
+  const result = await useCase.execute({ userId: user.id, habitId: id });
+
+  if (!result.success) {
+    return c.json({ message: "Habit not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(HabitPresenter.toHTTP(result.data), HttpStatusCodes.OK);
 };
 
 export const update: AppRouteHandler<UpdateHabitRoute> = async (c) => {

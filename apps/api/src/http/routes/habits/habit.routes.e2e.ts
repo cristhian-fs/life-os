@@ -95,6 +95,51 @@ describe("[E2E] Habits Routes", () => {
     await test.deleteUser(user.id);
   });
 
+  it("should return a habit on GET /habits/{id}", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create(
+        makeHabitEntity({ user_id: user.id, name: "Drink water" }),
+      ),
+    );
+
+    const res = await app.request(`/api/habits/${habit.id}`, {
+      headers,
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toEqual(
+      expect.objectContaining({ id: habit.id, name: "Drink water" }),
+    );
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return 404 getting a habit that does not exist", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/habits/00000000-0000-0000-0000-000000000000",
+      { headers },
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(404);
+    expect(body).toEqual(
+      expect.objectContaining({ message: "Habit not found" }),
+    );
+
+    await test.deleteUser(user.id);
+  });
+
   it("should return the updated habit after a PATCH request", async () => {
     const user = test.createUser({ email: "test@example.com" });
     await test.saveUser(user);

@@ -47,6 +47,22 @@ export const list = createRoute({
 
 export type ListHabitsRoute = typeof list;
 
+export const get = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/{id}",
+  summary: "Get a user habit by id",
+  request: {
+    params: IdUUIDParamsSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(HabitsResponseSchema, "The habit"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Habit not found"),
+  },
+});
+
+export type GetHabitRoute = typeof get;
+
 export const update = createRoute({
   tags,
   method: "patch",
