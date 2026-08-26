@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { useForm } from '@tanstack/react-form'
+import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -7,6 +8,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { authClient } from '#/lib/auth-client'
@@ -180,6 +182,15 @@ export function RegisterForm({
         <Field>
           <Button type="submit">Create your account</Button>
         </Field>
+        <FieldSeparator />
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <span className="text-muted-foreground">
+            Already have an account?
+          </span>
+          <Button variant="secondary" size="sm" render={<Link to="/login" />}>
+            Login
+          </Button>
+        </div>
       </FieldGroup>
     </form>
   )
