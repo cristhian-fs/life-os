@@ -1,15 +1,12 @@
 import { Entry } from "@/db/entities/entry.entity";
 import { HabitType, type Habit } from "@/db/entities/habit.entity";
-import { addDays, differenceInDays, format, subDays } from "date-fns";
-
+import { addUTCDays, diffInUTCDays, utcDateKey } from "./date-buckets";
 
 export type Streak = {
   from: Date;
   to: Date;
   streak_num: number;
 };
-
-const toDateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
 export const isSuccess = (entry: Entry, habit: Habit): boolean => {
   if (
@@ -32,17 +29,17 @@ export function buildBestStreaks(
   const mapEntries = new Map();
 
   entries.map((entry) => {
-    mapEntries.set(toDateKey(entry.date), entry);
+    mapEntries.set(utcDateKey(entry.date), entry);
   });
 
   let currentStreakStart: Date | null = null;
   let currentStreakLength: number = 0;
   let streaks: Streak[] = [];
 
-  const totalDays = differenceInDays(endDate, startDate);
+  const totalDays = diffInUTCDays(startDate, endDate);
   for (let i = 0; i <= totalDays; i++) {
-    const day = addDays(startDate, i);
-    const entry = mapEntries.get(toDateKey(day));
+    const day = addUTCDays(startDate, i);
+    const entry = mapEntries.get(utcDateKey(day));
     const success = Boolean(entry && isSuccess(entry, habit));
 
     if (success) {
@@ -54,7 +51,7 @@ export function buildBestStreaks(
       if (currentStreakLength > 0) {
         streaks.push({
           from: currentStreakStart!,
-          to: subDays(day, 1),
+          to: addUTCDays(day, -1),
           streak_num: currentStreakLength,
         });
       }

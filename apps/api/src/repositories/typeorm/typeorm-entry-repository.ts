@@ -28,8 +28,8 @@ export class TypeORMEntryRepository implements EntryRepository {
       .createQueryBuilder("entry")
       .where("entry.habit_id = :habitId", { habitId })
       .andWhere("entry.date BETWEEN :startDate AND :endDate", {
-        startDate: props.startDate,
-        endDate: props.endDate,
+        startDate: props.startDate.toISOString().slice(0, 10),
+        endDate: props.endDate.toISOString().slice(0, 10),
       })
       .getMany();
 
