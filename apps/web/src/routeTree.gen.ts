@@ -14,6 +14,8 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardHabitsIndexRouteImport } from './routes/dashboard/habits/index'
+import { Route as DashboardHabitsHabitIdRouteImport } from './routes/dashboard/habits/$habitId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardHabitsIndexRoute = DashboardHabitsIndexRouteImport.update({
+  id: '/habits/',
+  path: '/habits/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardHabitsHabitIdRoute = DashboardHabitsHabitIdRouteImport.update({
+  id: '/habits/$habitId',
+  path: '/habits/$habitId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,12 +59,16 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/habits/': typeof DashboardHabitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/habits': typeof DashboardHabitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,13 +77,36 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/habits/': typeof DashboardHabitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/register' | '/dashboard/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/register'
+    | '/dashboard/'
+    | '/dashboard/habits/$habitId'
+    | '/dashboard/habits/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/register' | '/dashboard/'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/dashboard'
+    | '/dashboard/habits/$habitId'
+    | '/dashboard/habits'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/register'
+    | '/dashboard/'
+    | '/dashboard/habits/$habitId'
+    | '/dashboard/habits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,15 +153,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/habits/': {
+      id: '/dashboard/habits/'
+      path: '/habits'
+      fullPath: '/dashboard/habits/'
+      preLoaderRoute: typeof DashboardHabitsIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/habits/$habitId': {
+      id: '/dashboard/habits/$habitId'
+      path: '/habits/$habitId'
+      fullPath: '/dashboard/habits/$habitId'
+      preLoaderRoute: typeof DashboardHabitsHabitIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardHabitsHabitIdRoute: typeof DashboardHabitsHabitIdRoute
+  DashboardHabitsIndexRoute: typeof DashboardHabitsIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardHabitsHabitIdRoute: DashboardHabitsHabitIdRoute,
+  DashboardHabitsIndexRoute: DashboardHabitsIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
