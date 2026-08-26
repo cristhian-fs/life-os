@@ -1,0 +1,319 @@
+import { useCreateHabit } from '#/features/habits/api/create-habit'
+import { useUpdateHabit } from '#/features/habits/api/update-habit'
+import { goalPeriodLabel } from '#/features/habits/lib/format'
+import { habitSchema } from '#/features/habits/lib/habit-schema'
+import { HabitGoalPeriod, HabitType } from '#/types/api'
+import type { Habit } from '#/types/api'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { toast } from '#/components/ui/toast'
+import { useForm } from '@tanstack/react-form'
+import { useState } from 'react'
+
+type HabitFormDialogProps = {
+  // Provide `trigger` for an uncontrolled dialog (e.g. the page-level "New
+  // habit" button). Omit it and pass `open`/`onOpenChange` instead when
+  // opening from elsewhere (e.g. a dropdown menu item) — nesting a
+  // DialogTrigger inside a menu item causes focus/portal stacking issues.
+  trigger?: React.ReactElement
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  habit?: Habit
+}
+
+export function HabitFormDialog({
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+  habit,
+}: HabitFormDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
+  const isEdit = !!habit
+
+  const createHabit = useCreateHabit({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.add({ title: 'Habit created', type: 'success' })
+        setOpen(false)
+      },
+      onError: (error) => toast.add({ title: error.message, type: 'error' }),
+    },
+  })
+  const updateHabit = useUpdateHabit({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.add({ title: 'Habit updated', type: 'success' })
+        setOpen(false)
+      },
+      onError: (error) => toast.add({ title: error.message, type: 'error' }),
+    },
+  })
+
+  const form = useForm({
+    defaultValues: {
+      name: habit?.name ?? '',
+      description: habit?.description ?? '',
+      type: habit?.type ?? HabitType.BOOLEAN,
+      unit: habit?.unit ?? null,
+      goal_value: habit?.goal_value ?? null,
+      goal_period: habit?.goal_period ?? HabitGoalPeriod.DAILY,
+    },
+    validators: { onSubmit: habitSchema },
+    onSubmit: async ({ value }) => {
+      if (isEdit) {
+        updateHabit.mutate({
+          id: habit.id,
+          data: {
+            name: value.name,
+            description: value.description,
+            goal_value: value.goal_value,
+            goal_period: value.goal_period,
+          },
+        })
+      } else {
+        createHabit.mutate({
+          data: {
+            name: value.name,
+            description: value.description,
+            type: value.type,
+            unit: value.unit,
+            goal_value: value.goal_value,
+            goal_period: value.goal_period,
+          },
+        })
+      }
+    },
+  })
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      {trigger && <DialogTrigger render={trigger} />}
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{isEdit ? 'Edit habit' : 'New habit'}</DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? 'Update the name, description, or goal.'
+              : 'Habits you check in on daily, weekly, or monthly.'}
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}
+        >
+          <FieldGroup>
+            <form.Field name="name">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="Read 20 pages"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field name="description">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <Textarea
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="Why this habit matters"
+                      rows={2}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field name="type">
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Type</FieldLabel>
+                  {isEdit ? (
+                    <p className="text-xs text-muted-foreground">
+                      {field.state.value === HabitType.NUMERIC
+                        ? "Numeric — can't be changed after creation"
+                        : "Done/not done — can't be changed after creation"}
+                    </p>
+                  ) : (
+                    <RadioGroup
+                      value={field.state.value}
+                      onValueChange={(v) => field.handleChange(v as HabitType)}
+                      className="grid-flow-col"
+                    >
+                      <FieldLabel className="flex-row items-center gap-2 text-xs font-normal">
+                        <RadioGroupItem value={HabitType.BOOLEAN} />
+                        Done / not done
+                      </FieldLabel>
+                      <FieldLabel className="flex-row items-center gap-2 text-xs font-normal">
+                        <RadioGroupItem value={HabitType.NUMERIC} />
+                        Numeric goal
+                      </FieldLabel>
+                    </RadioGroup>
+                  )}
+                </Field>
+              )}
+            </form.Field>
+
+            <form.Subscribe selector={(state) => state.values.type}>
+              {(type) =>
+                type === HabitType.NUMERIC && (
+                  <div className="flex gap-3">
+                    <form.Field name="goal_value">
+                      {(field) => {
+                        const isInvalid =
+                          field.state.meta.isTouched &&
+                          !field.state.meta.isValid
+                        return (
+                          <Field data-invalid={isInvalid} className="flex-1">
+                            <FieldLabel htmlFor={field.name}>Goal</FieldLabel>
+                            <Input
+                              id={field.name}
+                              name={field.name}
+                              type="number"
+                              value={field.state.value ?? ''}
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                field.handleChange(
+                                  e.target.value === ''
+                                    ? null
+                                    : Number(e.target.value),
+                                )
+                              }
+                              aria-invalid={isInvalid}
+                              placeholder="30"
+                            />
+                            {isInvalid && (
+                              <FieldError errors={field.state.meta.errors} />
+                            )}
+                          </Field>
+                        )
+                      }}
+                    </form.Field>
+                    <form.Field name="unit">
+                      {(field) => {
+                        const isInvalid =
+                          field.state.meta.isTouched &&
+                          !field.state.meta.isValid
+                        return (
+                          <Field data-invalid={isInvalid} className="flex-1">
+                            <FieldLabel htmlFor={field.name}>Unit</FieldLabel>
+                            <Input
+                              id={field.name}
+                              name={field.name}
+                              value={field.state.value ?? ''}
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                field.handleChange(e.target.value)
+                              }
+                              aria-invalid={isInvalid}
+                              disabled={isEdit}
+                              placeholder="minutes"
+                            />
+                            {isInvalid && (
+                              <FieldError errors={field.state.meta.errors} />
+                            )}
+                          </Field>
+                        )
+                      }}
+                    </form.Field>
+                  </div>
+                )
+              }
+            </form.Subscribe>
+
+            <form.Field name="goal_period">
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Frequency</FieldLabel>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(v) =>
+                      field.handleChange(v as HabitGoalPeriod)
+                    }
+                  >
+                    <SelectTrigger id={field.name} className="w-full">
+                      <SelectValue>
+                        {(value: HabitGoalPeriod) => goalPeriodLabel[value]}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(HabitGoalPeriod).map((period) => (
+                        <SelectItem key={period} value={period}>
+                          {goalPeriodLabel[period]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+            </form.Field>
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={createHabit.isPending || updateHabit.isPending}
+              >
+                {isEdit ? 'Save changes' : 'Create habit'}
+              </Button>
+            </DialogFooter>
+          </FieldGroup>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
