@@ -11,7 +11,7 @@ This projects contains a personal life organizer API and frontend
 - [x] It should be able to delete a habit
 - [x] It should be able to archive a habit
 - [x] It should be able to get user habits
-- [ ] It should be able to get a overview for each habit based on query parameters ('week', 'month', '3 months', '6 months', 'year', 'all')
+- [x] It should be able to get a overview for each habit based on query parameters ('week', 'month', '3 months', '6 months', 'year', 'all')
 - [x] It should be able to get a score history for each habit
   - Should work returning a percentage of how many habits were successfully made on each day,week,month,3months,6months,year and all
 - [x] It should be able to get a history bar graph for each habit
@@ -24,3 +24,11 @@ This projects contains a personal life organizer API and frontend
 - [x] It should not be able to create an entry for a archived habit
 - [x] It should be able to delete an entry
 - [x] It should be able to update an entry
+
+### Work
+
+- []
+- []
+- []
+- []
+- []
