@@ -7,6 +7,8 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
+  // .env lives at the monorepo root (VITE_API_URL etc.), not in apps/web.
+  envDir: '../../',
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
