@@ -36,6 +36,7 @@ export const EnvSchema = z.object({
 	BETTER_AUTH_URL: z.url(),
 	CORS_ORIGIN: z.url().optional().default("http://localhost:3000"),
 	DATABASE_URL: z.string(),
+	VITE_API_URL: z.string(),
 });
 
 export type env = z.infer<typeof EnvSchema>;
