@@ -8,33 +8,32 @@ import { NavUser } from '@/components/nav-user'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import {
-  TerminalIcon,
+  ListChecksIcon,
   LifebuoyIcon,
   PaperPlaneTiltIcon,
-  CommandIcon,
+  SquaresFourIcon,
 } from '@phosphor-icons/react'
-import { useRouteContext } from '@tanstack/react-router'
+import { Link, useLocation, useRouteContext } from '@tanstack/react-router'
+
+const dashboardRoute = {
+  title: 'Dashboard',
+  url: '/dashboard',
+  icon: <SquaresFourIcon />,
+}
 
 const data = {
   navMain: [
     {
-      title: 'Second Brain',
-      url: '#',
-      icon: <TerminalIcon />,
-      isActive: true,
-      items: [
-        {
-          title: 'Habits',
-          url: '/dashboard/habits',
-        },
-      ],
+      title: 'Habits',
+      url: '/dashboard/habits',
+      icon: <ListChecksIcon />,
     },
   ],
   navSecondary: [
@@ -50,33 +49,43 @@ const data = {
     },
   ],
 }
+
+// Single source of truth for "which page is this" — the dashboard header
+// looks up the current route's icon/title here instead of duplicating it.
+export const navRoutes = [dashboardRoute, ...data.navMain]
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { session } = useRouteContext({ from: '/dashboard' })
   const user = session.data?.user
+  const { pathname } = useLocation()
 
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<a href="#" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <CommandIcon className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">LifeOS</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <div className="flex items-center justify-between px-2 py-1">
+          <span className="truncate text-sm font-medium">LifeOS</span>
+          <NavUser user={user} />
+        </div>
       </SidebarHeader>
+      <div className="mx-2 border-t border-dashed border-sidebar-border" />
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Dashboard"
+                isActive={pathname === dashboardRoute.url}
+                render={<Link to={dashboardRoute.url} />}
+              >
+                {dashboardRoute.icon}
+                <span>{dashboardRoute.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <div className="mx-2 border-t border-dashed border-sidebar-border" />
+        <NavMain label="Second Brain" items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
     </Sidebar>
   )
 }
