@@ -21,15 +21,15 @@ export type Habit = {
   id: string
   user_id: string
   name: string
-  description: string
+  description: string | null
   type: HabitType
-  unit: string
-  goal_value: string
+  unit: string | null
+  goal_value: number | null
   goal_period: HabitGoalPeriod
   status: HabitStatus
   created_at: string
   updated_at: string
-  archived_at: string
+  archived_at: string | null
 }
 
 export type DeleteHabitResponse = {
@@ -69,5 +69,22 @@ export type HabitCalendarMapRequest = {
 
 export type HabitCalendarMapResponse = Array<{
   date: string
-  percentage: string
+  percentage: number
 }>
+
+export type Entry = {
+  id: string
+  user_id: string
+  habit_id: string
+  date: string
+  value_boolean: boolean | null
+  value_numeric: number | null
+  note: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type DeleteEntryResponse = {
+  success: boolean
+  message: string
+}
