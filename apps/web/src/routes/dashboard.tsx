@@ -1,4 +1,5 @@
 import { AppSidebar } from '#/components/app-sidebar'
+import { DashboardHeader } from '#/components/dashboard-header'
 import { SidebarInset, SidebarProvider } from '#/components/ui/sidebar'
 import { authClient } from '#/lib/auth-client'
 import { queryClient } from '#/lib/react-query'
@@ -25,6 +26,7 @@ function RouteComponent() {
     <SidebarProvider>
       <AppSidebar variant="sidebar" />
       <SidebarInset>
+        <DashboardHeader />
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
