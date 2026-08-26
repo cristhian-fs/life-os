@@ -2,7 +2,7 @@ import { api } from '#/lib/api-client'
 import type { MutationConfig } from '#/lib/react-query'
 import type { Habit } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { getHabitQueryOptions } from './get-habit'
+import { getHabitDetailQueryOptions } from './get-habit'
 
 export const archiveHabit = ({ id }: { id: string }): Promise<Habit> => {
   return api.patch(`/habits/${id}/archive`)
@@ -22,7 +22,7 @@ export const useArchiveHabit = ({
   return useMutation({
     onSuccess: (data, ...args) => {
       queryClient.refetchQueries({
-        queryKey: getHabitQueryOptions(data.id).queryKey,
+        queryKey: getHabitDetailQueryOptions(data.id).queryKey,
       })
       onSuccess?.(data, ...args)
     },

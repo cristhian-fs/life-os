@@ -11,16 +11,16 @@ export const getHabitBestStreaks = ({
   return api.get(`/habits/${habitId}/best-streaks`)
 }
 
-export const getHabitQueryOptions = (habitId: string) => {
+export const getHabitBestStreaksQueryOptions = (habitId: string) => {
   return queryOptions({
-    queryKey: ['habits', habitId],
+    queryKey: ['habits', habitId, 'best-streaks'],
     queryFn: () => getHabitBestStreaks({ habitId }),
   })
 }
 
 type UseHabitBestStreaksOptions = {
   habitId: string
-  queryConfig?: QueryConfig<typeof getHabitQueryOptions>
+  queryConfig?: QueryConfig<typeof getHabitBestStreaksQueryOptions>
 }
 
 export const useHabitBestStreaks = ({
@@ -28,7 +28,7 @@ export const useHabitBestStreaks = ({
   queryConfig,
 }: UseHabitBestStreaksOptions) => {
   return useQuery({
-    ...getHabitQueryOptions(habitId),
+    ...getHabitBestStreaksQueryOptions(habitId),
     ...queryConfig,
   })
 }

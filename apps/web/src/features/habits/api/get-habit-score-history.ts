@@ -17,19 +17,19 @@ export const getHabitScoreHistory = ({
   })
 }
 
-export const getHabitQueryOptions = ({
+export const getHabitScoreHistoryQueryOptions = ({
   id,
   period,
 }: HabitScoreHistoryRequest) => {
   return queryOptions({
-    queryKey: ['habits', id],
+    queryKey: ['habits', id, 'score-history', period],
     queryFn: () => getHabitScoreHistory({ id, period }),
   })
 }
 
 type UseHabitScoreHistoryOptions = {
   params: HabitScoreHistoryRequest
-  queryConfig?: QueryConfig<typeof getHabitQueryOptions>
+  queryConfig?: QueryConfig<typeof getHabitScoreHistoryQueryOptions>
 }
 
 export const useHabitScoreHistory = ({
@@ -37,7 +37,7 @@ export const useHabitScoreHistory = ({
   queryConfig,
 }: UseHabitScoreHistoryOptions) => {
   return useQuery({
-    ...getHabitQueryOptions(params),
+    ...getHabitScoreHistoryQueryOptions(params),
     ...queryConfig,
   })
 }

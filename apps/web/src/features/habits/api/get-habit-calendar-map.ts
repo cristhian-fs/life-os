@@ -11,16 +11,16 @@ export const getHabitCalendarMap = ({
   return api.get(`/habits/${habitId}/calendar-map`)
 }
 
-export const getHabitQueryOptions = (habitId: string) => {
+export const getHabitCalendarMapQueryOptions = (habitId: string) => {
   return queryOptions({
-    queryKey: ['habits', habitId],
+    queryKey: ['habits', habitId, 'calendar-map'],
     queryFn: () => getHabitCalendarMap({ habitId }),
   })
 }
 
 type UseHabitCalendarMapOptions = {
   habitId: string
-  queryConfig?: QueryConfig<typeof getHabitQueryOptions>
+  queryConfig?: QueryConfig<typeof getHabitCalendarMapQueryOptions>
 }
 
 export const useHabitCalendarMap = ({
@@ -28,7 +28,7 @@ export const useHabitCalendarMap = ({
   queryConfig,
 }: UseHabitCalendarMapOptions) => {
   return useQuery({
-    ...getHabitQueryOptions(habitId),
+    ...getHabitCalendarMapQueryOptions(habitId),
     ...queryConfig,
   })
 }

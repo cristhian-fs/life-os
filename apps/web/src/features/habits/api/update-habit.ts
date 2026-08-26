@@ -1,16 +1,17 @@
+import { habitFieldsSchema } from '#/features/habits/lib/habit-schema'
 import { api } from '#/lib/api-client'
 import type { MutationConfig } from '#/lib/react-query'
 import type { Habit } from '#/types/api'
-import { HabitGoalPeriod } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import z from 'zod'
-import { getHabitQueryOptions } from './get-habit'
+import type z from 'zod'
+import { getHabitDetailQueryOptions } from './get-habit'
 
-export const updateHabitInputSchema = z.object({
-  name: z.string().min(1, 'Name required'),
-  description: z.string().min(1, 'Description required'),
-  goal_value: z.coerce.number(),
-  goal_period: z.enum(HabitGoalPeriod),
+// The API can only patch these 4 fields — type/unit are fixed at creation.
+export const updateHabitInputSchema = habitFieldsSchema.pick({
+  name: true,
+  description: true,
+  goal_value: true,
+  goal_period: true,
 })
 
 export type UpdateHabitInput = z.infer<typeof updateHabitInputSchema>
@@ -39,7 +40,7 @@ export const useUpdateHabit = ({
   return useMutation({
     onSuccess: (data, ...args) => {
       queryClient.refetchQueries({
-        queryKey: getHabitQueryOptions(data.id).queryKey,
+        queryKey: getHabitDetailQueryOptions(data.id).queryKey,
       })
       onSuccess?.(data, ...args)
     },

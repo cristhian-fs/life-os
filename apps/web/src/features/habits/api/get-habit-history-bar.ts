@@ -17,19 +17,19 @@ export const getHabitHistoryBar = ({
   })
 }
 
-export const getHabitQueryOptions = ({
+export const getHabitHistoryBarQueryOptions = ({
   id,
   period,
 }: HabitHistoryBarGraphRequest) => {
   return queryOptions({
-    queryKey: ['habits', id],
+    queryKey: ['habits', id, 'history-bar', period],
     queryFn: () => getHabitHistoryBar({ id, period }),
   })
 }
 
 type UseHabitHistoryBarOptions = {
   params: HabitHistoryBarGraphRequest
-  queryConfig?: QueryConfig<typeof getHabitQueryOptions>
+  queryConfig?: QueryConfig<typeof getHabitHistoryBarQueryOptions>
 }
 
 export const useHabitHistoryBar = ({
@@ -37,7 +37,7 @@ export const useHabitHistoryBar = ({
   queryConfig,
 }: UseHabitHistoryBarOptions) => {
   return useQuery({
-    ...getHabitQueryOptions(params),
+    ...getHabitHistoryBarQueryOptions(params),
     ...queryConfig,
   })
 }

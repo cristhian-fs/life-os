@@ -2,10 +2,10 @@ import { api } from '#/lib/api-client'
 import type { MutationConfig } from '#/lib/react-query'
 import type { Habit } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { getHabitQueryOptions } from './get-habit'
+import { getHabitDetailQueryOptions } from './get-habit'
 
 export const deleteHabit = ({ id }: { id: string }): Promise<Habit> => {
-  return api.patch(`/habits/${id}/delete`)
+  return api.delete(`/habits/${id}`)
 }
 
 type UseDeleteHabitOptions = {
@@ -22,7 +22,7 @@ export const useDeleteHabit = ({
   return useMutation({
     onSuccess: (data, ...args) => {
       queryClient.invalidateQueries({
-        queryKey: getHabitQueryOptions(data.id).queryKey,
+        queryKey: getHabitDetailQueryOptions(data.id).queryKey,
       })
       onSuccess?.(data, ...args)
     },

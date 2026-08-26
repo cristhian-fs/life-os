@@ -1,19 +1,12 @@
 import { api } from '#/lib/api-client'
+import { habitSchema } from '#/features/habits/lib/habit-schema'
 import type { MutationConfig } from '#/lib/react-query'
 import type { Habit } from '#/types/api'
-import { HabitGoalPeriod, HabitType } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import z from 'zod'
+import type z from 'zod'
 import { getHabitsQueryOptions } from './get-habits'
 
-export const createHabitInputSchema = z.object({
-  name: z.string().min(1, 'Name required'),
-  description: z.string().min(1, 'Description required'),
-  goal_value: z.coerce.number(),
-  goal_period: z.enum(HabitGoalPeriod),
-  type: z.enum(HabitType),
-  unit: z.string().min(1, 'Unit required'),
-})
+export const createHabitInputSchema = habitSchema
 
 export type CreateHabitInput = z.infer<typeof createHabitInputSchema>
 
