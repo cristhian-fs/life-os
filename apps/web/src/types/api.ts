@@ -88,3 +88,79 @@ export type DeleteEntryResponse = {
   success: boolean
   message: string
 }
+
+// ====================
+// WORKS
+// ====================
+
+export enum WorkType {
+  BOOK = 'book',
+  MOVIE = 'movie',
+  ARTICLE = 'article',
+  COURSE = 'course',
+}
+
+export enum WorkStatus {
+  TO_CONSUME = 'to_consume',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  ABANDONED = 'abandoned',
+}
+
+interface BaseWork {
+  id: string
+  user_id: string
+  title: string
+  creator: string
+  status: WorkStatus
+  rating: number | null
+  started_at: string | null
+  completed_at: string | null
+  summary: string | null
+  external_url: string | null
+  image_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type BookWork = BaseWork & {
+  type: WorkType.BOOK
+  detail: {
+    isbn: string | null
+    pages: number | null
+    publisher: string | null
+  } | null
+}
+
+export type MovieWork = BaseWork & {
+  type: WorkType.MOVIE
+  detail: {
+    runtime_minutes: number | null
+    director: string | null
+  } | null
+}
+
+export type ArticleWork = BaseWork & {
+  type: WorkType.ARTICLE
+  detail: {
+    source_name: string
+    reading_time_minutes: number | null
+    published_at: string | null
+  } | null
+}
+
+export type CourseWork = BaseWork & {
+  type: WorkType.COURSE
+  detail: {
+    platform: string | null
+    instructor: string | null
+    duration_hours: number | null
+  } | null
+}
+
+export type Work = BookWork | MovieWork | ArticleWork | CourseWork
+
+export type DeleteWorkResponse = {
+  success: boolean
+  message: string
+}

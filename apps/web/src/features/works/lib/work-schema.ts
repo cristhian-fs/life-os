@@ -1,0 +1,83 @@
+import { WorkStatus, WorkType } from '#/types/api'
+import * as z from 'zod'
+
+/**
+ * Mirrors the API's CreateWorkSchema (apps/api/src/schemas/work.schema.ts) —
+ * a work's type fixes its detail shape and can't change after creation.
+ */
+const baseWorkFieldsSchema = z.object({
+  title: z.string().min(1, 'Title required'),
+  creator: z.string().min(1, 'Creator required'),
+  status: z.enum(WorkStatus),
+  external_url: z.url('Must be a valid URL').nullable(),
+  // Upload via useUploadWorkImage (POST /uploads/images) first, then pass the url it returns here.
+  image_url: z.string().nullable(),
+})
+
+export const bookWorkSchema = baseWorkFieldsSchema.extend({
+  type: z.literal(WorkType.BOOK),
+  detail: z.object({
+    isbn: z.string().nullable(),
+    pages: z.number().int().positive().nullable(),
+    publisher: z.string().nullable(),
+  }),
+})
+
+export const movieWorkSchema = baseWorkFieldsSchema.extend({
+  type: z.literal(WorkType.MOVIE),
+  detail: z.object({
+    runtime_minutes: z.number().int().positive().nullable(),
+    director: z.string().nullable(),
+  }),
+})
+
+export const articleWorkSchema = baseWorkFieldsSchema.extend({
+  type: z.literal(WorkType.ARTICLE),
+  detail: z.object({
+    source_name: z.string().min(1, 'Source required'),
+    reading_time_minutes: z.number().int().positive().nullable(),
+    published_at: z.string().nullable(),
+  }),
+})
+
+export const courseWorkSchema = baseWorkFieldsSchema.extend({
+  type: z.literal(WorkType.COURSE),
+  detail: z.object({
+    platform: z.string().nullable(),
+    instructor: z.string().nullable(),
+    duration_hours: z.number().positive().nullable(),
+  }),
+})
+
+export const createWorkSchema = z.discriminatedUnion('type', [
+  bookWorkSchema,
+  movieWorkSchema,
+  articleWorkSchema,
+  courseWorkSchema,
+])
+
+export type CreateWorkFormValues = z.infer<typeof createWorkSchema>
+
+/** Looked up by a fixed `type` prop so the form only validates that type's detail fields. */
+export const workSchemaByType = {
+  [WorkType.BOOK]: bookWorkSchema,
+  [WorkType.MOVIE]: movieWorkSchema,
+  [WorkType.ARTICLE]: articleWorkSchema,
+  [WorkType.COURSE]: courseWorkSchema,
+}
+
+// Mirrors the API's UpdateWorkSchema — every field optional, a real partial
+// patch (the edit form submits all of them; quick actions like the status
+// popover submit just one, e.g. `{ status }` or `{ rating }`). Detail fields
+// aren't here on purpose — the API can't patch them, only set at creation.
+export const updateWorkSchema = z.object({
+  title: z.string().min(1, 'Title required').optional(),
+  creator: z.string().min(1, 'Creator required').optional(),
+  status: z.enum(WorkStatus).optional(),
+  rating: z.number().int().min(0).max(5).nullable().optional(),
+  summary: z.string().nullable().optional(),
+  external_url: z.url('Must be a valid URL').nullable().optional(),
+  image_url: z.string().nullable().optional(),
+})
+
+export type UpdateWorkFormValues = z.infer<typeof updateWorkSchema>
