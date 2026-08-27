@@ -15,10 +15,11 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import {
-  ListChecksIcon,
   LifebuoyIcon,
+  ListChecksIcon,
   PaperPlaneTiltIcon,
   SquaresFourIcon,
+  VaultIcon,
 } from '@phosphor-icons/react'
 import { Link, useLocation, useRouteContext } from '@tanstack/react-router'
 
@@ -33,7 +34,18 @@ const data = {
     {
       title: 'Habits',
       url: '/dashboard/habits',
-      icon: <ListChecksIcon />,
+      icon: ListChecksIcon,
+    },
+    {
+      title: 'Vault',
+      url: '/dashboard/vault',
+      icon: VaultIcon,
+      items: [
+        { title: 'Books', url: '/dashboard/vault/books' },
+        { title: 'Movies', url: '/dashboard/vault/movies' },
+        { title: 'Articles', url: '/dashboard/vault/articles' },
+        { title: 'Courses', url: '/dashboard/vault/courses' },
+      ],
     },
   ],
   navSecondary: [
@@ -52,7 +64,12 @@ const data = {
 
 // Single source of truth for "which page is this" — the dashboard header
 // looks up the current route's icon/title here instead of duplicating it.
-export const navRoutes = [dashboardRoute, ...data.navMain]
+// navMain icons are components (NavMain renders them as `<item.icon />`), so
+// they're instantiated here to match dashboardRoute's already-rendered icon.
+export const navRoutes = [
+  dashboardRoute,
+  ...data.navMain.map((item) => ({ ...item, icon: <item.icon /> })),
+]
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { session } = useRouteContext({ from: '/dashboard' })
   const user = session.data?.user

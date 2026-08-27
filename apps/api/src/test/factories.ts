@@ -4,8 +4,10 @@ import {
   HabitStatus,
   HabitType,
 } from "@/db/entities/habit.entity";
+import { WorkStatus, WorkType } from "@/db/entities/work.entity";
 import type { CreateEntryInput } from "@/repositories/entry-repository";
 import type { CreateHabitInput } from "@/repositories/habit-repository";
+import type { CreateWorkInput } from "@/repositories/work-repository";
 
 // ponytail: hand-rolled random picks instead of pulling in @faker-js/faker for two fields
 function pick<T>(values: T[]): T {
@@ -62,5 +64,19 @@ export function makeEntryEntity(overrides: Partial<CreateEntryInput> = {}) {
     ...makeEntry(overrides),
     created_at: new Date(),
     updated_at: new Date(),
+  };
+}
+
+/** Builds a valid CreateWorkInput with randomized data. Pass overrides for anything a test cares about. */
+export function makeWork(
+  overrides: Partial<CreateWorkInput> = {},
+): CreateWorkInput {
+  return {
+    user_id: randomUUID(),
+    title: `Work ${randomUUID().slice(0, 8)}`,
+    creator: `Creator ${randomUUID().slice(0, 8)}`,
+    type: pick(Object.values(WorkType)),
+    status: pick(Object.values(WorkStatus)),
+    ...overrides,
   };
 }

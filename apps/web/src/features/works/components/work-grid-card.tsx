@@ -1,0 +1,39 @@
+import { formatWorkDetail, workTypeIcon } from '#/features/works/lib/format'
+import type { Work } from '#/types/api'
+import { Card, CardContent } from '@/components/ui/card'
+import { WorkActionsMenu } from './work-actions-menu'
+import { WorkStatusPopover } from './work-status-popover'
+
+/** Poster-style card for grid view — vertical, cover art up top. */
+export function WorkGridCard({ work }: { work: Work }) {
+  const Icon = workTypeIcon[work.type]
+  const detailLine = formatWorkDetail(work)
+
+  return (
+    <Card className="gap-0 overflow-hidden bg-transparent p-0">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+        {work.image_url ? (
+          <img
+            src={work.image_url}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+            <Icon className="size-8" />
+          </div>
+        )}
+        <div className="absolute top-1.5 right-1.5 rounded-md bg-background/80 backdrop-blur-xs">
+          <WorkActionsMenu work={work} />
+        </div>
+      </div>
+      <CardContent className="flex flex-col gap-1.5 p-3">
+        <p className="truncate text-sm font-medium">{work.title}</p>
+        <p className="truncate text-[11px] text-muted-foreground">
+          {[work.creator, detailLine].filter(Boolean).join(' · ')}
+        </p>
+        <WorkStatusPopover work={work} />
+      </CardContent>
+    </Card>
+  )
+}

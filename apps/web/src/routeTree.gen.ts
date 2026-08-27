@@ -16,6 +16,11 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardHabitsIndexRouteImport } from './routes/dashboard/habits/index'
 import { Route as DashboardHabitsHabitIdRouteImport } from './routes/dashboard/habits/$habitId'
+import { Route as DashboardVaultIndexRouteImport } from './routes/dashboard/vault/index'
+import { Route as DashboardVaultArticlesIndexRouteImport } from './routes/dashboard/vault/articles/index'
+import { Route as DashboardVaultBooksIndexRouteImport } from './routes/dashboard/vault/books/index'
+import { Route as DashboardVaultCoursesIndexRouteImport } from './routes/dashboard/vault/courses/index'
+import { Route as DashboardVaultMoviesIndexRouteImport } from './routes/dashboard/vault/movies/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +57,35 @@ const DashboardHabitsHabitIdRoute = DashboardHabitsHabitIdRouteImport.update({
   path: '/habits/$habitId',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardVaultIndexRoute = DashboardVaultIndexRouteImport.update({
+  id: '/vault/',
+  path: '/vault/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardVaultArticlesIndexRoute =
+  DashboardVaultArticlesIndexRouteImport.update({
+    id: '/vault/articles/',
+    path: '/vault/articles/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardVaultBooksIndexRoute =
+  DashboardVaultBooksIndexRouteImport.update({
+    id: '/vault/books/',
+    path: '/vault/books/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardVaultCoursesIndexRoute =
+  DashboardVaultCoursesIndexRouteImport.update({
+    id: '/vault/courses/',
+    path: '/vault/courses/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardVaultMoviesIndexRoute =
+  DashboardVaultMoviesIndexRouteImport.update({
+    id: '/vault/movies/',
+    path: '/vault/movies/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +95,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
+  '/dashboard/vault/': typeof DashboardVaultIndexRoute
+  '/dashboard/vault/articles/': typeof DashboardVaultArticlesIndexRoute
+  '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
+  '/dashboard/vault/courses/': typeof DashboardVaultCoursesIndexRoute
+  '/dashboard/vault/movies/': typeof DashboardVaultMoviesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,6 +108,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits': typeof DashboardHabitsIndexRoute
+  '/dashboard/vault': typeof DashboardVaultIndexRoute
+  '/dashboard/vault/articles': typeof DashboardVaultArticlesIndexRoute
+  '/dashboard/vault/books': typeof DashboardVaultBooksIndexRoute
+  '/dashboard/vault/courses': typeof DashboardVaultCoursesIndexRoute
+  '/dashboard/vault/movies': typeof DashboardVaultMoviesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,6 +123,11 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
+  '/dashboard/vault/': typeof DashboardVaultIndexRoute
+  '/dashboard/vault/articles/': typeof DashboardVaultArticlesIndexRoute
+  '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
+  '/dashboard/vault/courses/': typeof DashboardVaultCoursesIndexRoute
+  '/dashboard/vault/movies/': typeof DashboardVaultMoviesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,6 +139,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits/'
+    | '/dashboard/vault/'
+    | '/dashboard/vault/articles/'
+    | '/dashboard/vault/books/'
+    | '/dashboard/vault/courses/'
+    | '/dashboard/vault/movies/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,6 +152,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits'
+    | '/dashboard/vault'
+    | '/dashboard/vault/articles'
+    | '/dashboard/vault/books'
+    | '/dashboard/vault/courses'
+    | '/dashboard/vault/movies'
   id:
     | '__root__'
     | '/'
@@ -107,6 +166,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits/'
+    | '/dashboard/vault/'
+    | '/dashboard/vault/articles/'
+    | '/dashboard/vault/books/'
+    | '/dashboard/vault/courses/'
+    | '/dashboard/vault/movies/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,6 +231,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardHabitsHabitIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/vault/': {
+      id: '/dashboard/vault/'
+      path: '/vault'
+      fullPath: '/dashboard/vault/'
+      preLoaderRoute: typeof DashboardVaultIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/vault/articles/': {
+      id: '/dashboard/vault/articles/'
+      path: '/vault/articles'
+      fullPath: '/dashboard/vault/articles/'
+      preLoaderRoute: typeof DashboardVaultArticlesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/vault/books/': {
+      id: '/dashboard/vault/books/'
+      path: '/vault/books'
+      fullPath: '/dashboard/vault/books/'
+      preLoaderRoute: typeof DashboardVaultBooksIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/vault/courses/': {
+      id: '/dashboard/vault/courses/'
+      path: '/vault/courses'
+      fullPath: '/dashboard/vault/courses/'
+      preLoaderRoute: typeof DashboardVaultCoursesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/vault/movies/': {
+      id: '/dashboard/vault/movies/'
+      path: '/vault/movies'
+      fullPath: '/dashboard/vault/movies/'
+      preLoaderRoute: typeof DashboardVaultMoviesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
@@ -174,12 +273,22 @@ interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardHabitsHabitIdRoute: typeof DashboardHabitsHabitIdRoute
   DashboardHabitsIndexRoute: typeof DashboardHabitsIndexRoute
+  DashboardVaultIndexRoute: typeof DashboardVaultIndexRoute
+  DashboardVaultArticlesIndexRoute: typeof DashboardVaultArticlesIndexRoute
+  DashboardVaultBooksIndexRoute: typeof DashboardVaultBooksIndexRoute
+  DashboardVaultCoursesIndexRoute: typeof DashboardVaultCoursesIndexRoute
+  DashboardVaultMoviesIndexRoute: typeof DashboardVaultMoviesIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardHabitsHabitIdRoute: DashboardHabitsHabitIdRoute,
   DashboardHabitsIndexRoute: DashboardHabitsIndexRoute,
+  DashboardVaultIndexRoute: DashboardVaultIndexRoute,
+  DashboardVaultArticlesIndexRoute: DashboardVaultArticlesIndexRoute,
+  DashboardVaultBooksIndexRoute: DashboardVaultBooksIndexRoute,
+  DashboardVaultCoursesIndexRoute: DashboardVaultCoursesIndexRoute,
+  DashboardVaultMoviesIndexRoute: DashboardVaultMoviesIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
