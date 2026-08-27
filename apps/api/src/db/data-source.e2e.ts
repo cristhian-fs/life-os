@@ -6,6 +6,11 @@ import { Account } from "@/db/entities/account.entity";
 import { Session } from "@/db/entities/session.entity";
 import { Habit } from "@/db/entities/habit.entity";
 import { Entry } from "@/db/entities/entry.entity";
+import { Work } from "@/db/entities/work.entity";
+import { BookDetail } from "@/db/entities/book-detail.entity";
+import { CourseDetail } from "@/db/entities/course-detail.entity";
+import { MovieDetail } from "@/db/entities/movie-detail.entity";
+import { ArticleDetail } from "./entities/article-detail.entity";
 
 export const TestDataSource = new DataSource({
   type: "postgres",
@@ -13,5 +18,16 @@ export const TestDataSource = new DataSource({
   dropSchema: true,
   synchronize: true,
   logging: false,
-  entities: [User, Account, Session, Habit, Entry],
+  entities: [
+    User,
+    Account,
+    Session,
+    Habit,
+    Entry,
+    Work,
+    BookDetail,
+    CourseDetail,
+    MovieDetail,
+    ArticleDetail,
+  ],
 });
