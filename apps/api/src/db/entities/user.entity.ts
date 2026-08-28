@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import type { Habit } from "./habit.entity";
+import type { Work } from "./work.entity";
 
 @Entity({ name: "user" })
 export class User {
@@ -26,4 +27,7 @@ export class User {
 
   @OneToMany("Habit", (habit: Habit) => habit.user)
   habits: Habit[];
+
+  @OneToMany("Work", (work: Work) => work.user)
+  works: Work[];
 }

@@ -2,7 +2,7 @@ import { api } from '#/lib/api-client'
 import type { MutationConfig } from '#/lib/react-query'
 import type { DeleteWorkResponse } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { getWorksQueryOptions } from './get-works'
+import { getWorksQueryOptions, workAnalyticsQueryKey } from './get-works'
 
 export const deleteWork = ({
   id,
@@ -28,6 +28,7 @@ export const useDeleteWork = ({
       queryClient.refetchQueries({
         queryKey: getWorksQueryOptions().queryKey,
       })
+      queryClient.invalidateQueries({ queryKey: workAnalyticsQueryKey })
       onSuccess?.(data, ...args)
     },
     ...restConfig,

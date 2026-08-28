@@ -33,23 +33,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
 import * as z from 'zod'
+import { WorkDatePickerField } from './work-date-picker-field'
 import { WorkImageField } from './work-image-field'
 
 type WorkFormDialogProps = {
-  // Provide `trigger` for an uncontrolled dialog (e.g. the page-level "New
-  // book" button). Omit it and pass `open`/`onOpenChange` instead when
-  // opening from elsewhere (e.g. a dropdown menu item).
   trigger?: React.ReactElement
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  /** Fixed by the page this dialog is used on — a work's type can't change after creation. */
   type: WorkType
   work?: Work
 }
 
-// One flat `detail` bag carrying every type's fields — only the ones for
-// `type` are rendered/sent. The unused ones get stripped by zod at
-// validate/submit time, so one form covers all 4 types instead of one per type.
 type DetailValues = {
   isbn: string | null
   pages: number | null
@@ -134,6 +128,9 @@ export function WorkFormDialog({
       image_url: work?.image_url ?? null,
       rating: work?.rating ?? null,
       summary: work?.summary ?? null,
+      started_at: work?.started_at ?? null,
+      completed_at: work?.completed_at ?? null,
+      type,
       detail: {
         isbn: (detail && 'isbn' in detail && detail.isbn) || null,
         pages: (detail && 'pages' in detail && detail.pages) || null,
@@ -160,11 +157,6 @@ export function WorkFormDialog({
           null,
       } satisfies DetailValues,
     },
-    // Create/edit have differently-shaped valid payloads (detail fields only
-    // exist on create; rating/summary only on edit), so validation happens
-    // per-field below instead of one form-level schema — the createWorkSchema/
-    // updateWorkSchema exports stay the pure request-shape source of truth
-    // for the API call itself (see api/create-work.ts, api/update-work.ts).
     onSubmit: async ({ value }) => {
       if (isEdit) {
         updateWork.mutate({
@@ -176,6 +168,8 @@ export function WorkFormDialog({
             rating: value.rating,
             summary: value.summary,
             external_url: value.external_url,
+            started_at: value.started_at,
+            completed_at: value.completed_at,
             image_url: value.image_url,
           },
         })
@@ -189,6 +183,8 @@ export function WorkFormDialog({
             external_url: value.external_url,
             image_url: value.image_url,
             detail: detailForType(type, value.detail),
+            started_at: value.started_at,
+            completed_at: value.completed_at,
           } as CreateWorkInput,
         })
       }
@@ -462,6 +458,56 @@ export function WorkFormDialog({
                 </Field>
               )}
             </form.Field>
+
+            <div className="flex flex-wrap items-start gap-3">
+              <form.Field name="started_at">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>
+                      Started at (optional)
+                    </FieldLabel>
+                    <WorkDatePickerField
+                      id={field.name}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                    />
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field
+                name="completed_at"
+                validators={{
+                  onChangeListenTo: ['started_at'],
+                  onChange: ({ value, fieldApi }) => {
+                    const startedAt = fieldApi.form.getFieldValue('started_at')
+                    if (!value || !startedAt) return undefined
+                    return new Date(value) < new Date(startedAt)
+                      ? { message: "Can't be before started at" }
+                      : undefined
+                  },
+                }}
+              >
+                {(field) => {
+                  const isInvalid = !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Completed at (optional)
+                      </FieldLabel>
+                      <WorkDatePickerField
+                        id={field.name}
+                        value={field.state.value}
+                        onChange={field.handleChange}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+            </div>
 
             {isEdit && (
               <form.Field name="rating">

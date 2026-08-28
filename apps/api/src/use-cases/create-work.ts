@@ -46,6 +46,10 @@ export class CreateWorkUseCase {
       status: payload.status,
       external_url: payload.external_url ?? null,
       image_url: payload.image_url ?? null,
+      started_at: payload.started_at ? new Date(payload.started_at) : undefined,
+      completed_at: payload.completed_at
+        ? new Date(payload.completed_at)
+        : undefined,
     });
 
     const detailRepo = this.detailRepositories[payload.type];

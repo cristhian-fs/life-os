@@ -4,7 +4,7 @@ import type { MutationConfig } from '#/lib/react-query'
 import type { Work } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type z from 'zod'
-import { getWorksQueryOptions } from './get-works'
+import { getWorksQueryOptions, workAnalyticsQueryKey } from './get-works'
 
 export const createWorkInputSchema = createWorkSchema
 
@@ -34,6 +34,9 @@ export const useCreateWork = ({
       queryClient.refetchQueries({
         queryKey: getWorksQueryOptions().queryKey,
       })
+      // A new work item shifts backlog/funnel/completed-count/wishlist-wait
+      // charts too — invalidate the whole analytics prefix, not one exact key.
+      queryClient.invalidateQueries({ queryKey: workAnalyticsQueryKey })
       onSuccess?.(data, ...args)
     },
     ...restConfig,

@@ -58,6 +58,33 @@ export const workStatusDotColor: Record<WorkStatus, string> = {
   [WorkStatus.ABANDONED]: 'bg-destructive',
 }
 
+/** Funnel-stage colors for the vault overview chart — reuses the same status
+ * semantics as workStatusDotColor/-BadgeVariant (primary/destructive/neutral),
+ * just as raw CSS values since Recharts needs a `fill`, not a Tailwind class. */
+export const workFunnelStageColor = {
+  entered: 'var(--muted-foreground)',
+  in_progress: 'var(--primary)',
+  completed: 'var(--foreground)',
+  abandoned: 'var(--destructive)',
+} as const
+
+export const workFunnelStageLabel = {
+  entered: 'Entered',
+  in_progress: 'In progress',
+  completed: 'Completed',
+  abandoned: 'Abandoned',
+} as const
+
+/** "3.2 days", "18h" — the single largest unit, for a compact stat tile. */
+export function formatWishlistWait(avgSeconds: number | null): string {
+  if (avgSeconds === null) return '—'
+  if (avgSeconds < 3600) return '<1h'
+  const days = avgSeconds / 86400
+  return days >= 1
+    ? `${days.toFixed(1)} days`
+    : `${(avgSeconds / 3600).toFixed(1)}h`
+}
+
 /** Short detail line shown on a work card, e.g. "O'Reilly · 320 pages". */
 export function formatWorkDetail(work: Work): string | null {
   if (!work.detail) return null

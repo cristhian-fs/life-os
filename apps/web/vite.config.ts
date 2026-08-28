@@ -10,6 +10,9 @@ const config = defineConfig({
   // .env lives at the monorepo root (VITE_API_URL etc.), not in apps/web.
   envDir: '../../',
   resolve: { tsconfigPaths: true },
+  server: {
+    port: 2001,
+  },
   plugins: [
     devtools(),
     tailwindcss(),

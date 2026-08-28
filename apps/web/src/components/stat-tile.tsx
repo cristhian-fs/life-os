@@ -1,13 +1,13 @@
 import { Skeleton } from '@/components/ui/skeleton'
 
-export function HabitStat({
+export function StatTile({
   label,
   value,
   suffix,
   loading,
 }: {
   label: string
-  value: number
+  value: number | string
   suffix: string
   loading?: boolean
 }) {

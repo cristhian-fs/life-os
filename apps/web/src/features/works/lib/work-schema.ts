@@ -4,12 +4,18 @@ import * as z from 'zod'
 /**
  * Mirrors the API's CreateWorkSchema (apps/api/src/schemas/work.schema.ts) —
  * a work's type fixes its detail shape and can't change after creation.
+ * started_at/completed_at are here (not just on update) so a work can be
+ * logged with dates in the past — e.g. a book finished last year, added
+ * today. The API enforces completed_at >= started_at; the form mirrors that
+ * check for immediate feedback (see work-form-dialog.tsx).
  */
 const baseWorkFieldsSchema = z.object({
   title: z.string().min(1, 'Title required'),
   creator: z.string().min(1, 'Creator required'),
   status: z.enum(WorkStatus),
   external_url: z.url('Must be a valid URL').nullable(),
+  started_at: z.string().nullable(),
+  completed_at: z.string().nullable(),
   // Upload via useUploadWorkImage (POST /uploads/images) first, then pass the url it returns here.
   image_url: z.string().nullable(),
 })
@@ -75,6 +81,8 @@ export const updateWorkSchema = z.object({
   creator: z.string().min(1, 'Creator required').optional(),
   status: z.enum(WorkStatus).optional(),
   rating: z.number().int().min(0).max(5).nullable().optional(),
+  started_at: z.string().nullable().optional(),
+  completed_at: z.string().nullable().optional(),
   summary: z.string().nullable().optional(),
   external_url: z.url('Must be a valid URL').nullable().optional(),
   image_url: z.string().nullable().optional(),
