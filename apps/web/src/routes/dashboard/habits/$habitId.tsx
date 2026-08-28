@@ -11,7 +11,6 @@ import {
   HabitHistoryBarChart,
   HabitScoreHistoryChart,
 } from '#/features/habits/components/habit-charts'
-import { HabitStat } from '#/features/habits/components/habit-stat'
 import { NumericCheckIn } from '#/features/habits/components/numeric-check-in'
 import { formatGoal } from '#/features/habits/lib/format'
 import {
@@ -31,6 +30,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { StatTile } from '@/components/stat-tile'
 import { CheckCircleIcon } from '@phosphor-icons/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -118,13 +118,13 @@ function RouteComponent() {
       <div className="rounded-xl bg-card p-6 ring-1 ring-foreground/10">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
           <div className="grid grid-cols-3">
-            <HabitStat
+            <StatTile
               label="Current streak"
               value={currentStreak}
               suffix="days"
             />
-            <HabitStat label="Best streak" value={bestStreak} suffix="days" />
-            <HabitStat
+            <StatTile label="Best streak" value={bestStreak} suffix="days" />
+            <StatTile
               label={periodLabel[period]}
               value={avgCompletion}
               suffix="% completion"
