@@ -147,4 +147,22 @@ describe("Create Work Use Case", () => {
     expect(movieDetailRepository.items).toHaveLength(0);
     expect(articleDetailRepository.items).toHaveLength(0);
   });
+
+  it("should persist a backdated started_at/completed_at set at creation", async () => {
+    const { work } = await sut.execute({
+      userId: "user_01",
+      payload: {
+        type: WorkType.BOOK,
+        title: "Dune",
+        creator: "Frank Herbert",
+        status: WorkStatus.COMPLETED,
+        started_at: "2023-01-01T00:00:00.000Z",
+        completed_at: "2023-02-01T00:00:00.000Z",
+        detail: {},
+      },
+    });
+
+    expect(work.started_at).toEqual(new Date("2023-01-01T00:00:00.000Z"));
+    expect(work.completed_at).toEqual(new Date("2023-02-01T00:00:00.000Z"));
+  });
 });
