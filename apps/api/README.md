@@ -34,13 +34,13 @@ This projects contains a personal life organizer API and frontend
 
 #### Analytics
 
-- [ ] Should be able to get the consumed work items by period and type
-- [ ] Should be able to get a work items backlog volume (items to_consume)
+- [x] Should be able to get the consumed work items by period and type
+- [x] Should be able to get a work items backlog volume (items to_consume)
   - How many items has `status = to_consume` on each time point
-- [ ] Should be able to get a conversion tax: from everything that entered as `to_consume`, how much effectvely became `completed` vs was `abandoned`, a simple funnel (entered -> in_progress -> completed/abandoned)
+- [x] Should be able to get a conversion tax: from everything that entered as `to_consume`, how much effectvely became `completed` vs was `abandoned`, a simple funnel (entered -> in_progress -> completed/abandoned)
 
 #### Avg and velocity
 
 - [ ] Should be able to get a avg of items by month, total completed divided by number of months on the range, or a movable range (last 3/6 months)
-- [ ] Avg consume time: difference between `started_at` and `completed_at`, how much average time, the user take to read a book vs a course
-- [ ] Avg "stopped on wishlist" time: from `created_at` to `started_at`, how many time on avg something keeps waiting before the user actually start.
+- [x] Avg consume time: difference between `started_at` and `completed_at`, how much average time, the user take to read a book vs a course
+- [x] Avg "stopped on wishlist" time: from `created_at` to `started_at`, how many time on avg something keeps waiting before the user actually start.
