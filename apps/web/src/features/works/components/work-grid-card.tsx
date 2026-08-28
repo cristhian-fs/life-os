@@ -2,6 +2,7 @@ import { formatWorkDetail, workTypeIcon } from '#/features/works/lib/format'
 import type { Work } from '#/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { WorkActionsMenu } from './work-actions-menu'
+import { WorkProgressActions } from './work-progress-actions'
 import { WorkStatusPopover } from './work-status-popover'
 
 /** Poster-style card for grid view — vertical, cover art up top. */
@@ -32,7 +33,10 @@ export function WorkGridCard({ work }: { work: Work }) {
         <p className="truncate text-[11px] text-muted-foreground">
           {[work.creator, detailLine].filter(Boolean).join(' · ')}
         </p>
-        <WorkStatusPopover work={work} />
+        <div className="flex flex-wrap items-center gap-1.5">
+          <WorkStatusPopover work={work} />
+          <WorkProgressActions work={work} />
+        </div>
       </CardContent>
     </Card>
   )
