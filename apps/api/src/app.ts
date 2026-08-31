@@ -4,13 +4,14 @@ import habit from "@/http/routes/habits/habit.index";
 import entry from "@/http/routes/entries/entry.index";
 import work from "@/http/routes/works/work.index";
 import upload from "@/http/routes/uploads/upload.index";
+import purchaseWishlist from "@/http/routes/purchase-wishlist/purchase-wishlist.index";
 import workAnalytics from "@/http/routes/work-analytics/work-analytics.index";
 
 const app = createApp();
 
 configureOpenAPI(app);
 
-const routes = [habit, entry, work, upload, workAnalytics] as const;
+const routes = [habit, entry, work, upload, workAnalytics, purchaseWishlist] as const;
 
 routes.forEach((route) => {
   app.route("/api", route);

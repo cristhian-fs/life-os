@@ -14,6 +14,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardPurchaseWishlistRouteImport } from './routes/dashboard/purchase-wishlist'
 import { Route as DashboardHabitsIndexRouteImport } from './routes/dashboard/habits/index'
 import { Route as DashboardHabitsHabitIdRouteImport } from './routes/dashboard/habits/$habitId'
 import { Route as DashboardVaultIndexRouteImport } from './routes/dashboard/vault/index'
@@ -48,6 +49,12 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPurchaseWishlistRoute =
+  DashboardPurchaseWishlistRouteImport.update({
+    id: '/purchase-wishlist',
+    path: '/purchase-wishlist',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardHabitsIndexRoute = DashboardHabitsIndexRouteImport.update({
   id: '/habits/',
   path: '/habits/',
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/dashboard/purchase-wishlist': typeof DashboardPurchaseWishlistRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/dashboard/purchase-wishlist': typeof DashboardPurchaseWishlistRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits': typeof DashboardHabitsIndexRoute
@@ -129,6 +138,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/dashboard/purchase-wishlist': typeof DashboardPurchaseWishlistRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/dashboard/purchase-wishlist'
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits/'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/dashboard/purchase-wishlist'
     | '/dashboard'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits'
@@ -175,6 +187,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/dashboard/purchase-wishlist'
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
     | '/dashboard/habits/'
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/purchase-wishlist': {
+      id: '/dashboard/purchase-wishlist'
+      path: '/purchase-wishlist'
+      fullPath: '/dashboard/purchase-wishlist'
+      preLoaderRoute: typeof DashboardPurchaseWishlistRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/habits/': {
@@ -290,6 +310,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteChildren {
+  DashboardPurchaseWishlistRoute: typeof DashboardPurchaseWishlistRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardHabitsHabitIdRoute: typeof DashboardHabitsHabitIdRoute
   DashboardHabitsIndexRoute: typeof DashboardHabitsIndexRoute
@@ -302,6 +323,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardPurchaseWishlistRoute: DashboardPurchaseWishlistRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardHabitsHabitIdRoute: DashboardHabitsHabitIdRoute,
   DashboardHabitsIndexRoute: DashboardHabitsIndexRoute,
