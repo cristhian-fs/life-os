@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import type { Habit } from "./habit.entity";
+import type { PurchaseWishlist } from "./purchase-wishlist.entity";
 
 @Entity({ name: "user" })
 export class User {
@@ -26,4 +27,10 @@ export class User {
 
   @OneToMany("Habit", (habit: Habit) => habit.user)
   habits: Habit[];
+
+  @OneToMany(
+    "PurchaseWishlist",
+    (purchaseWishlist: PurchaseWishlist) => purchaseWishlist.user,
+  )
+  purchaseWishlist: PurchaseWishlist[];
 }

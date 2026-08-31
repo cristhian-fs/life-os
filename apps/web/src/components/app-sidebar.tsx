@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sidebar'
 import {
   LifebuoyIcon,
+  ListBulletsIcon,
   ListChecksIcon,
   PaperPlaneTiltIcon,
   SquaresFourIcon,
@@ -46,6 +47,11 @@ const data = {
         { title: 'Articles', url: '/dashboard/vault/articles' },
         { title: 'Courses', url: '/dashboard/vault/courses' },
       ],
+    },
+    {
+      title: 'Purchase Wishlist',
+      url: '/dashboard/purchase-wishlist',
+      icon: ListBulletsIcon,
     },
   ],
   navSecondary: [

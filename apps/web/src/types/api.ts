@@ -164,3 +164,35 @@ export type DeleteWorkResponse = {
   success: boolean
   message: string
 }
+
+// ====================
+// PURCHASE WISHLIST
+// ====================
+
+// Light summary, not the full Work — purchase-wishlist doesn't join detail tables.
+export type PurchaseWishlistWork = {
+  id: string
+  type: WorkType
+  title: string
+  creator: string
+  status: WorkStatus
+  image_url: string | null
+}
+
+export type PurchaseWishlist = {
+  id: string
+  user_id: string
+  work_id: string | null
+  work: PurchaseWishlistWork | null
+  title: string | null
+  estimated_price_in_cents: number | null
+  currency: string | null
+  store_or_url: string
+  purchased_at: string | null
+  created_at: string
+}
+
+export type DeletePurchaseWishlistResponse = {
+  success: boolean
+  message: string
+}
