@@ -200,10 +200,11 @@ export type PurchaseWishlist = {
   purchased_at: string | null
   created_at: string
 }
-
 export type DeletePurchaseWishlistResponse = {
   success: boolean
   message: string
+}
+
 // WORKS ANALYTICS
 // ====================
 

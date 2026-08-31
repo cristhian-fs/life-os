@@ -82,10 +82,28 @@ export const workSchemaByType = {
   [WorkType.VIDEO]: videoWorkSchema,
 }
 
+// Flat bag of every type's detail fields, all optional — mirrors the API's
+// UpdateDetailSchema. A work's type can't change on update, so the form
+// (which knows its fixed `type` prop) only ever fills in the relevant subset
+// via detailForType(); the API drops whatever doesn't belong to the type.
+const updateDetailSchema = z.object({
+  isbn: z.string().nullable().optional(),
+  pages: z.number().int().positive().nullable().optional(),
+  publisher: z.string().nullable().optional(),
+  runtime_minutes: z.number().int().positive().nullable().optional(),
+  director: z.string().nullable().optional(),
+  source_name: z.string().nullable().optional(),
+  reading_time_minutes: z.number().int().positive().nullable().optional(),
+  published_at: z.string().nullable().optional(),
+  platform: z.string().nullable().optional(),
+  instructor: z.string().nullable().optional(),
+  duration_hours: z.number().positive().nullable().optional(),
+  duration_minutes: z.number().int().positive().nullable().optional(),
+})
+
 // Mirrors the API's UpdateWorkSchema — every field optional, a real partial
 // patch (the edit form submits all of them; quick actions like the status
-// popover submit just one, e.g. `{ status }` or `{ rating }`). Detail fields
-// aren't here on purpose — the API can't patch them, only set at creation.
+// popover submit just one, e.g. `{ status }` or `{ rating }`).
 export const updateWorkSchema = z.object({
   title: z.string().min(1, 'Title required').optional(),
   creator: z.string().min(1, 'Creator required').optional(),
@@ -96,6 +114,7 @@ export const updateWorkSchema = z.object({
   summary: z.string().nullable().optional(),
   external_url: z.url('Must be a valid URL').nullable().optional(),
   image_url: z.string().nullable().optional(),
+  detail: updateDetailSchema.optional(),
 })
 
 export type UpdateWorkFormValues = z.infer<typeof updateWorkSchema>

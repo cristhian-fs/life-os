@@ -1,4 +1,8 @@
 import { useDeleteWork } from '#/features/works/api/delete-work'
+import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
+import { useUpdateWork } from '#/features/works/api/update-work'
+import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { fetchIsbnCover, getCoverSource } from '#/features/works/lib/cover-fetch'
 import { toast } from '#/components/ui/toast'
 import type { Work } from '#/types/api'
 import {
@@ -21,6 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   DotsThreeOutlineIcon,
+  DownloadSimpleIcon,
   PencilSimpleIcon,
   TrashIcon,
 } from '@phosphor-icons/react'
@@ -38,6 +43,46 @@ export function WorkActionsMenu({ work }: { work: Work }) {
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
+  const updateWork = useUpdateWork({
+    mutationConfig: {
+      onSuccess: () => toast.add({ title: 'Cover updated', type: 'success' }),
+      onError: (error) => toast.add({ title: error.message, type: 'error' }),
+    },
+  })
+  const uploadImage = useUploadWorkImage()
+  const fetchOgImage = useFetchOgImage()
+
+  // Dispatches to whichever source applies: ISBN for books, og:image scrape
+  // for anything with a link — the same og:image path already covers a
+  // future IMDb/TMDb-linked movie, no type-specific movie code needed.
+  const coverSource = getCoverSource(work)
+  const isFetchingCover =
+    uploadImage.isPending || fetchOgImage.isPending || updateWork.isPending
+
+  async function handleFetchCover() {
+    if (!coverSource) return
+    try {
+      let url: string | null
+      if (coverSource.kind === 'isbn') {
+        const file = await fetchIsbnCover(coverSource.isbn)
+        url = file ? (await uploadImage.mutateAsync({ file })).url : null
+      } else {
+        url = (await fetchOgImage.mutateAsync({ pageUrl: coverSource.pageUrl }))
+          .url
+      }
+
+      if (!url) {
+        toast.add({ title: 'No cover image found', type: 'error' })
+        return
+      }
+      updateWork.mutate({ id: work.id, data: { image_url: url } })
+    } catch (error) {
+      toast.add({
+        title: error instanceof Error ? error.message : 'Fetch failed',
+        type: 'error',
+      })
+    }
+  }
 
   return (
     <>
@@ -51,6 +96,15 @@ export function WorkActionsMenu({ work }: { work: Work }) {
             <PencilSimpleIcon />
             Edit
           </DropdownMenuItem>
+          {coverSource && (
+            <DropdownMenuItem
+              onClick={handleFetchCover}
+              disabled={isFetchingCover}
+            >
+              <DownloadSimpleIcon />
+              Fetch cover
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"

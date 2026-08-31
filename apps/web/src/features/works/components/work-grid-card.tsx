@@ -1,9 +1,10 @@
 import { formatWorkDetail, workTypeIcon } from '#/features/works/lib/format'
-import type { Work } from '#/types/api'
+import { WorkType, type Work } from '#/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { WorkActionsMenu } from './work-actions-menu'
 import { WorkProgressActions } from './work-progress-actions'
 import { WorkStatusPopover } from './work-status-popover'
+import { cn } from '#/lib/utils'
 
 /** Poster-style card for grid view — vertical, cover art up top. */
 export function WorkGridCard({ work }: { work: Work }) {
@@ -12,7 +13,14 @@ export function WorkGridCard({ work }: { work: Work }) {
 
   return (
     <Card className="gap-0 overflow-hidden bg-transparent p-0">
-      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+      <div
+        className={cn('relative w-full overflow-hidden bg-muted', {
+          'aspect-video':
+            work.type === WorkType.VIDEO || work.type === WorkType.ARTICLE,
+          'aspect-square':
+            work.type !== WorkType.VIDEO && work.type !== WorkType.ARTICLE,
+        })}
+      >
         {work.image_url ? (
           <img
             src={work.image_url}

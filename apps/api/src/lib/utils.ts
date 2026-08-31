@@ -45,3 +45,17 @@ export function resolveDateRange(
     to: habitEnd,
   };
 }
+
+export async function fetchOgImage(url: string): Promise<string | null> {
+  const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0" } });
+  if (!res.ok) return null;
+  const html = await res.text();
+
+  const content = html.match(
+    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+  )?.[1];
+
+  // HTML always serializes attribute values with &amp;, not a literal & —
+  // left undecoded, multi-param image URLs (CDN tokens, crop params) break.
+  return content?.replace(/&amp;/g, "&") ?? null;
+}

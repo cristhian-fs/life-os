@@ -6,7 +6,7 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
   "image/gif",
 ];
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 export const UploadImageSchema = z.object({
   file: z
@@ -22,3 +22,8 @@ export const UploadImageSchema = z.object({
 
 export const UploadImageResponseSchema = z.object({ url: z.url() });
 export type UploadImageResponse = z.infer<typeof UploadImageResponseSchema>;
+
+export const FetchOgImageSchema = z.object({ pageUrl: z.url() });
+
+export const FetchOgImageResponseSchema = z.object({ url: z.url().nullable() });
+export type FetchOgImageResponse = z.infer<typeof FetchOgImageResponseSchema>;

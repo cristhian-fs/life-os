@@ -82,7 +82,8 @@ export const update: AppRouteHandler<UpdateWorkRoute> = async (c) => {
   const payload = c.req.valid("json");
 
   const worksRepository = new TypeORMWorkRepository(dataSource);
-  const useCase = new UpdateUserWorkUseCase(worksRepository);
+  const detailRepositories = await makeDetailRepositories();
+  const useCase = new UpdateUserWorkUseCase(worksRepository, detailRepositories);
 
   const { work } = await useCase.execute({
     userId: user.id,
@@ -97,7 +98,6 @@ export const update: AppRouteHandler<UpdateWorkRoute> = async (c) => {
     );
   }
 
-  const detailRepositories = await makeDetailRepositories();
   const detail = await detailRepositories[work.type].findByWorkId(work.id);
 
   return c.json(WorkPresenter.toHTTP(work, detail), HttpStatusCodes.OK);

@@ -1,6 +1,9 @@
 import { useCreateWork } from '#/features/works/api/create-work'
 import type { CreateWorkInput } from '#/features/works/api/create-work'
+import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
 import { useUpdateWork } from '#/features/works/api/update-work'
+import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { fetchIsbnCover } from '#/features/works/lib/cover-fetch'
 import { workStatusLabel, workTypeLabel } from '#/features/works/lib/format'
 import { WorkStatus, WorkType } from '#/types/api'
 import type { Work } from '#/types/api'
@@ -123,6 +126,21 @@ export function WorkFormDialog({
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
+  // Auto-fills the cover image from the link's og:image when one is pasted
+  // in — separate from WorkImageField's own upload mutation since it targets
+  // a different field (image_url) via the form, not a local <img>.
+  const autoOgImage = useFetchOgImage({
+    mutationConfig: {
+      onSuccess: (data) => data.url && form.setFieldValue('image_url', data.url),
+    },
+  })
+  // Same idea for books: Open Library's cover-by-ISBN endpoint fetched
+  // client-side, then re-hosted via the same upload mutation WorkImageField uses.
+  const autoIsbnCover = useUploadWorkImage({
+    mutationConfig: {
+      onSuccess: (data) => form.setFieldValue('image_url', data.url),
+    },
+  })
 
   const detail = work?.detail
   const form = useForm({
@@ -182,6 +200,7 @@ export function WorkFormDialog({
             started_at: value.started_at,
             completed_at: value.completed_at,
             image_url: value.image_url,
+            detail: detailForType(type, value.detail),
           },
         })
       } else {
@@ -214,7 +233,7 @@ export function WorkFormDialog({
           </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Update status, rating, or notes.'
+              ? 'Update details, status, rating, or notes.'
               : `Add a ${typeLabel.toLowerCase()} to your vault.`}
           </DialogDescription>
         </DialogHeader>
@@ -297,7 +316,39 @@ export function WorkFormDialog({
               }}
             </form.Field>
 
-            {!isEdit && type === WorkType.BOOK && (
+            {type === WorkType.BOOK && (
+              <form.Field name="detail.isbn">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>
+                      ISBN (optional)
+                    </FieldLabel>
+                    <Input
+                      id={field.name}
+                      value={field.state.value ?? ''}
+                      onChange={(e) =>
+                        field.handleChange(e.target.value || null)
+                      }
+                      onBlur={() => {
+                        if (
+                          isEdit ||
+                          !field.state.value ||
+                          form.getFieldValue('image_url')
+                        ) {
+                          return
+                        }
+                        fetchIsbnCover(field.state.value).then(
+                          (file) => file && autoIsbnCover.mutate({ file }),
+                        )
+                      }}
+                      placeholder="e.g. 9780132350884"
+                    />
+                  </Field>
+                )}
+              </form.Field>
+            )}
+
+            {type === WorkType.BOOK && (
               <div className="flex gap-3">
                 <form.Field name="detail.publisher">
                   {(field) => (
@@ -335,7 +386,7 @@ export function WorkFormDialog({
               </div>
             )}
 
-            {!isEdit && type === WorkType.MOVIE && (
+            {type === WorkType.MOVIE && (
               <form.Field name="detail.runtime_minutes">
                 {(field) => (
                   <Field>
@@ -357,7 +408,7 @@ export function WorkFormDialog({
               </form.Field>
             )}
 
-            {!isEdit && type === WorkType.ARTICLE && (
+            {type === WorkType.ARTICLE && (
               <div className="flex gap-3">
                 <form.Field
                   name="detail.source_name"
@@ -406,7 +457,7 @@ export function WorkFormDialog({
               </div>
             )}
 
-            {!isEdit && type === WorkType.COURSE && (
+            {type === WorkType.COURSE && (
               <div className="flex gap-3">
                 <form.Field name="detail.platform">
                   {(field) => (
@@ -447,7 +498,7 @@ export function WorkFormDialog({
               </div>
             )}
 
-            {!isEdit && type === WorkType.VIDEO && (
+            {type === WorkType.VIDEO && (
               <div className="flex gap-3">
                 <form.Field name="detail.platform">
                   {(field) => (
@@ -601,7 +652,17 @@ export function WorkFormDialog({
                       id={field.name}
                       type="url"
                       value={field.state.value ?? ''}
-                      onBlur={field.handleBlur}
+                      onBlur={() => {
+                        field.handleBlur()
+                        if (
+                          isEdit ||
+                          !field.state.value ||
+                          form.getFieldValue('image_url')
+                        ) {
+                          return
+                        }
+                        autoOgImage.mutate({ pageUrl: field.state.value })
+                      }}
                       onChange={(e) =>
                         field.handleChange(e.target.value || null)
                       }

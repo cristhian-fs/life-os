@@ -6,4 +6,6 @@ import * as routes from "./upload.routes";
 const router = createRouter();
 router.use("*", loggedIn);
 
-export default router.openapi(routes.uploadImage, handlers.uploadImage);
+export default router
+  .openapi(routes.uploadImage, handlers.uploadImage)
+  .openapi(routes.fetchOgImage, handlers.fetchOgImage);

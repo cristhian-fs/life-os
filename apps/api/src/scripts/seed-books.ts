@@ -4,7 +4,7 @@ import { WorkStatus, WorkType } from "@/db/entities/work.entity";
 import { TypeORMWorkRepository } from "@/repositories/typeorm/typeorm-work-repository";
 import { TypeORMBookDetailRepository } from "@/repositories/typeorm/typeorm-book-detail-repository";
 
-const USER_ID = "N6g9z0p2xxnIC8LECi4XRZKety7r7FF7";
+const USER_ID = "C8T3UE4KX8aMnPsguAHLcLUp7NoSK4L7";
 
 interface BookSeed {
   title: string;

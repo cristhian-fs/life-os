@@ -82,6 +82,27 @@ export const CreateWorkSchema = z.discriminatedUnion("type", [
 
 export type CreateWorkInput = z.infer<typeof CreateWorkSchema>;
 
+// Flat bag of every type's detail fields, all optional — a work's type can't
+// change on update, so unlike CreateWorkSchema this isn't a discriminated
+// union; the use-case picks the fields relevant to the work's existing type
+// and ignores the rest.
+const UpdateDetailSchema = z.object({
+  isbn: z.string().nullable().optional(),
+  pages: z.number().int().positive().nullable().optional(),
+  publisher: z.string().nullable().optional(),
+  runtime_minutes: z.number().int().positive().nullable().optional(),
+  director: z.string().nullable().optional(),
+  source_name: z.string().nullable().optional(),
+  reading_time_minutes: z.number().int().positive().nullable().optional(),
+  published_at: z.string().datetime().nullable().optional(),
+  platform: z.string().nullable().optional(),
+  instructor: z.string().nullable().optional(),
+  duration_hours: z.number().positive().nullable().optional(),
+  duration_minutes: z.number().int().positive().nullable().optional(),
+});
+
+export type UpdateDetailInput = z.infer<typeof UpdateDetailSchema>;
+
 // No `type` field here on purpose — a work item's type can't be edited after creation.
 export const UpdateWorkSchema = z.object({
   title: z.string().min(1).optional(),
@@ -93,6 +114,7 @@ export const UpdateWorkSchema = z.object({
   summary: z.string().nullable().optional(),
   external_url: z.url().nullable().optional(),
   image_url: z.url().nullable().optional(),
+  detail: UpdateDetailSchema.optional(),
 });
 
 export type UpdateWorkInput = z.infer<typeof UpdateWorkSchema>;
