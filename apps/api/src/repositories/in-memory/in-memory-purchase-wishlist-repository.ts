@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import type {
   CreatePurchaseWishlistInput,
+  PendingWishlistSummary,
   PurchaseWishlistRepository,
 } from "@/repositories/purchase-wishlist-repository";
 
@@ -64,5 +65,19 @@ export class InMemoryPurchaseWishlistRepository implements PurchaseWishlistRepos
 
     this.items[purchaseWishlistIndex] = purchaseWishlist;
     return purchaseWishlist;
+  }
+
+  async getPendingSummary(userId: string): Promise<PendingWishlistSummary> {
+    const pending = this.items.filter(
+      (item) => item.user_id === userId && item.purchased_at === null,
+    );
+
+    return {
+      count: pending.length,
+      totalEstimatedCents: pending.reduce(
+        (sum, item) => sum + (item.estimated_price_in_cents ?? 0),
+        0,
+      ),
+    };
   }
 }

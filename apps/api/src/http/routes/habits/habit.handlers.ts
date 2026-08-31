@@ -9,9 +9,11 @@ import type {
   CreateHabitRoute,
   DeleteHabitRoute,
   GetHabitRoute,
+  HabitProgressSummaryRoute,
   HistoryBarRoute,
   ListHabitsRoute,
   ScoreHistoryRoute,
+  TodayHabitsRoute,
   UpdateHabitRoute,
 } from "./habit.routes";
 import { GetUserHabitsUseCase } from "@/use-cases/get-user-habits";
@@ -30,6 +32,8 @@ import { BestStreaksUseCase } from "@/use-cases/best-streaks-use-case";
 import { ScoreHistoryUseCase } from "@/use-cases/score-history-use-case";
 import { CalendarMapUseCase } from "@/use-cases/calendar-map-use-case";
 import { HistoryBarUseCase } from "@/use-cases/history-bar-use-case";
+import { HabitsTodayUseCase } from "@/use-cases/habits-today-use-case";
+import { HabitsProgressSummaryUseCase } from "@/use-cases/habits-progress-summary-use-case";
 
 export const create: AppRouteHandler<CreateHabitRoute> = async (c) => {
   const dataSource = await ensureInitialized();
@@ -70,6 +74,61 @@ export const list: AppRouteHandler<ListHabitsRoute> = async (c) => {
   const habits = await useCase.execute({ userId: user.id });
 
   return c.json(HabitPresenter.toHTTPList(habits.habits), HttpStatusCodes.OK);
+};
+
+export const today: AppRouteHandler<TodayHabitsRoute> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const entriesRepository = new TypeORMEntryRepository(dataSource);
+  const useCase = new HabitsTodayUseCase(habitsRepository, entriesRepository);
+
+  const { habits } = await useCase.execute({ userId: user.id });
+
+  return c.json(HabitPresenter.toHTTPList(habits), HttpStatusCodes.OK);
+};
+
+export const progressSummary: AppRouteHandler<
+  HabitProgressSummaryRoute
+> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = c.get("user");
+
+  if (!user) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
+
+  const habitsRepository = new TypeORMHabitRepository(dataSource);
+  const entriesRepository = new TypeORMEntryRepository(dataSource);
+  const useCase = new HabitsProgressSummaryUseCase(
+    habitsRepository,
+    entriesRepository,
+  );
+
+  const { streaks, weekConclusionTax, monthConclusionTax } =
+    await useCase.execute({ userId: user.id });
+
+  return c.json(
+    {
+      streaks: streaks.map((entry) => ({
+        habit_id: entry.habit_id,
+        habit_name: entry.habit_name,
+        streak: entry.streak ? StreakPresenter.toHTTP(entry.streak) : null,
+      })),
+      week_conclusion_tax: weekConclusionTax,
+      month_conclusion_tax: monthConclusionTax,
+    },
+    HttpStatusCodes.OK,
+  );
 };
 
 export const get: AppRouteHandler<GetHabitRoute> = async (c) => {

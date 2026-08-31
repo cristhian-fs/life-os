@@ -9,12 +9,14 @@ import { CreatePurchaseWishlistUseCase } from "@/use-cases/create-purchase-wishl
 import { DeletePurchaseWishlistUseCase } from "@/use-cases/delete-purchase-wishlist-use-case";
 import { GetPurchaseWishlistUseCase } from "@/use-cases/get-purchase-wishlist-use-case";
 import { GetUserPurchaseWishlistUseCase } from "@/use-cases/get-user-purchase-wishlist-use-case";
+import { PendingWishlistSummaryUseCase } from "@/use-cases/pending-wishlist-summary-use-case";
 import { UpdatePurchaseWishlistUseCase } from "@/use-cases/update-purchase-wishlist-use-case";
 import type {
   CreatePurchaseWishlistRoute,
   DeletePurchaseWishlistRoute,
   GetPurchaseWishlistRoute,
   ListPurchaseWishlistRoute,
+  PendingWishlistSummaryRoute,
   UpdatePurchaseWishlistRoute,
 } from "./purchase-wishlist.routes";
 
@@ -75,6 +77,32 @@ export const list: AppRouteHandler<ListPurchaseWishlistRoute> = async (c) => {
 
   return c.json(
     PurchaseWishlistPresenter.toHTTPList(items),
+    HttpStatusCodes.OK,
+  );
+};
+
+export const summary: AppRouteHandler<PendingWishlistSummaryRoute> = async (
+  c,
+) => {
+  const dataSource = await ensureInitialized();
+  const user = requireUser(c);
+
+  const purchaseWishlistRepository = new TypeORMPurchaseWishlistRepository(
+    dataSource,
+  );
+  const useCase = new PendingWishlistSummaryUseCase(
+    purchaseWishlistRepository,
+  );
+
+  const { count, totalEstimatedCents } = await useCase.execute({
+    userId: user.id,
+  });
+
+  return c.json(
+    {
+      pending_count: count,
+      pending_total_estimated_cents: totalEstimatedCents,
+    },
     HttpStatusCodes.OK,
   );
 };

@@ -23,4 +23,5 @@ export interface EntryRepository {
     habitId: string,
     props: FindByHabitAndDateRangeProps,
   ): Promise<Entry[]>;
+  findManyByIdsAndDate(habitIds: string[], date: Date): Promise<Entry[]>;
 }

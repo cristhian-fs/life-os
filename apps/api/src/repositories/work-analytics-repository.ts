@@ -1,4 +1,4 @@
-import type { WorkType } from "@/db/entities/work.entity";
+import type { WorkStatus, WorkType } from "@/db/entities/work.entity";
 
 export interface DateRange {
   from: Date;
@@ -52,4 +52,7 @@ export interface WorkAnalyticsRepository {
     range: DateRange,
     type?: WorkType,
   ): Promise<number | null>;
+
+  // Dashboard: rangeless "as of right now" count for a status (e.g. current backlog/in-progress)
+  countByStatus(userId: string, status: WorkStatus): Promise<number>;
 }

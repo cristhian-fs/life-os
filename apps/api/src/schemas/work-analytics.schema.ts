@@ -40,3 +40,9 @@ export const CompletedWorksCountResponseSchema = z.object({
 export const AvgWishlistWaitTimeResponseSchema = z.object({
   avg_seconds: z.number().nullable(),
 });
+
+export const WorkConsumptionSummaryResponseSchema = z.object({
+  consumed_this_month: z.number().nullable(),
+  backlog_now: z.number(),
+  in_progress_now: z.number(),
+});

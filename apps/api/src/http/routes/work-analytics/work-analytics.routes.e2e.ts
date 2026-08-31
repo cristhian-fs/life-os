@@ -260,4 +260,38 @@ describe("[E2E] Work Analytics Routes", () => {
 
     await test.deleteUser(user.id);
   });
+
+  it("should return current consumption counts on GET /works/analytics/summary", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    await TestDataSource.getRepository(Work).save(
+      TestDataSource.getRepository(Work).create([
+        makeWorkEntity({
+          user_id: user.id,
+          status: WorkStatus.COMPLETED,
+          completed_at: new Date(),
+        }),
+        makeWorkEntity({ user_id: user.id, status: WorkStatus.TO_CONSUME }),
+        makeWorkEntity({ user_id: user.id, status: WorkStatus.TO_CONSUME }),
+        makeWorkEntity({ user_id: user.id, status: WorkStatus.IN_PROGRESS }),
+      ]),
+    );
+
+    const res = await app.request("/api/works/analytics/summary", {
+      headers,
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toEqual({
+      consumed_this_month: 1,
+      backlog_now: 2,
+      in_progress_now: 1,
+    });
+
+    await test.deleteUser(user.id);
+  });
 });

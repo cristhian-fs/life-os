@@ -6,6 +6,7 @@ import { NotFoundSchema } from "@/schemas/common.schema";
 import {
   CreatePurchaseWishlistSchema,
   DeletePurchaseWishlistResponseSchema,
+  PendingWishlistSummaryResponseSchema,
   PurchaseWishlistResponseSchema,
   UpdatePurchaseWishlistSchema,
 } from "@/schemas/purchase-wishlist.schema";
@@ -51,6 +52,21 @@ export const list = createRoute({
 });
 
 export type ListPurchaseWishlistRoute = typeof list;
+
+export const summary = createRoute({
+  tags,
+  method: "get",
+  path: "/purchase-wishlist/summary",
+  summary: "Pending item count and total estimated price",
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      PendingWishlistSummaryResponseSchema,
+      "Summary of pending (not yet purchased) wishlist items",
+    ),
+  },
+});
+
+export type PendingWishlistSummaryRoute = typeof summary;
 
 export const get = createRoute({
   tags,

@@ -43,6 +43,18 @@ export type HabitBestStreaksResponse = Array<{
   streak_num: number
 }>
 
+export type HabitsTodayResponse = Habit[]
+
+export type HabitProgressSummaryResponse = {
+  streaks: Array<{
+    habit_id: string
+    habit_name: string
+    streak: { from: string; to: string; streak_num: number } | null
+  }>
+  week_conclusion_tax: number
+  month_conclusion_tax: number
+}
+
 export type HabitScoreHistoryRequest = {
   id: string
   period: HabitPeriodRequest
@@ -205,6 +217,11 @@ export type DeletePurchaseWishlistResponse = {
   message: string
 }
 
+export type PendingWishlistSummaryResponse = {
+  pending_count: number
+  pending_total_estimated_cents: number
+}
+
 // WORKS ANALYTICS
 // ====================
 
@@ -247,4 +264,10 @@ export type WorkAvgWishlistWaitRequest = {
 }
 export type WorkAvgWishlistWaitResponse = {
   avg_seconds: number | null
+}
+
+export type WorkConsumptionSummaryResponse = {
+  consumed_this_month: number | null
+  backlog_now: number
+  in_progress_now: number
 }

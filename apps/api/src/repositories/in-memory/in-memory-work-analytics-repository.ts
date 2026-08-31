@@ -220,4 +220,10 @@ export class InMemoryWorkAnalyticsRepository implements WorkAnalyticsRepository 
 
     return totalSeconds / relevant.length;
   }
+
+  async countByStatus(userId: string, status: WorkStatus): Promise<number> {
+    return this.items.filter(
+      (work) => work.user_id === userId && work.status === status,
+    ).length;
+  }
 }

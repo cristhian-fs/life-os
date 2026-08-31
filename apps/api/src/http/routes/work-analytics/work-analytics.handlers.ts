@@ -6,11 +6,13 @@ import { TypeORMWorkAnalyticsRepository } from "@/repositories/typeorm/typeorm-w
 import { AvgWishlistWaitTimeUseCase } from "@/use-cases/avg-wishlist-wait-time-use-case";
 import { CompletedWorksCountUseCase } from "@/use-cases/completed-works-count-use-case";
 import { WorkBacklogUseCase } from "@/use-cases/work-backlog-use-case";
+import { WorkConsumptionSummaryUseCase } from "@/use-cases/work-consumption-summary-use-case";
 import { WorkStatusFunnelUseCase } from "@/use-cases/work-status-funnel-use-case";
 import type {
   AvgWishlistWaitTimeRoute,
   CompletedWorksCountRoute,
   WorkBacklogRoute,
+  WorkConsumptionSummaryRoute,
   WorkStatusFunnelRoute,
 } from "./work-analytics.routes";
 
@@ -101,4 +103,26 @@ export const avgWishlistWaitTime: AppRouteHandler<
   });
 
   return c.json({ avg_seconds: data }, HttpStatusCodes.OK);
+};
+
+export const summary: AppRouteHandler<WorkConsumptionSummaryRoute> = async (
+  c,
+) => {
+  const dataSource = await ensureInitialized();
+  const user = requireUser(c);
+
+  const repository = new TypeORMWorkAnalyticsRepository(dataSource);
+  const useCase = new WorkConsumptionSummaryUseCase(repository);
+
+  const { consumedThisMonth, backlogNow, inProgressNow } =
+    await useCase.execute({ userId: user.id });
+
+  return c.json(
+    {
+      consumed_this_month: consumedThisMonth,
+      backlog_now: backlogNow,
+      in_progress_now: inProgressNow,
+    },
+    HttpStatusCodes.OK,
+  );
 };

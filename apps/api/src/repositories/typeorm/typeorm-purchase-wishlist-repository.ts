@@ -2,6 +2,7 @@ import type { DataSource, DeepPartial, Repository } from "typeorm";
 import { PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import type {
   CreatePurchaseWishlistInput,
+  PendingWishlistSummary,
   PurchaseWishlistRepository,
 } from "@/repositories/purchase-wishlist-repository";
 
@@ -52,5 +53,19 @@ export class TypeORMPurchaseWishlistRepository implements PurchaseWishlistReposi
       purchaseWishlist as DeepPartial<PurchaseWishlist>,
     );
     return this.repo.save(merged);
+  }
+  async getPendingSummary(userId: string): Promise<PendingWishlistSummary> {
+    const row = await this.repo
+      .createQueryBuilder("purchase_wishlist")
+      .select("COUNT(*)", "count")
+      .addSelect("COALESCE(SUM(estimated_price_in_cents), 0)", "total")
+      .where("purchase_wishlist.user_id = :userId", { userId })
+      .andWhere("purchase_wishlist.purchased_at IS NULL")
+      .getRawOne<{ count: string; total: string }>();
+
+    return {
+      count: Number(row?.count ?? 0),
+      totalEstimatedCents: Number(row?.total ?? 0),
+    };
   }
 }

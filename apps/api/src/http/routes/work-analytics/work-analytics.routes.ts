@@ -8,6 +8,7 @@ import {
   CompletedWorksCountResponseSchema,
   WorkBacklogQuerySchema,
   WorkBacklogResponseSchema,
+  WorkConsumptionSummaryResponseSchema,
   WorkStatusFunnelQuerySchema,
   WorkStatusFunnelResponseSchema,
 } from "@/schemas/work-analytics.schema";
@@ -77,3 +78,19 @@ export const avgWishlistWaitTime = createRoute({
 });
 
 export type AvgWishlistWaitTimeRoute = typeof avgWishlistWaitTime;
+
+export const summary = createRoute({
+  tags,
+  method: "get",
+  path: "/works/analytics/summary",
+  summary:
+    "Consumed this month, current backlog, and current in-progress count",
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      WorkConsumptionSummaryResponseSchema,
+      "Current consumption summary",
+    ),
+  },
+});
+
+export type WorkConsumptionSummaryRoute = typeof summary;
