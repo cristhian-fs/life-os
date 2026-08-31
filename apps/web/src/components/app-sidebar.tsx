@@ -45,6 +45,7 @@ const data = {
         { title: 'Movies', url: '/dashboard/vault/movies' },
         { title: 'Articles', url: '/dashboard/vault/articles' },
         { title: 'Courses', url: '/dashboard/vault/courses' },
+        { title: 'Videos', url: '/dashboard/vault/videos' },
       ],
     },
   ],

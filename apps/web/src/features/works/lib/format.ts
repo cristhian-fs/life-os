@@ -6,6 +6,7 @@ import {
   FilmReelIcon,
   GraduationCapIcon,
   NewspaperIcon,
+  VideoCameraIcon,
 } from '@phosphor-icons/react'
 
 export const workTypeLabel: Record<WorkType, string> = {
@@ -13,6 +14,7 @@ export const workTypeLabel: Record<WorkType, string> = {
   [WorkType.MOVIE]: 'Movie',
   [WorkType.ARTICLE]: 'Article',
   [WorkType.COURSE]: 'Course',
+  [WorkType.VIDEO]: 'Video',
 }
 
 export const workTypeIcon: Record<WorkType, Icon> = {
@@ -20,6 +22,7 @@ export const workTypeIcon: Record<WorkType, Icon> = {
   [WorkType.MOVIE]: FilmReelIcon,
   [WorkType.ARTICLE]: NewspaperIcon,
   [WorkType.COURSE]: GraduationCapIcon,
+  [WorkType.VIDEO]: VideoCameraIcon,
 }
 
 /** Inviting subhead under the "{Label}s" heading on each vault type page. */
@@ -30,6 +33,8 @@ export const workTypeSubtitle: Record<WorkType, string> = {
   [WorkType.ARTICLE]:
     'Save what you’re reading and revisit it whenever you like.',
   [WorkType.COURSE]: 'Track what you’re learning, one lesson at a time.',
+  [WorkType.VIDEO]:
+    'Save videos to watch and keep track of what you’ve seen.',
 }
 
 export const workStatusLabel: Record<WorkStatus, string> = {
@@ -94,6 +99,14 @@ export function formatWorkDetail(work: Work): string | null {
       const { platform, instructor, duration_hours } = work.detail
       return (
         [platform, instructor, duration_hours ? `${duration_hours}h` : null]
+          .filter(Boolean)
+          .join(' · ') || null
+      )
+    }
+    case WorkType.VIDEO: {
+      const { platform, duration_minutes } = work.detail
+      return (
+        [platform, duration_minutes ? `${duration_minutes} min` : null]
           .filter(Boolean)
           .join(' · ') || null
       )

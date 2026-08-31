@@ -98,6 +98,7 @@ export enum WorkType {
   MOVIE = 'movie',
   ARTICLE = 'article',
   COURSE = 'course',
+  VIDEO = 'video',
 }
 
 export enum WorkStatus {
@@ -158,7 +159,15 @@ export type CourseWork = BaseWork & {
   } | null
 }
 
-export type Work = BookWork | MovieWork | ArticleWork | CourseWork
+export type VideoWork = BaseWork & {
+  type: WorkType.VIDEO
+  detail: {
+    platform: string | null
+    duration_minutes: number | null
+  } | null
+}
+
+export type Work = BookWork | MovieWork | ArticleWork | CourseWork | VideoWork
 
 export type DeleteWorkResponse = {
   success: boolean

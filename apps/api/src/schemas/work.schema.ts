@@ -46,11 +46,20 @@ const CreateCourseWorkSchema = BaseWorkSchema.extend({
   }),
 });
 
+const CreateVideoWorkSchema = BaseWorkSchema.extend({
+  type: z.literal(WorkType.VIDEO),
+  detail: z.object({
+    platform: z.string().nullable().optional(),
+    duration_minutes: z.number().int().positive().nullable().optional(),
+  }),
+});
+
 export const CreateWorkSchema = z.discriminatedUnion("type", [
   CreateBookWorkSchema,
   CreateMovieWorkSchema,
   CreateArticleWorkSchema,
   CreateCourseWorkSchema,
+  CreateVideoWorkSchema,
 ]);
 
 export type CreateWorkInput = z.infer<typeof CreateWorkSchema>;
@@ -93,6 +102,11 @@ const CourseDetailResponseSchema = z.object({
   duration_hours: z.number().nullable(),
 });
 
+const VideoDetailResponseSchema = z.object({
+  platform: z.string().nullable(),
+  duration_minutes: z.number().nullable(),
+});
+
 export const WorkResponseSchema = z.object({
   id: z.string(),
   user_id: z.string(),
@@ -114,6 +128,7 @@ export const WorkResponseSchema = z.object({
       MovieDetailResponseSchema,
       ArticleDetailResponseSchema,
       CourseDetailResponseSchema,
+      VideoDetailResponseSchema,
     ])
     .nullable(),
 });

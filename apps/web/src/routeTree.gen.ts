@@ -21,6 +21,7 @@ import { Route as DashboardVaultArticlesIndexRouteImport } from './routes/dashbo
 import { Route as DashboardVaultBooksIndexRouteImport } from './routes/dashboard/vault/books/index'
 import { Route as DashboardVaultCoursesIndexRouteImport } from './routes/dashboard/vault/courses/index'
 import { Route as DashboardVaultMoviesIndexRouteImport } from './routes/dashboard/vault/movies/index'
+import { Route as DashboardVaultVideosIndexRouteImport } from './routes/dashboard/vault/videos/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -86,6 +87,12 @@ const DashboardVaultMoviesIndexRoute =
     path: '/vault/movies/',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardVaultVideosIndexRoute =
+  DashboardVaultVideosIndexRouteImport.update({
+    id: '/vault/videos/',
+    path: '/vault/videos/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
   '/dashboard/vault/courses/': typeof DashboardVaultCoursesIndexRoute
   '/dashboard/vault/movies/': typeof DashboardVaultMoviesIndexRoute
+  '/dashboard/vault/videos/': typeof DashboardVaultVideosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
   '/dashboard/vault/books': typeof DashboardVaultBooksIndexRoute
   '/dashboard/vault/courses': typeof DashboardVaultCoursesIndexRoute
   '/dashboard/vault/movies': typeof DashboardVaultMoviesIndexRoute
+  '/dashboard/vault/videos': typeof DashboardVaultVideosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,6 +137,7 @@ export interface FileRoutesById {
   '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
   '/dashboard/vault/courses/': typeof DashboardVaultCoursesIndexRoute
   '/dashboard/vault/movies/': typeof DashboardVaultMoviesIndexRoute
+  '/dashboard/vault/videos/': typeof DashboardVaultVideosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/dashboard/vault/books/'
     | '/dashboard/vault/courses/'
     | '/dashboard/vault/movies/'
+    | '/dashboard/vault/videos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/dashboard/vault/books'
     | '/dashboard/vault/courses'
     | '/dashboard/vault/movies'
+    | '/dashboard/vault/videos'
   id:
     | '__root__'
     | '/'
@@ -171,6 +183,7 @@ export interface FileRouteTypes {
     | '/dashboard/vault/books/'
     | '/dashboard/vault/courses/'
     | '/dashboard/vault/movies/'
+    | '/dashboard/vault/videos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardVaultMoviesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/vault/videos/': {
+      id: '/dashboard/vault/videos/'
+      path: '/vault/videos'
+      fullPath: '/dashboard/vault/videos/'
+      preLoaderRoute: typeof DashboardVaultVideosIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
@@ -278,6 +298,7 @@ interface DashboardRouteChildren {
   DashboardVaultBooksIndexRoute: typeof DashboardVaultBooksIndexRoute
   DashboardVaultCoursesIndexRoute: typeof DashboardVaultCoursesIndexRoute
   DashboardVaultMoviesIndexRoute: typeof DashboardVaultMoviesIndexRoute
+  DashboardVaultVideosIndexRoute: typeof DashboardVaultVideosIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -289,6 +310,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardVaultBooksIndexRoute: DashboardVaultBooksIndexRoute,
   DashboardVaultCoursesIndexRoute: DashboardVaultCoursesIndexRoute,
   DashboardVaultMoviesIndexRoute: DashboardVaultMoviesIndexRoute,
+  DashboardVaultVideosIndexRoute: DashboardVaultVideosIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

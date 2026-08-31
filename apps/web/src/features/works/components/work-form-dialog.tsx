@@ -62,6 +62,7 @@ type DetailValues = {
   platform: string | null
   instructor: string | null
   duration_hours: number | null
+  duration_minutes: number | null
 }
 
 function detailForType(type: WorkType, detail: DetailValues) {
@@ -88,6 +89,11 @@ function detailForType(type: WorkType, detail: DetailValues) {
         platform: detail.platform,
         instructor: detail.instructor,
         duration_hours: detail.duration_hours,
+      }
+    case WorkType.VIDEO:
+      return {
+        platform: detail.platform,
+        duration_minutes: detail.duration_minutes,
       }
   }
 }
@@ -157,6 +163,11 @@ export function WorkFormDialog({
           (detail && 'instructor' in detail && detail.instructor) || null,
         duration_hours:
           (detail && 'duration_hours' in detail && detail.duration_hours) ||
+          null,
+        duration_minutes:
+          (detail &&
+            'duration_minutes' in detail &&
+            detail.duration_minutes) ||
           null,
       } satisfies DetailValues,
     },
@@ -270,7 +281,9 @@ export function WorkFormDialog({
                         ? 'Director'
                         : type === WorkType.COURSE
                           ? 'Instructor'
-                          : 'Author'}
+                          : type === WorkType.VIDEO
+                            ? 'Creator'
+                            : 'Author'}
                     </FieldLabel>
                     <Input
                       id={field.name}
@@ -419,6 +432,47 @@ export function WorkFormDialog({
                     <Field className="flex-1">
                       <FieldLabel htmlFor={field.name}>
                         Duration (hours)
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        type="number"
+                        value={field.state.value ?? ''}
+                        onChange={(e) =>
+                          field.handleChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </Field>
+                  )}
+                </form.Field>
+              </div>
+            )}
+
+            {!isEdit && type === WorkType.VIDEO && (
+              <div className="flex gap-3">
+                <form.Field name="detail.platform">
+                  {(field) => (
+                    <Field className="flex-1">
+                      <FieldLabel htmlFor={field.name}>Platform</FieldLabel>
+                      <Input
+                        id={field.name}
+                        value={field.state.value ?? ''}
+                        onChange={(e) =>
+                          field.handleChange(e.target.value || null)
+                        }
+                        placeholder="e.g. YouTube"
+                      />
+                    </Field>
+                  )}
+                </form.Field>
+                <form.Field name="detail.duration_minutes">
+                  {(field) => (
+                    <Field className="flex-1">
+                      <FieldLabel htmlFor={field.name}>
+                        Duration (minutes)
                       </FieldLabel>
                       <Input
                         id={field.name}

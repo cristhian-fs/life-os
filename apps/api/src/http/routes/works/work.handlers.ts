@@ -7,6 +7,7 @@ import { TypeORMArticleDetailRepository } from "@/repositories/typeorm/typeorm-a
 import { TypeORMBookDetailRepository } from "@/repositories/typeorm/typeorm-book-detail-repository";
 import { TypeORMCourseDetailRepository } from "@/repositories/typeorm/typeorm-course-detail-repository";
 import { TypeORMMovieDetailRepository } from "@/repositories/typeorm/typeorm-movie-detail-repository";
+import { TypeORMVideoDetailRepository } from "@/repositories/typeorm/typeorm-video-detail-repository";
 import { TypeORMWorkRepository } from "@/repositories/typeorm/typeorm-work-repository";
 import type { WorkDetailRepositories } from "@/repositories/work-detail-repositories";
 import { CreateWorkUseCase } from "@/use-cases/create-work";
@@ -38,6 +39,7 @@ async function makeDetailRepositories(): Promise<WorkDetailRepositories> {
     movie: new TypeORMMovieDetailRepository(dataSource),
     article: new TypeORMArticleDetailRepository(dataSource),
     course: new TypeORMCourseDetailRepository(dataSource),
+    video: new TypeORMVideoDetailRepository(dataSource),
   };
 }
 

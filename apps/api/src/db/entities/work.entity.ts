@@ -14,12 +14,14 @@ import type { BookDetail } from "./book-detail.entity";
 import type { MovieDetail } from "./movie-detail.entity";
 import type { CourseDetail } from "./course-detail.entity";
 import type { ArticleDetail } from "./article-detail.entity";
+import type { VideoDetail } from "./video-detail.entity";
 
 export enum WorkType {
   BOOK = "book",
   MOVIE = "movie",
   COURSE = "course",
   ARTICLE = "article",
+  VIDEO = "video",
 }
 
 export enum WorkStatus {
@@ -96,4 +98,7 @@ export class Work {
     (articleDetail: ArticleDetail) => articleDetail.work,
   )
   articleDetail?: ArticleDetail;
+
+  @OneToOne("VideoDetail", (videoDetail: VideoDetail) => videoDetail.work)
+  videoDetail?: VideoDetail;
 }
