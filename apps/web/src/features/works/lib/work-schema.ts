@@ -55,11 +55,20 @@ export const courseWorkSchema = baseWorkFieldsSchema.extend({
   }),
 })
 
+export const videoWorkSchema = baseWorkFieldsSchema.extend({
+  type: z.literal(WorkType.VIDEO),
+  detail: z.object({
+    platform: z.string().nullable(),
+    duration_minutes: z.number().int().positive().nullable(),
+  }),
+})
+
 export const createWorkSchema = z.discriminatedUnion('type', [
   bookWorkSchema,
   movieWorkSchema,
   articleWorkSchema,
   courseWorkSchema,
+  videoWorkSchema,
 ])
 
 export type CreateWorkFormValues = z.infer<typeof createWorkSchema>
@@ -70,6 +79,7 @@ export const workSchemaByType = {
   [WorkType.MOVIE]: movieWorkSchema,
   [WorkType.ARTICLE]: articleWorkSchema,
   [WorkType.COURSE]: courseWorkSchema,
+  [WorkType.VIDEO]: videoWorkSchema,
 }
 
 // Mirrors the API's UpdateWorkSchema — every field optional, a real partial

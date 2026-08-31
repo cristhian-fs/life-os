@@ -4,6 +4,7 @@ import { InMemoryArticleDetailRepository } from "@/repositories/in-memory/in-mem
 import { InMemoryBookDetailRepository } from "@/repositories/in-memory/in-memory-book-detail-repository";
 import { InMemoryCourseDetailRepository } from "@/repositories/in-memory/in-memory-course-detail-repository";
 import { InMemoryMovieDetailRepository } from "@/repositories/in-memory/in-memory-movie-detail-repository";
+import { InMemoryVideoDetailRepository } from "@/repositories/in-memory/in-memory-video-detail-repository";
 import { InMemoryWorkRepository } from "@/repositories/in-memory/in-memory-work-repository";
 import { makeWork } from "@/test/factories";
 import { GetUserWorksUseCase } from "./get-user-works";
@@ -13,6 +14,7 @@ let bookDetailRepository: InMemoryBookDetailRepository;
 let movieDetailRepository: InMemoryMovieDetailRepository;
 let articleDetailRepository: InMemoryArticleDetailRepository;
 let courseDetailRepository: InMemoryCourseDetailRepository;
+let videoDetailRepository: InMemoryVideoDetailRepository;
 let sut: GetUserWorksUseCase;
 
 describe("Get User Works Use Case", () => {
@@ -22,11 +24,13 @@ describe("Get User Works Use Case", () => {
     movieDetailRepository = new InMemoryMovieDetailRepository();
     articleDetailRepository = new InMemoryArticleDetailRepository();
     courseDetailRepository = new InMemoryCourseDetailRepository();
+    videoDetailRepository = new InMemoryVideoDetailRepository();
     sut = new GetUserWorksUseCase(worksRepository, {
       book: bookDetailRepository,
       movie: movieDetailRepository,
       article: articleDetailRepository,
       course: courseDetailRepository,
+      video: videoDetailRepository,
     });
   });
 
@@ -63,15 +67,24 @@ describe("Get User Works Use Case", () => {
       platform: "Some Platform",
     });
 
+    const video = await worksRepository.create(
+      makeWork({ user_id: "user_01", type: WorkType.VIDEO }),
+    );
+    const videoDetail = await videoDetailRepository.create({
+      work_id: video.id,
+      platform: "YouTube",
+    });
+
     const { works } = await sut.execute({ userId: "user_01" });
 
-    expect(works).toHaveLength(4);
+    expect(works).toHaveLength(5);
 
     const byId = Object.fromEntries(works.map((work) => [work.id, work]));
     expect(byId[book.id].bookDetail).toEqual(bookDetail);
     expect(byId[movie.id].movieDetail).toEqual(movieDetail);
     expect(byId[article.id].articleDetail).toEqual(articleDetail);
     expect(byId[course.id].courseDetail).toEqual(courseDetail);
+    expect(byId[video.id].videoDetail).toEqual(videoDetail);
   });
 
   it("should return null for the relation when no detail row exists yet", async () => {

@@ -34,7 +34,7 @@ export function QuickSelectPopover<T extends string>({
 }) {
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger render={trigger} />
+      <PopoverTrigger nativeButton={false} render={trigger} />
       <PopoverContent align="start" className="w-44 gap-0.5 p-1">
         {options.map((option) => (
           <button

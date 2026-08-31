@@ -13,6 +13,7 @@ import { BookDetail } from "@/db/entities/book-detail.entity";
 import { CourseDetail } from "@/db/entities/course-detail.entity";
 import { MovieDetail } from "@/db/entities/movie-detail.entity";
 import { ArticleDetail } from "./entities/article-detail.entity";
+import { VideoDetail } from "@/db/entities/video-detail.entity";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -32,5 +33,6 @@ export const AppDataSource = new DataSource({
     CourseDetail,
     MovieDetail,
     ArticleDetail,
+    VideoDetail,
   ],
 });

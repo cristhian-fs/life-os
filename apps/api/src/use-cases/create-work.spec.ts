@@ -4,6 +4,7 @@ import { InMemoryArticleDetailRepository } from "@/repositories/in-memory/in-mem
 import { InMemoryBookDetailRepository } from "@/repositories/in-memory/in-memory-book-detail-repository";
 import { InMemoryCourseDetailRepository } from "@/repositories/in-memory/in-memory-course-detail-repository";
 import { InMemoryMovieDetailRepository } from "@/repositories/in-memory/in-memory-movie-detail-repository";
+import { InMemoryVideoDetailRepository } from "@/repositories/in-memory/in-memory-video-detail-repository";
 import { InMemoryWorkRepository } from "@/repositories/in-memory/in-memory-work-repository";
 import { CreateWorkUseCase } from "./create-work";
 
@@ -12,6 +13,7 @@ let bookDetailRepository: InMemoryBookDetailRepository;
 let movieDetailRepository: InMemoryMovieDetailRepository;
 let articleDetailRepository: InMemoryArticleDetailRepository;
 let courseDetailRepository: InMemoryCourseDetailRepository;
+let videoDetailRepository: InMemoryVideoDetailRepository;
 let sut: CreateWorkUseCase;
 
 describe("Create Work Use Case", () => {
@@ -21,11 +23,13 @@ describe("Create Work Use Case", () => {
     movieDetailRepository = new InMemoryMovieDetailRepository();
     articleDetailRepository = new InMemoryArticleDetailRepository();
     courseDetailRepository = new InMemoryCourseDetailRepository();
+    videoDetailRepository = new InMemoryVideoDetailRepository();
     sut = new CreateWorkUseCase(worksRepository, {
       book: bookDetailRepository,
       movie: movieDetailRepository,
       article: articleDetailRepository,
       course: courseDetailRepository,
+      video: videoDetailRepository,
     });
   });
 
@@ -58,6 +62,7 @@ describe("Create Work Use Case", () => {
     expect(movieDetailRepository.items).toHaveLength(0);
     expect(articleDetailRepository.items).toHaveLength(0);
     expect(courseDetailRepository.items).toHaveLength(0);
+    expect(videoDetailRepository.items).toHaveLength(0);
   });
 
   it("should create a movie work with its movie detail", async () => {
@@ -87,6 +92,7 @@ describe("Create Work Use Case", () => {
     expect(bookDetailRepository.items).toHaveLength(0);
     expect(articleDetailRepository.items).toHaveLength(0);
     expect(courseDetailRepository.items).toHaveLength(0);
+    expect(videoDetailRepository.items).toHaveLength(0);
   });
 
   it("should create an article work with its article detail", async () => {
@@ -121,6 +127,7 @@ describe("Create Work Use Case", () => {
     expect(bookDetailRepository.items).toHaveLength(0);
     expect(movieDetailRepository.items).toHaveLength(0);
     expect(courseDetailRepository.items).toHaveLength(0);
+    expect(videoDetailRepository.items).toHaveLength(0);
   });
 
   it("should create a course work with its course detail", async () => {
@@ -146,6 +153,40 @@ describe("Create Work Use Case", () => {
     expect(bookDetailRepository.items).toHaveLength(0);
     expect(movieDetailRepository.items).toHaveLength(0);
     expect(articleDetailRepository.items).toHaveLength(0);
+    expect(videoDetailRepository.items).toHaveLength(0);
+  });
+
+  it("should create a video work with its video detail", async () => {
+    const { work, detail } = await sut.execute({
+      userId: "user_01",
+      payload: {
+        type: WorkType.VIDEO,
+        title: "Sorting Algorithms Explained",
+        creator: "Some Channel",
+        status: WorkStatus.COMPLETED,
+        detail: { platform: "YouTube", duration_minutes: 24 },
+      },
+    });
+
+    expect(work).toEqual(
+      expect.objectContaining({
+        type: WorkType.VIDEO,
+        title: "Sorting Algorithms Explained",
+      }),
+    );
+    expect(detail).toEqual(
+      expect.objectContaining({
+        work_id: work.id,
+        platform: "YouTube",
+        duration_minutes: 24,
+      }),
+    );
+
+    expect(videoDetailRepository.items).toHaveLength(1);
+    expect(bookDetailRepository.items).toHaveLength(0);
+    expect(movieDetailRepository.items).toHaveLength(0);
+    expect(articleDetailRepository.items).toHaveLength(0);
+    expect(courseDetailRepository.items).toHaveLength(0);
   });
 
   it("should persist a backdated started_at/completed_at set at creation", async () => {

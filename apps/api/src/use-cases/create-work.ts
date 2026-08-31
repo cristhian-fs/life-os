@@ -2,6 +2,7 @@ import type { ArticleDetail } from "@/db/entities/article-detail.entity";
 import type { BookDetail } from "@/db/entities/book-detail.entity";
 import type { CourseDetail } from "@/db/entities/course-detail.entity";
 import type { MovieDetail } from "@/db/entities/movie-detail.entity";
+import type { VideoDetail } from "@/db/entities/video-detail.entity";
 import type { Work } from "@/db/entities/work.entity";
 import type { WorkDetailRepositories } from "@/repositories/work-detail-repositories";
 import type { WorkRepository } from "@/repositories/work-repository";
@@ -17,6 +18,7 @@ interface WorkDetailMap {
   movie: MovieDetail;
   article: ArticleDetail;
   course: CourseDetail;
+  video: VideoDetail;
 }
 
 export type CreateWorkUseCaseResponse<
