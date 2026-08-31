@@ -2,10 +2,16 @@ import type { ArticleDetail } from "@/db/entities/article-detail.entity";
 import type { BookDetail } from "@/db/entities/book-detail.entity";
 import type { CourseDetail } from "@/db/entities/course-detail.entity";
 import type { MovieDetail } from "@/db/entities/movie-detail.entity";
+import type { VideoDetail } from "@/db/entities/video-detail.entity";
 import { type Work, WorkType } from "@/db/entities/work.entity";
 import type { WorkResponse } from "@/schemas/work.schema";
 
-type WorkDetail = BookDetail | MovieDetail | ArticleDetail | CourseDetail;
+type WorkDetail =
+  | BookDetail
+  | MovieDetail
+  | ArticleDetail
+  | CourseDetail
+  | VideoDetail;
 
 function presentDetail(
   type: WorkType,
@@ -34,6 +40,10 @@ function presentDetail(
     case WorkType.COURSE: {
       const { platform, instructor, duration_hours } = detail as CourseDetail;
       return { platform, instructor, duration_hours };
+    }
+    case WorkType.VIDEO: {
+      const { platform, duration_minutes } = detail as VideoDetail;
+      return { platform, duration_minutes };
     }
   }
 }
@@ -66,6 +76,7 @@ export class WorkPresenter {
       work.movieDetail ??
       work.articleDetail ??
       work.courseDetail ??
+      work.videoDetail ??
       null;
 
     return WorkPresenter.toHTTP(work, detail);

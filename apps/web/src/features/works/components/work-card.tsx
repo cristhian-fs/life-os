@@ -3,6 +3,7 @@ import type { Work } from '#/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowSquareOutIcon, StarIcon } from '@phosphor-icons/react'
 import { WorkActionsMenu } from './work-actions-menu'
+import { WorkProgressActions } from './work-progress-actions'
 import { WorkStatusPopover } from './work-status-popover'
 
 export function WorkCard({ work }: { work: Work }) {
@@ -51,6 +52,7 @@ export function WorkCard({ work }: { work: Work }) {
             <span className="text-xs">{work.rating}</span>
           </div>
         )}
+        <WorkProgressActions work={work} />
         <WorkStatusPopover work={work} />
         <WorkActionsMenu work={work} />
       </CardContent>

@@ -2,14 +2,32 @@ import { WorkStatus, WorkType } from "@/db/entities/work.entity";
 import { z } from "zod";
 
 // Common Fields
-const BaseWorkSchema = z.object({
-  title: z.string().min(1),
-  creator: z.string(),
-  status: z.enum(WorkStatus).default(WorkStatus.TO_CONSUME),
-  external_url: z.url().nullable().optional(),
-  // Upload the file via POST /uploads/images first, then pass the url it returns here.
-  image_url: z.url().nullable().optional(),
-});
+const BaseWorkSchema = z
+  .object({
+    title: z.string().min(1),
+    creator: z.string(),
+    status: z.enum(WorkStatus).default(WorkStatus.TO_CONSUME),
+    external_url: z.url().nullable().optional(),
+    image_url: z.url().nullable().optional(),
+    started_at: z.string().nullable().optional(),
+    completed_at: z.string().nullable().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.started_at && data.completed_at) {
+      const start = new Date(data.started_at);
+      const end = new Date(data.completed_at);
+
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+        if (start > end) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Completed At can't be smaller than started at",
+            path: ["completed_at"],
+          });
+        }
+      }
+    }
+  });
 
 const CreateBookWorkSchema = BaseWorkSchema.extend({
   type: z.literal(WorkType.BOOK),
@@ -46,11 +64,20 @@ const CreateCourseWorkSchema = BaseWorkSchema.extend({
   }),
 });
 
+const CreateVideoWorkSchema = BaseWorkSchema.extend({
+  type: z.literal(WorkType.VIDEO),
+  detail: z.object({
+    platform: z.string().nullable().optional(),
+    duration_minutes: z.number().int().positive().nullable().optional(),
+  }),
+});
+
 export const CreateWorkSchema = z.discriminatedUnion("type", [
   CreateBookWorkSchema,
   CreateMovieWorkSchema,
   CreateArticleWorkSchema,
   CreateCourseWorkSchema,
+  CreateVideoWorkSchema,
 ]);
 
 export type CreateWorkInput = z.infer<typeof CreateWorkSchema>;
@@ -93,6 +120,11 @@ const CourseDetailResponseSchema = z.object({
   duration_hours: z.number().nullable(),
 });
 
+const VideoDetailResponseSchema = z.object({
+  platform: z.string().nullable(),
+  duration_minutes: z.number().nullable(),
+});
+
 export const WorkResponseSchema = z.object({
   id: z.string(),
   user_id: z.string(),
@@ -114,6 +146,7 @@ export const WorkResponseSchema = z.object({
       MovieDetailResponseSchema,
       ArticleDetailResponseSchema,
       CourseDetailResponseSchema,
+      VideoDetailResponseSchema,
     ])
     .nullable(),
 });

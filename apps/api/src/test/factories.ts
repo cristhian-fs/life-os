@@ -4,7 +4,7 @@ import {
   HabitStatus,
   HabitType,
 } from "@/db/entities/habit.entity";
-import { WorkStatus, WorkType } from "@/db/entities/work.entity";
+import { WorkStatus, WorkType, type Work } from "@/db/entities/work.entity";
 import type { CreateEntryInput } from "@/repositories/entry-repository";
 import type { CreateHabitInput } from "@/repositories/habit-repository";
 import type { CreateWorkInput } from "@/repositories/work-repository";
@@ -79,4 +79,21 @@ export function makeWork(
     status: pick(Object.values(WorkStatus)),
     ...overrides,
   };
+}
+
+/** Builds row data for seeding the Work table directly (bypassing the repository/use-case layer). Accepts any Work field, including nulls, unlike makeWork's CreateWorkInput-shaped overrides. */
+export function makeWorkEntity(overrides: Partial<Work> = {}): Work {
+  return {
+    id: randomUUID(),
+    ...makeWork(),
+    rating: null,
+    started_at: null,
+    completed_at: null,
+    summary: null,
+    external_url: null,
+    image_url: null,
+    created_at: new Date(),
+    updated_at: new Date(),
+    ...overrides,
+  } as Work;
 }

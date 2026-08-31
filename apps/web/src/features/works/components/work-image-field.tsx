@@ -3,8 +3,7 @@ import { toast } from '#/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { ImageSquareIcon, XIcon } from '@phosphor-icons/react'
-import { useRef } from 'react'
-import type { ClipboardEvent } from 'react'
+import { useEffect, useRef } from 'react'
 
 /** Cover-art picker for a work item — uploads immediately on file select and reports back the resulting URL. */
 export function WorkImageField({
@@ -22,36 +21,41 @@ export function WorkImageField({
     },
   })
 
-  const handlePaste = (e: ClipboardEvent<HTMLButtonElement>) => {
-    const items = e.clipboardData.items
+  // Window-level, not onPaste on the button: a `paste` event only fires on
+  // whatever element has focus, and clicking the button to focus it also
+  // opens the native file picker (stealing focus before Ctrl+V can land).
+  // Listening on window instead means paste works anywhere while this
+  // dialog is open, no click-then-cancel dance needed first.
+  useEffect(() => {
+    const handlePaste = (e: globalThis.ClipboardEvent) => {
+      const items = e.clipboardData?.items
+      if (!items?.length) return
 
-    if (!items.length) return
-
-    for (const item of items) {
-      // Filter and pick only image files
-      if (item.type.startsWith('image/')) {
+      for (const item of items) {
+        if (!item.type.startsWith('image/')) continue
         const file = item.getAsFile()
-        if (file) {
-          // File limit
-          if (file.size > 5 * 1024 * 1024) {
-            toast.add({ title: 'Image must be up to 5MB.' })
-            return
-          }
+        if (!file) continue
 
-          upload.mutate({ file })
-          e.preventDefault()
-          break
+        if (file.size > 5 * 1024 * 1024) {
+          toast.add({ title: 'Image must be up to 5MB.', type: 'error' })
+          return
         }
+
+        upload.mutate({ file })
+        e.preventDefault()
+        return
       }
     }
-  }
+
+    window.addEventListener('paste', handlePaste)
+    return () => window.removeEventListener('paste', handlePaste)
+  }, [upload])
 
   return (
     <div className="flex items-center gap-3">
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        onPaste={handlePaste}
         disabled={upload.isPending}
         className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-input bg-input/20 text-muted-foreground transition-colors hover:bg-input/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
       >

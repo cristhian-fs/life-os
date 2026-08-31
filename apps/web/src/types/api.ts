@@ -98,6 +98,7 @@ export enum WorkType {
   MOVIE = 'movie',
   ARTICLE = 'article',
   COURSE = 'course',
+  VIDEO = 'video',
 }
 
 export enum WorkStatus {
@@ -158,7 +159,15 @@ export type CourseWork = BaseWork & {
   } | null
 }
 
-export type Work = BookWork | MovieWork | ArticleWork | CourseWork
+export type VideoWork = BaseWork & {
+  type: WorkType.VIDEO
+  detail: {
+    platform: string | null
+    duration_minutes: number | null
+  } | null
+}
+
+export type Work = BookWork | MovieWork | ArticleWork | CourseWork | VideoWork
 
 export type DeleteWorkResponse = {
   success: boolean
@@ -195,4 +204,46 @@ export type PurchaseWishlist = {
 export type DeletePurchaseWishlistResponse = {
   success: boolean
   message: string
+// WORKS ANALYTICS
+// ====================
+
+export type WorkAnalyticsBacklogRequest = {
+  from: Date
+  to: Date
+  bucketUnit: 'day' | 'week' | 'month'
+}
+
+export type WorkAnalyticsBacklogResponse = Array<{
+  bucket_start: string
+  bucket_end: string
+  count: number
+}>
+
+export type WorkConversionFunnelRequest = {
+  from: Date
+  to: Date
+}
+export type WorkConversionFunnelResponse = {
+  entered: number
+  in_progress: number
+  completed: number
+  abandoned: number
+}
+
+export type WorkCompletedCountRequest = {
+  from: Date
+  to: Date
+  type?: WorkType
+}
+export type WorkCompletedCountResponse = {
+  count: number | null
+}
+
+export type WorkAvgWishlistWaitRequest = {
+  from: Date
+  to: Date
+  type?: WorkType
+}
+export type WorkAvgWishlistWaitResponse = {
+  avg_seconds: number | null
 }

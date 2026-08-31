@@ -32,17 +32,6 @@ const dayLabel = (date: Date) =>
     timeZone: 'UTC',
   })
 
-/**
- * Renders the fixed 365-day grid `buildHeatmapGrid` computes (see
- * features/habits/lib/heatmap-grid.ts for the grid shape itself — this
- * component only turns cells into markup and wires up logging).
- *
- * Each day is clickable — boolean habits log straight away, numeric habits
- * pop a small form to type the day's value. Logging upserts (see
- * useLogHabitDay) rather than blindly creating, since today's cell would
- * otherwise double up with whatever the habit's own check-in control
- * already logged for today.
- */
 export function HabitCalendarHeatmap({
   habit,
   data,
@@ -171,6 +160,7 @@ function DayCell({
   const [draft, setDraft] = useState('')
   const [open, setOpen] = useState(false)
   const isNumeric = habit.type === HabitType.NUMERIC
+  const done = !!point && point.percentage > 0
   const tooltip = `${dayLabel(date)}${point ? ` · ${Math.round(Number(point.percentage))}%` : ' · not tracked'}`
 
   const swatch = cn(
@@ -193,7 +183,7 @@ function DayCell({
             <button
               type="button"
               disabled={!canLog || pending}
-              onClick={() => onLog({ value_boolean: true })}
+              onClick={() => onLog({ value_boolean: !done })}
               aria-label={`Log ${habit.name} for ${dayLabel(date)}`}
               className={swatch}
               style={swatchStyle}

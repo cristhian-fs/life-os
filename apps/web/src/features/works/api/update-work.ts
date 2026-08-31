@@ -4,7 +4,7 @@ import type { MutationConfig } from '#/lib/react-query'
 import type { Work } from '#/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type z from 'zod'
-import { getWorksQueryOptions } from './get-works'
+import { getWorksQueryOptions, workAnalyticsQueryKey } from './get-works'
 
 export const updateWorkInputSchema = updateWorkSchema
 
@@ -36,6 +36,8 @@ export const useUpdateWork = ({
       queryClient.refetchQueries({
         queryKey: getWorksQueryOptions().queryKey,
       })
+      // status/rating/started_at/completed_at all feed the analytics charts.
+      queryClient.invalidateQueries({ queryKey: workAnalyticsQueryKey })
       onSuccess?.(data, ...args)
     },
     ...restConfig,
