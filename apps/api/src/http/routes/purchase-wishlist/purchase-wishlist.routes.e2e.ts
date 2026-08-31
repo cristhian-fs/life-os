@@ -421,4 +421,47 @@ describe("[E2E] Purchase Wishlist Routes", () => {
     await test.deleteUser(owner.id);
     await test.deleteUser(other.id);
   });
+
+  it("should return the pending count and total on GET /purchase-wishlist/summary", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    await TestDataSource.getRepository(PurchaseWishlist).save(
+      TestDataSource.getRepository(PurchaseWishlist).create([
+        {
+          user_id: user.id,
+          store_or_url: "https://amazon.com",
+          estimated_price_in_cents: 1000,
+          purchased_at: null,
+        },
+        {
+          user_id: user.id,
+          store_or_url: "https://amazon.com",
+          estimated_price_in_cents: 2500,
+          purchased_at: null,
+        },
+        {
+          user_id: user.id,
+          store_or_url: "https://amazon.com",
+          estimated_price_in_cents: 5000,
+          purchased_at: new Date(), // already purchased, excluded
+        },
+      ]),
+    );
+
+    const res = await app.request("/api/purchase-wishlist/summary", {
+      headers,
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toEqual({
+      pending_count: 2,
+      pending_total_estimated_cents: 3500,
+    });
+
+    await test.deleteUser(user.id);
+  });
 });

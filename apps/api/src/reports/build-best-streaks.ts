@@ -35,6 +35,9 @@ export function buildBestStreaks(
   let currentStreakStart: Date | null = null;
   let currentStreakLength: number = 0;
   let streaks: Streak[] = [];
+  // The streak still open at endDate, if any — captured before streaks gets
+  // sorted below, since sorting loses which entry was last.
+  let currentStreak: Streak | null = null;
 
   const totalDays = diffInUTCDays(startDate, endDate);
   for (let i = 0; i <= totalDays; i++) {
@@ -61,14 +64,15 @@ export function buildBestStreaks(
   }
 
   if (currentStreakLength > 0) {
-    streaks.push({
+    currentStreak = {
       from: currentStreakStart!,
       to: endDate,
       streak_num: currentStreakLength,
-    });
+    };
+    streaks.push(currentStreak);
   }
 
   streaks.sort((a, b) => b.streak_num - a.streak_num);
 
-  return { streaks };
+  return { streaks, currentStreak };
 }

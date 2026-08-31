@@ -541,4 +541,87 @@ describe("[E2E] Habits Routes", () => {
 
     await test.deleteUser(user.id);
   });
+
+  it("should return only active habits with no entry today on GET /habits/today", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const [done, pending, archived] = await TestDataSource.getRepository(
+      Habit,
+    ).save(
+      TestDataSource.getRepository(Habit).create([
+        makeHabitEntity({ user_id: user.id, name: "Done today" }),
+        makeHabitEntity({ user_id: user.id, name: "Not done today" }),
+        {
+          ...makeHabitEntity({ user_id: user.id, name: "Archived" }),
+          status: HabitStatus.ARCHIVED,
+        },
+      ]),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create(
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: done.id,
+          date: new Date(),
+        }),
+      ),
+    );
+
+    const res = await app.request("/api/habits/today", { headers });
+    const habits = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(habits).toEqual([
+      expect.objectContaining({ id: pending.id, name: "Not done today" }),
+    ]);
+    expect(habits.map((h: { id: string }) => h.id)).not.toContain(archived.id);
+    expect(habits.map((h: { id: string }) => h.id)).not.toContain(done.id);
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should return current streaks and a conclusion tax on GET /habits/progress-summary", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const habit = await TestDataSource.getRepository(Habit).save(
+      TestDataSource.getRepository(Habit).create(
+        makeHabitEntity({ user_id: user.id, type: HabitType.BOOLEAN }),
+      ),
+    );
+    await TestDataSource.getRepository(Entry).save(
+      TestDataSource.getRepository(Entry).create(
+        makeEntryEntity({
+          user_id: user.id,
+          habit_id: habit.id,
+          date: new Date(),
+          value_boolean: true,
+        }),
+      ),
+    );
+
+    const res = await app.request("/api/habits/progress-summary", {
+      headers,
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toEqual({
+      streaks: [
+        expect.objectContaining({
+          habit_id: habit.id,
+          streak: expect.objectContaining({ streak_num: 1 }),
+        }),
+      ],
+      week_conclusion_tax: expect.any(Number),
+      month_conclusion_tax: expect.any(Number),
+    });
+
+    await test.deleteUser(user.id);
+  });
 });

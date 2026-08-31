@@ -70,3 +70,8 @@ export const DeletePurchaseWishlistResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
 });
+
+export const PendingWishlistSummaryResponseSchema = z.object({
+  pending_count: z.number(),
+  pending_total_estimated_cents: z.number(),
+});

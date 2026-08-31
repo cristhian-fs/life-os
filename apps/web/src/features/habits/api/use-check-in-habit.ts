@@ -34,6 +34,9 @@ export function useCheckInHabit(habitId: string) {
     queryClient.invalidateQueries({
       queryKey: getHabitDetailQueryOptions(habitId).queryKey,
     })
+    // Separate key (['habits', 'today'], no habitId) — checking in here can
+    // drop this habit off that list, so any consumer of it needs a refetch.
+    queryClient.invalidateQueries({ queryKey: ['habits', 'today'] })
   }
 
   const createEntry = useCreateEntry({

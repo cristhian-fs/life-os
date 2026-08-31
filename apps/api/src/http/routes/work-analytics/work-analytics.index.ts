@@ -10,4 +10,5 @@ export default router
   .openapi(routes.backlog, handlers.backlog)
   .openapi(routes.statusFunnel, handlers.statusFunnel)
   .openapi(routes.completedCount, handlers.completedCount)
-  .openapi(routes.avgWishlistWaitTime, handlers.avgWishlistWaitTime);
+  .openapi(routes.avgWishlistWaitTime, handlers.avgWishlistWaitTime)
+  .openapi(routes.summary, handlers.summary);

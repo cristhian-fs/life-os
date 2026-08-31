@@ -185,4 +185,8 @@ export class TypeORMWorkAnalyticsRepository implements WorkAnalyticsRepository {
     const row = await qb.getRawOne<{ avg_seconds: string | null }>();
     return row?.avg_seconds != null ? Number(row.avg_seconds) : null;
   }
+
+  async countByStatus(userId: string, status: WorkStatus): Promise<number> {
+    return this.repo.countBy({ user_id: userId, status });
+  }
 }
