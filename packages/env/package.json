@@ -9,9 +9,7 @@
     "@life-os/eslint-config": "workspace:*",
     "@life-os/prettier": "workspace:*",
     "@life-os/tsconfig": "workspace:*",
-    "@types/node": "^20.12.6",
-    "dotenv": "^17.4.2",
-    "dotenv-expand": "^1000.0.0"
+    "@types/node": "^20.12.6"
   },
   "eslintConfig": {
     "extends": [
@@ -20,6 +18,8 @@
   },
   "prettier": "@life-os/prettier",
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "dotenv-expand": "^1000.0.0",
     "zod": "^4.4.3"
   }
 }

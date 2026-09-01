@@ -1,0 +1,45 @@
+# Production deploy — e.g. as a Dokploy "Compose" application.
+# Set the env vars referenced below in Dokploy's Environment panel (or a
+# .env file next to this one for a plain `docker compose` deploy); assign
+# domains to each service in Dokploy's UI, which wires up Traefik/SSL
+# automatically — no labels needed here.
+#
+# Postgres is NOT defined here — this assumes a managed Postgres (Dokploy's
+# own, or any external one) via DATABASE_URL. Object storage (R2/S3) is
+# external too — AWS_ENDPOINT should point at your real R2/S3 endpoint in
+# production, not the docker-compose.yml dev MinIO.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "9999"
+    environment:
+      NODE_ENV: production
+      PORT: "9999"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: ${DATABASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      VITE_API_URL: ${VITE_API_URL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+      AWS_PUBLIC_URL: ${AWS_PUBLIC_URL}
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      # Baked into the JS bundle at build time — must match the domain
+      # you assign the api service, and changing it means rebuilding.
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped
+    expose:
+      - "80"
