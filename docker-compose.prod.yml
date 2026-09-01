@@ -17,6 +17,8 @@ services:
     restart: unless-stopped
     expose:
       - "9999"
+    networks:
+      - dokploy-network
     environment:
       NODE_ENV: production
       PORT: "9999"
@@ -43,3 +45,13 @@ services:
     restart: unless-stopped
     expose:
       - "80"
+    networks:
+      - dokploy-network
+
+# Dokploy's own shared network — Traefik and every Dokploy-deployed
+# container sit on it; without this, domains assigned in the Dokploy UI
+# can't actually route to these services. Dokploy creates it, don't create
+# it yourself elsewhere.
+networks:
+  dokploy-network:
+    external: true
