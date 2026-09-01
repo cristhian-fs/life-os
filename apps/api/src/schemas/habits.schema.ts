@@ -79,3 +79,20 @@ export const HistoryBarPointSchema = z.object({
 export const HistoryBarResponseSchema = z.array(HistoryBarPointSchema);
 
 export type HistoryBarPointResponse = z.infer<typeof HistoryBarPointSchema>;
+
+const HabitStreakSummarySchema = z.object({
+  habit_id: z.string(),
+  habit_name: z.string(),
+  streak: StreakSchema.nullable(),
+});
+
+export const HabitProgressSummaryResponseSchema = z.object({
+  streaks: z.array(HabitStreakSummarySchema),
+  // % of expected habit-days completed, averaged across active habits.
+  week_conclusion_tax: z.number(),
+  month_conclusion_tax: z.number(),
+});
+
+export type HabitProgressSummaryResponse = z.infer<
+  typeof HabitProgressSummaryResponseSchema
+>;

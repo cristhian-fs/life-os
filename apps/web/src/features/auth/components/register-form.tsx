@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { useForm } from '@tanstack/react-form'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,6 +39,7 @@ export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
+  const navigate = useNavigate()
   const form = useForm({
     defaultValues: {
       name: '',
@@ -63,6 +64,7 @@ export function RegisterForm({
               title: 'Account created',
               type: 'success',
             })
+            navigate({ to: '/dashboard' })
           },
           onError(context) {
             toast.add({

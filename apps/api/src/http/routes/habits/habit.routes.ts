@@ -8,6 +8,7 @@ import {
   CalendarMapResponseSchema,
   CreateHabitSchema,
   DeleteHabitResponseSchema,
+  HabitProgressSummaryResponseSchema,
   HabitsResponseSchema,
   HistoryBarResponseSchema,
   ScoreHistoryQuerySchema,
@@ -46,6 +47,37 @@ export const list = createRoute({
 });
 
 export type ListHabitsRoute = typeof list;
+
+export const today = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/today",
+  summary: "List active habits with no entry logged today",
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(HabitsResponseSchema),
+      "Active habits missing today's entry",
+    ),
+  },
+});
+
+export type TodayHabitsRoute = typeof today;
+
+export const progressSummary = createRoute({
+  tags,
+  method: "get",
+  path: "/habits/progress-summary",
+  summary:
+    "Current streak per active habit, plus week/month completion rate across all of them",
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      HabitProgressSummaryResponseSchema,
+      "Progress summary across active habits",
+    ),
+  },
+});
+
+export type HabitProgressSummaryRoute = typeof progressSummary;
 
 export const get = createRoute({
   tags,

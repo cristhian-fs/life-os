@@ -35,6 +35,17 @@ export class TypeORMEntryRepository implements EntryRepository {
 
     return data;
   }
+  async findManyByIdsAndDate(habitIds: string[], date: Date): Promise<Entry[]> {
+    if (!habitIds.length) return [];
+
+    const data = await this.repo
+      .createQueryBuilder("entry")
+      .where("entry.habit_id IN (:...habitIds)", { habitIds })
+      .andWhere("entry.date = :date", { date: date.toISOString().slice(0, 10) })
+      .getMany();
+
+    return data;
+  }
   async findById(entryId: string): Promise<Entry | null> {
     const data = await this.repo.findOneBy({ id: entryId });
 

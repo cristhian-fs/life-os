@@ -4,8 +4,10 @@ import {
   HabitStatus,
   HabitType,
 } from "@/db/entities/habit.entity";
+import { WorkStatus, WorkType, type Work } from "@/db/entities/work.entity";
 import type { CreateEntryInput } from "@/repositories/entry-repository";
 import type { CreateHabitInput } from "@/repositories/habit-repository";
+import type { CreateWorkInput } from "@/repositories/work-repository";
 
 // ponytail: hand-rolled random picks instead of pulling in @faker-js/faker for two fields
 function pick<T>(values: T[]): T {
@@ -63,4 +65,35 @@ export function makeEntryEntity(overrides: Partial<CreateEntryInput> = {}) {
     created_at: new Date(),
     updated_at: new Date(),
   };
+}
+
+/** Builds a valid CreateWorkInput with randomized data. Pass overrides for anything a test cares about. */
+export function makeWork(
+  overrides: Partial<CreateWorkInput> = {},
+): CreateWorkInput {
+  return {
+    user_id: randomUUID(),
+    title: `Work ${randomUUID().slice(0, 8)}`,
+    creator: `Creator ${randomUUID().slice(0, 8)}`,
+    type: pick(Object.values(WorkType)),
+    status: pick(Object.values(WorkStatus)),
+    ...overrides,
+  };
+}
+
+/** Builds row data for seeding the Work table directly (bypassing the repository/use-case layer). Accepts any Work field, including nulls, unlike makeWork's CreateWorkInput-shaped overrides. */
+export function makeWorkEntity(overrides: Partial<Work> = {}): Work {
+  return {
+    id: randomUUID(),
+    ...makeWork(),
+    rating: null,
+    started_at: null,
+    completed_at: null,
+    summary: null,
+    external_url: null,
+    image_url: null,
+    created_at: new Date(),
+    updated_at: new Date(),
+    ...overrides,
+  } as Work;
 }

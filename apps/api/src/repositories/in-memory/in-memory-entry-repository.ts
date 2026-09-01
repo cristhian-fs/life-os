@@ -5,6 +5,7 @@ import type {
   EntryRepository,
   FindByHabitAndDateRangeProps,
 } from "@/repositories/entry-repository";
+import { utcDateKey } from "@/reports/date-buckets";
 
 export class InMemoryEntryRepository implements EntryRepository {
   public items: Entry[] = [];
@@ -59,5 +60,13 @@ export class InMemoryEntryRepository implements EntryRepository {
 
     this.items[entryIndex] = entry;
     return entry;
+  }
+
+  async findManyByIdsAndDate(habitIds: string[], date: Date): Promise<Entry[]> {
+    const dateKey = utcDateKey(date);
+    return this.items.filter(
+      (item) =>
+        habitIds.includes(item.habit_id) && utcDateKey(item.date) === dateKey,
+    );
   }
 }
