@@ -10,10 +10,7 @@ import {
 } from '@/components/ui/chart'
 import type { ChartConfig } from '@/components/ui/chart'
 import { Bar, BarChart, Cell, XAxis, YAxis } from 'recharts'
-
-const chartConfig = {
-  count: { label: 'Items' },
-} satisfies ChartConfig
+import { useTranslation } from 'react-i18next'
 
 /** entered -> in_progress -> completed/abandoned, one bar per stage, colored
  * by the same status semantics as the badge/dot used everywhere else. */
@@ -22,11 +19,16 @@ export function WorkConversionFunnelChart({
 }: {
   data: WorkConversionFunnelResponse
 }) {
+  const { t } = useTranslation()
+  const chartConfig = {
+    count: { label: t('work.overview.itemsSeries') },
+  } satisfies ChartConfig
+
   const stages = (
     ['entered', 'in_progress', 'completed', 'abandoned'] as const
   ).map((stage) => ({
     stage,
-    label: workFunnelStageLabel[stage],
+    label: workFunnelStageLabel(stage),
     count: data[stage],
   }))
 

@@ -10,8 +10,10 @@ import { usePurchaseWishlistDisplayPrefs } from '#/features/purchase-wishlist/li
 import { VaultDisplayToggle } from '#/features/works/components/vault-display-toggle'
 import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function PurchaseWishlistPage() {
+  const { t } = useTranslation()
   const items = usePurchaseWishlists()
   const [prefs, setPrefs] = usePurchaseWishlistDisplayPrefs()
 
@@ -21,17 +23,17 @@ export function PurchaseWishlistPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-medium tracking-tight">
-              Purchase Wishlist
+              {t('purchaseWishlist.title')}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Things you're planning to buy, and what you're buying them for.
+              {t('purchaseWishlist.description')}
             </p>
           </div>
           <PurchaseWishlistFormDialog
             trigger={
               <Button>
                 <PlusIcon />
-                New item
+                {t('purchaseWishlist.newItem')}
               </Button>
             }
           />

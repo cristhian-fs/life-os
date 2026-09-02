@@ -1,5 +1,6 @@
 import type { HabitBestStreaksResponse } from '#/types/api'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
@@ -23,8 +24,14 @@ export function HabitBestStreaksChart({
 }: {
   data: HabitBestStreaksResponse
 }) {
+  const { t } = useTranslation()
+
   if (data.length === 0) {
-    return <p className="text-xs text-muted-foreground">No streaks yet.</p>
+    return (
+      <p className="text-xs text-muted-foreground">
+        {t('habits.detail.noStreaksYet')}
+      </p>
+    )
   }
 
   const max = data[0].streak_num || 1

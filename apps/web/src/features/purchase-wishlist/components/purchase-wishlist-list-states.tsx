@@ -10,17 +10,20 @@ import {
 } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ListBulletsIcon, PlusIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function EmptyPurchaseWishlist() {
+  const { t } = useTranslation()
+
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <ListBulletsIcon />
         </EmptyMedia>
-        <EmptyTitle>Nothing on your wishlist yet</EmptyTitle>
+        <EmptyTitle>{t('purchaseWishlist.emptyState.title')}</EmptyTitle>
         <EmptyDescription>
-          Add something you're planning to buy.
+          {t('purchaseWishlist.emptyState.description')}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
@@ -28,7 +31,7 @@ export function EmptyPurchaseWishlist() {
           trigger={
             <Button>
               <PlusIcon />
-              New item
+              {t('purchaseWishlist.newItem')}
             </Button>
           }
         />

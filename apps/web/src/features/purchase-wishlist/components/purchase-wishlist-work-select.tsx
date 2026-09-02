@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslation } from 'react-i18next'
 
 const NONE = 'none'
 
@@ -24,6 +25,7 @@ export function PurchaseWishlistWorkSelect({
 }: {
   item: PurchaseWishlist
 }) {
+  const { t } = useTranslation()
   const works = useWorks()
   const updateItem = useUpdatePurchaseWishlist({
     mutationConfig: {
@@ -51,16 +53,18 @@ export function PurchaseWishlistWorkSelect({
         <SelectValue>
           {() =>
             linkedWork
-              ? `${linkedWork.title} · ${workTypeLabel[linkedWork.type]}`
-              : 'No work linked'
+              ? `${linkedWork.title} · ${workTypeLabel(linkedWork.type)}`
+              : t('purchaseWishlist.noWorkLinked')
           }
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={NONE}>No work linked</SelectItem>
+        <SelectItem value={NONE}>
+          {t('purchaseWishlist.noWorkLinked')}
+        </SelectItem>
         {candidates.map((work) => (
           <SelectItem key={work.id} value={work.id}>
-            {work.title} · {workTypeLabel[work.type]}
+            {work.title} · {workTypeLabel(work.type)}
           </SelectItem>
         ))}
       </SelectContent>

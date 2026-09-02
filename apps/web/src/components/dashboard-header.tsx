@@ -1,8 +1,9 @@
-import { navRoutes } from '@/components/app-sidebar'
+import { useNavRoutes } from '#/hooks/use-nav-routes'
 import { useLocation } from '@tanstack/react-router'
 
 export function DashboardHeader() {
   const { pathname } = useLocation()
+  const { dashboardRoute, navRoutes } = useNavRoutes()
   // Exact match first (most routes); fall back to the longest navRoutes
   // entry that prefixes the path, so a sub-route like /dashboard/habits/:id
   // still shows "Habits" instead of a blank header.
@@ -21,7 +22,9 @@ export function DashboardHeader() {
       <span className="text-muted-foreground [&_svg]:size-4">
         {route?.icon}
       </span>
-      <h1 className="text-sm font-medium">{route?.title ?? 'Dashboard'}</h1>
+      <h1 className="text-sm font-medium">
+        {route?.title ?? dashboardRoute.title}
+      </h1>
     </header>
   )
 }

@@ -7,18 +7,25 @@ import {
   EmptyWorks,
   WorkListSkeleton,
 } from '#/features/works/components/work-list-states'
-import { workTypeLabel, workTypeSubtitle } from '#/features/works/lib/format'
+import {
+  workFormNewTitle,
+  workTypeLabel,
+  workTypeSubtitle,
+} from '#/features/works/lib/format'
 import { useVaultDisplayPrefs } from '#/features/works/lib/vault-display-prefs'
 import type { WorkType } from '#/types/api'
 import { Button } from '@/components/ui/button'
 import type { Icon } from '@phosphor-icons/react'
 import { PlusIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 /** Shared list page for one vault type — routes just pick a `type` and an icon. */
 export function VaultTypePage({ type, icon }: { type: WorkType; icon: Icon }) {
+  // Subscribes to language changes so workTypeLabel()/etc (which read the
+  // global i18n singleton, not this hook) re-render correctly on switch.
+  useTranslation()
   const works = useWorks()
   const items = works.data?.filter((w) => w.type === type) ?? []
-  const label = workTypeLabel[type]
   const [prefs, setPrefs] = useVaultDisplayPrefs(type)
 
   return (
@@ -26,9 +33,11 @@ export function VaultTypePage({ type, icon }: { type: WorkType; icon: Icon }) {
       <div className="mx-auto w-full max-w-4xl px-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl tracking-tight font-medium">{label}s</h2>
+            <h2 className="text-2xl tracking-tight font-medium">
+              {workTypeLabel(type)}
+            </h2>
             <p className="text-sm text-muted-foreground">
-              {workTypeSubtitle[type]}
+              {workTypeSubtitle(type)}
             </p>
           </div>
           <WorkFormDialog
@@ -36,7 +45,7 @@ export function VaultTypePage({ type, icon }: { type: WorkType; icon: Icon }) {
             trigger={
               <Button>
                 <PlusIcon />
-                New {label.toLowerCase()}
+                {workFormNewTitle(type)}
               </Button>
             }
           />

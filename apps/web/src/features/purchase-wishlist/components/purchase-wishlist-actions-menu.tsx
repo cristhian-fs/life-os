@@ -26,6 +26,7 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /** Edit/Delete for one wishlist item — the overflow menu on every card. */
 export function PurchaseWishlistActionsMenu({
@@ -33,12 +34,17 @@ export function PurchaseWishlistActionsMenu({
 }: {
   item: PurchaseWishlist
 }) {
+  const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const deleteItem = useDeletePurchaseWishlist({
     mutationConfig: {
-      onSuccess: () => toast.add({ title: 'Deleted', type: 'success' }),
+      onSuccess: () =>
+        toast.add({
+          title: t('purchaseWishlist.actions.deletedToast'),
+          type: 'success',
+        }),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
@@ -48,12 +54,14 @@ export function PurchaseWishlistActionsMenu({
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
           <DotsThreeOutlineIcon />
-          <span className="sr-only">More options</span>
+          <span className="sr-only">
+            {t('purchaseWishlist.actions.moreOptions')}
+          </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <PencilSimpleIcon />
-            Edit
+            {t('purchaseWishlist.actions.edit')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -61,7 +69,7 @@ export function PurchaseWishlistActionsMenu({
             onClick={() => setDeleteOpen(true)}
           >
             <TrashIcon />
-            Delete
+            {t('purchaseWishlist.actions.delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -76,20 +84,24 @@ export function PurchaseWishlistActionsMenu({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete "{item.title ?? item.store_or_url}"?
+              {t('purchaseWishlist.actions.deleteConfirmTitle', {
+                title: item.title ?? item.store_or_url,
+              })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes it from your wishlist.
+              {t('purchaseWishlist.actions.deleteConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t('purchaseWishlist.actions.cancel')}
+            </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => deleteItem.mutate({ id: item.id })}
               disabled={deleteItem.isPending}
             >
-              Delete
+              {t('purchaseWishlist.actions.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

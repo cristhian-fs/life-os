@@ -2,6 +2,7 @@ import { useWorks } from '#/features/works/api/get-works'
 import { WorkCard } from '#/features/works/components/work-card'
 import { WorkStatus } from '#/types/api'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslation } from 'react-i18next'
 
 const MAX_ITEMS = 5
 
@@ -11,6 +12,7 @@ const MAX_ITEMS = 5
  * route stays layout-only. */
 export function WorkInProgressList() {
   const works = useWorks()
+  const { t } = useTranslation('translations')
 
   if (works.isLoading) {
     return (
@@ -30,7 +32,7 @@ export function WorkInProgressList() {
   if (inProgress.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        Nothing in progress right now.
+        {t('dashboard.noActiveProgress')}
       </p>
     )
   }

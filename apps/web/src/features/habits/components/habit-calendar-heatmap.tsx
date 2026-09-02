@@ -17,7 +17,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import type { TFunction } from 'i18next'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const cellClass = { default: 'size-2.5', compact: 'size-2' } as const
 const gapClass = { default: 'gap-1', compact: 'gap-0.5' } as const
@@ -41,6 +43,7 @@ export function HabitCalendarHeatmap({
   data: HabitCalendarMapResponse
   size?: 'default' | 'compact'
 }) {
+  const { t } = useTranslation()
   const { logDay: logHabitDay, isPending } = useLogHabitDay(habit.id)
   const canLog = habit.status === HabitStatus.ACTIVE
 
@@ -80,6 +83,7 @@ export function HabitCalendarHeatmap({
                 canLog={canLog}
                 pending={isPending}
                 onLog={(date, value) => logDay(date, value)}
+                t={t}
               />
             ))}
           </div>
@@ -96,6 +100,7 @@ function HeatmapDayCell({
   canLog,
   pending,
   onLog,
+  t,
 }: {
   habit: Habit
   cell: string
@@ -106,6 +111,7 @@ function HeatmapDayCell({
     date: Date,
     value: { value_boolean?: boolean | null; value_numeric?: number | null },
   ) => Promise<unknown> | undefined
+  t: TFunction
 }) {
   if (day.kind === 'empty') {
     return <div className={cell} />
@@ -118,7 +124,9 @@ function HeatmapDayCell({
           render={<div className={cn(cell, 'rounded-xs bg-muted/20')} />}
         />
         <TooltipContent>
-          {dayLabel(day.date)} · before this habit existed
+          {t('habits.detail.beforeHabitExisted', {
+            date: dayLabel(day.date),
+          })}
         </TooltipContent>
       </Tooltip>
     )
@@ -133,6 +141,7 @@ function HeatmapDayCell({
       pending={pending}
       cell={cell}
       onLog={(value) => onLog(day.date, value)}
+      t={t}
     />
   )
 }
@@ -145,6 +154,7 @@ function DayCell({
   pending,
   cell,
   onLog,
+  t,
 }: {
   habit: Habit
   date: Date
@@ -156,12 +166,13 @@ function DayCell({
     value_boolean?: boolean | null
     value_numeric?: number | null
   }) => Promise<unknown> | undefined
+  t: TFunction
 }) {
   const [draft, setDraft] = useState('')
   const [open, setOpen] = useState(false)
   const isNumeric = habit.type === HabitType.NUMERIC
   const done = !!point && point.percentage > 0
-  const tooltip = `${dayLabel(date)}${point ? ` · ${Math.round(Number(point.percentage))}%` : ' · not tracked'}`
+  const tooltip = `${dayLabel(date)}${point ? ` · ${Math.round(Number(point.percentage))}%` : ` · ${t('habits.detail.notTracked')}`}`
 
   const swatch = cn(
     cell,
@@ -184,7 +195,10 @@ function DayCell({
               type="button"
               disabled={!canLog || pending}
               onClick={() => onLog({ value_boolean: !done })}
-              aria-label={`Log ${habit.name} for ${dayLabel(date)}`}
+              aria-label={t('habits.detail.logAriaLabel', {
+                name: habit.name,
+                date: dayLabel(date),
+              })}
               className={swatch}
               style={swatchStyle}
             />
@@ -215,7 +229,10 @@ function DayCell({
                 <button
                   type="button"
                   disabled={!canLog || pending}
-                  aria-label={`Log ${habit.name} for ${dayLabel(date)}`}
+                  aria-label={t('habits.detail.logAriaLabel', {
+                    name: habit.name,
+                    date: dayLabel(date),
+                  })}
                   className={swatch}
                   style={swatchStyle}
                 />
@@ -234,11 +251,14 @@ function DayCell({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={habit.goal_value ? String(habit.goal_value) : '0'}
-            aria-label={`${habit.name} value for ${dayLabel(date)}`}
+            aria-label={t('habits.detail.valueAriaLabel', {
+              name: habit.name,
+              date: dayLabel(date),
+            })}
             className="h-7"
           />
           <Button type="submit" size="sm" disabled={draft === ''}>
-            Log
+            {t('habits.detail.logButton')}
           </Button>
         </form>
       </PopoverContent>

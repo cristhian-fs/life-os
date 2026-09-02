@@ -1,3 +1,4 @@
+import i18n from '#/i18n'
 import { workTypeIcon } from '#/features/works/lib/format'
 import type { PurchaseWishlist } from '#/types/api'
 import type { Icon } from '@phosphor-icons/react'
@@ -9,11 +10,13 @@ export function purchaseWishlistIcon(item: PurchaseWishlist): Icon {
 }
 
 export function formatPurchasedAt(purchasedAt: string | null): string {
-  if (!purchasedAt) return 'Not purchased'
-  return `Purchased ${new Date(purchasedAt).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })}`
+  if (!purchasedAt) return i18n.t('purchaseWishlist.notPurchased')
+  return i18n.t('purchaseWishlist.purchasedAt', {
+    date: new Date(purchasedAt).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }),
+  })
 }

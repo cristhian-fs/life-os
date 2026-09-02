@@ -1,5 +1,5 @@
 import { WorkFormDialog } from '#/features/works/components/work-form-dialog'
-import { workTypeLabel } from '#/features/works/lib/format'
+import { workFormNewTitle, workTypeLabel } from '#/features/works/lib/format'
 import type { WorkType } from '#/types/api'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +13,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Icon } from '@phosphor-icons/react'
 import { PlusIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function EmptyWorks({
   type,
@@ -21,7 +22,8 @@ export function EmptyWorks({
   type: WorkType
   icon: Icon
 }) {
-  const label = workTypeLabel[type].toLowerCase()
+  const { t } = useTranslation()
+  const label = workTypeLabel(type).toLowerCase()
 
   return (
     <Empty>
@@ -29,8 +31,8 @@ export function EmptyWorks({
         <EmptyMedia variant="icon">
           <Icon />
         </EmptyMedia>
-        <EmptyTitle>No {label}s yet</EmptyTitle>
-        <EmptyDescription>Add one to start tracking it here.</EmptyDescription>
+        <EmptyTitle>{t('work.emptyState.title', { label })}</EmptyTitle>
+        <EmptyDescription>{t('work.emptyState.description')}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <WorkFormDialog
@@ -38,7 +40,7 @@ export function EmptyWorks({
           trigger={
             <Button>
               <PlusIcon />
-              New {label}
+              {workFormNewTitle(type)}
             </Button>
           }
         />

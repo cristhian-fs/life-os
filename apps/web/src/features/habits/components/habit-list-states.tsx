@@ -10,17 +10,20 @@ import {
 } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ListChecksIcon, PlusIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function EmptyHabits() {
+  const { t } = useTranslation()
+
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <ListChecksIcon />
         </EmptyMedia>
-        <EmptyTitle>No habits yet</EmptyTitle>
+        <EmptyTitle>{t('habits.emptyState.title')}</EmptyTitle>
         <EmptyDescription>
-          Add a habit to start tracking it daily, weekly, or monthly.
+          {t('habits.emptyState.description')}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
@@ -28,7 +31,7 @@ export function EmptyHabits() {
           trigger={
             <Button>
               <PlusIcon />
-              New habit
+              {t('habits.emptyState.newHabit')}
             </Button>
           }
         />

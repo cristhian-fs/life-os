@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
+import { LanguageSwitcher } from './language-switcher'
 import { useTheme } from './theme-provider'
 import { getInitials } from '#/lib/utils'
 import { useNavigate } from '@tanstack/react-router'
@@ -25,6 +27,7 @@ export function NavUser({
 }: {
   user: typeof authClient.$Infer.Session.user
 }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const logout = async () => {
     await authClient.signOut(
@@ -52,7 +55,7 @@ export function NavUser({
           <AvatarImage src={user.image ?? ''} alt={user.name} />
           <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
         </Avatar>
-        <span className="sr-only">Open user menu</span>
+        <span className="sr-only">{t('navUser.openUserMenu')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="min-w-56 rounded-lg"
@@ -77,26 +80,29 @@ export function NavUser({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger>
+              {t('navUser.theme')}
+            </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuItem onClick={() => setTheme('light')}>
-                  Light
+                  {t('navUser.themeLight')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('dark')}>
-                  Dark
+                  {t('navUser.themeDark')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('system')}>
-                  System
+                  {t('navUser.themeSystem')}
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+          <LanguageSwitcher />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout}>
           <SignOutIcon />
-          Log out
+          {t('navUser.logOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -19,8 +19,7 @@ export async function fetchIsbnCover(isbn: string): Promise<File | null> {
 }
 
 export type CoverSource =
-  | { kind: 'isbn'; isbn: string }
-  | { kind: 'og'; pageUrl: string }
+  { kind: 'isbn'; isbn: string } | { kind: 'og'; pageUrl: string }
 
 /**
  * Where a work's cover can be fetched from, if anywhere. Books prefer their

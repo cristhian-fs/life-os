@@ -33,6 +33,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from '#/components/ui/toast'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type HabitFormDialogProps = {
   // Provide `trigger` for an uncontrolled dialog (e.g. the page-level "New
@@ -51,6 +52,7 @@ export function HabitFormDialog({
   onOpenChange,
   habit,
 }: HabitFormDialogProps) {
+  const { t } = useTranslation()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
@@ -59,7 +61,7 @@ export function HabitFormDialog({
   const createHabit = useCreateHabit({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: 'Habit created', type: 'success' })
+        toast.add({ title: t('habits.form.created'), type: 'success' })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -68,7 +70,7 @@ export function HabitFormDialog({
   const updateHabit = useUpdateHabit({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: 'Habit updated', type: 'success' })
+        toast.add({ title: t('habits.form.updated'), type: 'success' })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -116,11 +118,13 @@ export function HabitFormDialog({
       {trigger && <DialogTrigger render={trigger} />}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit habit' : 'New habit'}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? t('habits.form.editTitle') : t('habits.form.newTitle')}
+          </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Update the name, description, or goal.'
-              : 'Habits you check in on daily, weekly, or monthly.'}
+              ? t('habits.form.editDescription')
+              : t('habits.form.newDescription')}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -136,7 +140,9 @@ export function HabitFormDialog({
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('habits.form.name')}
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
@@ -144,7 +150,7 @@ export function HabitFormDialog({
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      placeholder="Read 20 pages"
+                      placeholder={t('habits.form.namePlaceholder')}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -160,7 +166,9 @@ export function HabitFormDialog({
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('habits.form.description')}
+                    </FieldLabel>
                     <Textarea
                       id={field.name}
                       name={field.name}
@@ -168,7 +176,7 @@ export function HabitFormDialog({
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      placeholder="Why this habit matters"
+                      placeholder={t('habits.form.descriptionPlaceholder')}
                       rows={2}
                     />
                     {isInvalid && (
@@ -182,12 +190,14 @@ export function HabitFormDialog({
             <form.Field name="type">
               {(field) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name}>Type</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    {t('habits.form.type')}
+                  </FieldLabel>
                   {isEdit ? (
                     <p className="text-xs text-muted-foreground">
                       {field.state.value === HabitType.NUMERIC
-                        ? "Numeric — can't be changed after creation"
-                        : "Done/not done — can't be changed after creation"}
+                        ? t('habits.form.typeNumericLocked')
+                        : t('habits.form.typeBooleanLocked')}
                     </p>
                   ) : (
                     <RadioGroup
@@ -197,11 +207,11 @@ export function HabitFormDialog({
                     >
                       <FieldLabel className="flex-row items-center gap-2 text-xs font-normal">
                         <RadioGroupItem value={HabitType.BOOLEAN} />
-                        Done / not done
+                        {t('habits.form.typeBooleanOption')}
                       </FieldLabel>
                       <FieldLabel className="flex-row items-center gap-2 text-xs font-normal">
                         <RadioGroupItem value={HabitType.NUMERIC} />
-                        Numeric goal
+                        {t('habits.form.typeNumericOption')}
                       </FieldLabel>
                     </RadioGroup>
                   )}
@@ -220,7 +230,9 @@ export function HabitFormDialog({
                           !field.state.meta.isValid
                         return (
                           <Field data-invalid={isInvalid} className="flex-1">
-                            <FieldLabel htmlFor={field.name}>Goal</FieldLabel>
+                            <FieldLabel htmlFor={field.name}>
+                              {t('habits.form.goal')}
+                            </FieldLabel>
                             <Input
                               id={field.name}
                               name={field.name}
@@ -235,7 +247,7 @@ export function HabitFormDialog({
                                 )
                               }
                               aria-invalid={isInvalid}
-                              placeholder="30"
+                              placeholder={t('habits.form.goalPlaceholder')}
                             />
                             {isInvalid && (
                               <FieldError errors={field.state.meta.errors} />
@@ -251,7 +263,9 @@ export function HabitFormDialog({
                           !field.state.meta.isValid
                         return (
                           <Field data-invalid={isInvalid} className="flex-1">
-                            <FieldLabel htmlFor={field.name}>Unit</FieldLabel>
+                            <FieldLabel htmlFor={field.name}>
+                              {t('habits.form.unit')}
+                            </FieldLabel>
                             <Input
                               id={field.name}
                               name={field.name}
@@ -262,7 +276,7 @@ export function HabitFormDialog({
                               }
                               aria-invalid={isInvalid}
                               disabled={isEdit}
-                              placeholder="minutes"
+                              placeholder={t('habits.form.unitPlaceholder')}
                             />
                             {isInvalid && (
                               <FieldError errors={field.state.meta.errors} />
@@ -279,7 +293,9 @@ export function HabitFormDialog({
             <form.Field name="goal_period">
               {(field) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name}>Frequency</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    {t('habits.form.frequency')}
+                  </FieldLabel>
                   <Select
                     value={field.state.value}
                     onValueChange={(v) =>
@@ -288,13 +304,13 @@ export function HabitFormDialog({
                   >
                     <SelectTrigger id={field.name} className="w-full">
                       <SelectValue>
-                        {(value: HabitGoalPeriod) => goalPeriodLabel[value]}
+                        {(value: HabitGoalPeriod) => goalPeriodLabel(value)}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {Object.values(HabitGoalPeriod).map((period) => (
                         <SelectItem key={period} value={period}>
-                          {goalPeriodLabel[period]}
+                          {goalPeriodLabel(period)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -308,7 +324,9 @@ export function HabitFormDialog({
                 type="submit"
                 disabled={createHabit.isPending || updateHabit.isPending}
               >
-                {isEdit ? 'Save changes' : 'Create habit'}
+                {isEdit
+                  ? t('habits.form.saveChanges')
+                  : t('habits.form.createHabit')}
               </Button>
             </DialogFooter>
           </FieldGroup>
