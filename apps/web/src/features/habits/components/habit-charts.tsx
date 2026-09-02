@@ -18,14 +18,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-
-const scoreConfig = {
-  percentage: { label: 'Completion', color: 'var(--primary)' },
-} satisfies ChartConfig
-
-const countConfig = {
-  count: { label: 'Days done', color: 'var(--primary)' },
-} satisfies ChartConfig
+import { useTranslation } from 'react-i18next'
 
 function formatTick(date: string) {
   return format(parseISO(date), 'MMM d')
@@ -36,6 +29,14 @@ export function HabitScoreHistoryChart({
 }: {
   data: HabitScoreHistoryResponse
 }) {
+  const { t } = useTranslation()
+  const scoreConfig = {
+    percentage: {
+      label: t('habits.detail.completion'),
+      color: 'var(--primary)',
+    },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={scoreConfig} className="aspect-auto h-48 w-full">
       <LineChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
@@ -72,6 +73,11 @@ export function HabitHistoryBarChart({
 }: {
   data: HabitHistoryBarGraphResponse
 }) {
+  const { t } = useTranslation()
+  const countConfig = {
+    count: { label: t('habits.detail.daysDone'), color: 'var(--primary)' },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={countConfig} className="aspect-auto h-48 w-full">
       <BarChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>

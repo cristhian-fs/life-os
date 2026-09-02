@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { GridFourIcon, RowsIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function VaultDisplayToggle({
   prefs,
@@ -21,6 +22,8 @@ export function VaultDisplayToggle({
   prefs: VaultDisplayPrefs
   onChange: (next: VaultDisplayPrefs) => void
 }) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex items-center gap-2">
       {prefs.view === 'grid' && (
@@ -31,12 +34,14 @@ export function VaultDisplayToggle({
           }
         >
           <SelectTrigger size="sm" className="w-[8.5rem]">
-            <SelectValue>{(v: string) => `${v} columns`}</SelectValue>
+            <SelectValue>
+              {(v: string) => t('work.display.columns', { count: Number(v) })}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {VAULT_GRID_COLUMNS.map((n) => (
               <SelectItem key={n} value={String(n)}>
-                {n} columns
+                {t('work.display.columns', { count: n })}
               </SelectItem>
             ))}
           </SelectContent>
@@ -51,10 +56,10 @@ export function VaultDisplayToggle({
         variant="outline"
         size="sm"
       >
-        <ToggleGroupItem value="grid" aria-label="Grid view">
+        <ToggleGroupItem value="grid" aria-label={t('work.display.gridView')}>
           <GridFourIcon />
         </ToggleGroupItem>
-        <ToggleGroupItem value="list" aria-label="List view">
+        <ToggleGroupItem value="list" aria-label={t('work.display.listView')}>
           <RowsIcon />
         </ToggleGroupItem>
       </ToggleGroup>

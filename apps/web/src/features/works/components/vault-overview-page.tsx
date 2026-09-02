@@ -23,11 +23,13 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const EMPTY_FUNNEL = { entered: 0, in_progress: 0, completed: 0, abandoned: 0 }
 
 /** Vault landing page — how items are moving through the shelf. */
 export function VaultOverviewPage() {
+  const { t } = useTranslation()
   const [preset, setPreset] = useState<DateRangePreset>('90D')
   const { from, to } = useMemo(() => dateRangeForPreset(preset), [preset])
   const bucketUnit = bucketUnitForPreset(preset)
@@ -41,10 +43,11 @@ export function VaultOverviewPage() {
     <div className="px-2 py-6">
       <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 p-6">
         <div>
-          <h2 className="text-2xl font-medium tracking-tight">Vault</h2>
+          <h2 className="text-2xl font-medium tracking-tight">
+            {t('work.overview.title')}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            How your books, movies, articles, and courses are moving through the
-            shelf.
+            {t('work.overview.description')}
           </p>
         </div>
         <Select
@@ -59,7 +62,7 @@ export function VaultOverviewPage() {
               <SelectItem
                 key={p}
                 value={p}
-                aria-label={dateRangePresetLabel[p]}
+                aria-label={dateRangePresetLabel(p)}
               >
                 {p}
               </SelectItem>
@@ -73,13 +76,13 @@ export function VaultOverviewPage() {
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-2">
               <StatTile
-                label="Completed"
+                label={t('work.overview.completed')}
                 value={completedCount.data?.count ?? 0}
-                suffix="items"
+                suffix={t('work.overview.itemsSuffix')}
                 loading={completedCount.isLoading}
               />
               <StatTile
-                label="Avg. wait to start"
+                label={t('work.overview.avgWaitToStart')}
                 value={formatWishlistWait(avgWait.data?.avg_seconds ?? null)}
                 suffix=""
                 loading={avgWait.isLoading}
@@ -89,7 +92,9 @@ export function VaultOverviewPage() {
             <Separator />
 
             <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-medium">Backlog over time</h3>
+              <h3 className="text-sm font-medium">
+                {t('work.overview.backlogOverTime')}
+              </h3>
               {backlog.isLoading ? (
                 <Skeleton className="h-48 w-full" />
               ) : (
@@ -100,7 +105,9 @@ export function VaultOverviewPage() {
             <Separator />
 
             <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-medium">Conversion funnel</h3>
+              <h3 className="text-sm font-medium">
+                {t('work.overview.conversionFunnel')}
+              </h3>
               {funnel.isLoading ? (
                 <Skeleton className="h-40 w-full" />
               ) : (

@@ -2,15 +2,13 @@ import { useWorks } from '#/features/works/api/get-works'
 import { WorkCard } from '#/features/works/components/work-card'
 import { WorkStatus } from '#/types/api'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslation } from 'react-i18next'
 
 const MAX_ITEMS = 5
 
-/** "In progress" widget for the dashboard overview — the actual work items,
- * not just a count, reusing WorkCard as-is (status popover, progress
- * actions, edit/delete menu all work right here). Owns its own query so the
- * route stays layout-only. */
 export function WorkInProgressList() {
   const works = useWorks()
+  const { t } = useTranslation('translations')
 
   if (works.isLoading) {
     return (
@@ -30,7 +28,7 @@ export function WorkInProgressList() {
   if (inProgress.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        Nothing in progress right now.
+        {t('dashboard.noActiveProgress')}
       </p>
     )
   }

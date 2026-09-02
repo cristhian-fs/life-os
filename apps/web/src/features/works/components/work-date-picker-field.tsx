@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import type { Matcher } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 
 /** Date-picker field for an optional ISO-string form value ("" input, "" output — null when cleared). */
 export function WorkDatePickerField({
@@ -22,6 +23,7 @@ export function WorkDatePickerField({
   /** react-day-picker matcher — defaults to disabling future dates only, so past/backdated values stay pickable. */
   disabledDays?: Matcher | Matcher[]
 }) {
+  const { t } = useTranslation()
   const selected = value ? new Date(value) : undefined
 
   return (
@@ -39,7 +41,11 @@ export function WorkDatePickerField({
           />
         }
       >
-        {selected ? format(selected, 'PPP') : <span>Pick a date</span>}
+        {selected ? (
+          format(selected, 'PPP')
+        ) : (
+          <span>{t('work.datePicker.pickDate')}</span>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar

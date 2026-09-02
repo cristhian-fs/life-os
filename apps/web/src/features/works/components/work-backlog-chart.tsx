@@ -7,10 +7,7 @@ import {
 import type { ChartConfig } from '@/components/ui/chart'
 import { format, parseISO } from 'date-fns'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-
-const chartConfig = {
-  count: { label: 'To-consume items', color: 'var(--primary)' },
-} satisfies ChartConfig
+import { useTranslation } from 'react-i18next'
 
 function formatTick(date: string) {
   return format(parseISO(date), 'MMM d')
@@ -22,6 +19,14 @@ export function WorkBacklogChart({
 }: {
   data: WorkAnalyticsBacklogResponse
 }) {
+  const { t } = useTranslation()
+  const chartConfig = {
+    count: {
+      label: t('work.overview.toConsumeItemsSeries'),
+      color: 'var(--primary)',
+    },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-48 w-full">
       <BarChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>

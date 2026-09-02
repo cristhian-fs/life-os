@@ -1,9 +1,10 @@
-import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { useUploadImage } from '#/features/uploads/api/upload-image'
 import { toast } from '#/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { ImageSquareIcon, XIcon } from '@phosphor-icons/react'
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /** Cover-art picker for a work item — uploads immediately on file select and reports back the resulting URL. */
 export function WorkImageField({
@@ -13,8 +14,9 @@ export function WorkImageField({
   value: string | null
   onChange: (url: string | null) => void
 }) {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
-  const upload = useUploadWorkImage({
+  const upload = useUploadImage({
     mutationConfig: {
       onSuccess: (data) => onChange(data.url),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -37,7 +39,7 @@ export function WorkImageField({
         if (!file) continue
 
         if (file.size > 5 * 1024 * 1024) {
-          toast.add({ title: 'Image must be up to 5MB.', type: 'error' })
+          toast.add({ title: t('work.image.tooLarge'), type: 'error' })
           return
         }
 
@@ -49,7 +51,7 @@ export function WorkImageField({
 
     window.addEventListener('paste', handlePaste)
     return () => window.removeEventListener('paste', handlePaste)
-  }, [upload])
+  }, [upload, t])
 
   return (
     <div className="flex items-center gap-3">
@@ -79,7 +81,9 @@ export function WorkImageField({
         }}
       />
       <div className="flex flex-col gap-1">
-        <p className="text-xs text-muted-foreground">Cover image, up to 5MB.</p>
+        <p className="text-xs text-muted-foreground">
+          {t('work.image.coverHint')}
+        </p>
         {value && (
           <Button
             type="button"
@@ -89,7 +93,7 @@ export function WorkImageField({
             onClick={() => onChange(null)}
           >
             <XIcon />
-            Remove
+            {t('work.image.remove')}
           </Button>
         )}
       </div>

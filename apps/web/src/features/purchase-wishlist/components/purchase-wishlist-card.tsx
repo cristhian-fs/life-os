@@ -10,8 +10,10 @@ import type { PurchaseWishlist } from '#/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { LinkIcon } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 
 export function PurchaseWishlistCard({ item }: { item: PurchaseWishlist }) {
+  const { t } = useTranslation()
   const isUrl = /^https?:\/\//.test(item.store_or_url)
   const Icon = purchaseWishlistIcon(item)
 
@@ -40,7 +42,7 @@ export function PurchaseWishlistCard({ item }: { item: PurchaseWishlist }) {
                 target="_blank"
                 rel="noreferrer"
                 className="shrink-0 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label="Open store link"
+                aria-label={t('purchaseWishlist.openStoreLink')}
               >
                 <LinkIcon className="size-3.5" />
               </a>

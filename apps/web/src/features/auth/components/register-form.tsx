@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,32 +15,37 @@ import { Input } from '@/components/ui/input'
 import { authClient } from '#/lib/auth-client'
 import { toast } from '#/components/ui/toast'
 
-const formSchema = z
-  .object({
-    name: z.string(),
-    email: z.email(),
-    password: z
-      .string()
-      .min(8, { message: 'A senha precisa ter pelo menos 8 caracteres' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'A senha precisa ter pelo menos 8 caracteres' }),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'As senhas não coincidem',
-        path: ['confirmPassword'],
-      })
-    }
-  })
-
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
+
+  // Rebuilt every render (not module-level) so its messages stay in the
+  // current language — a schema built once at import time would freeze
+  // its error strings at whichever language was active on first load.
+  const formSchema = z
+    .object({
+      name: z.string(),
+      email: z.email(t('auth.emailInvalid')),
+      password: z
+        .string()
+        .min(8, { message: t('auth.register.passwordMinLength') }),
+      confirmPassword: z
+        .string()
+        .min(8, { message: t('auth.register.passwordMinLength') }),
+    })
+    .superRefine(({ password, confirmPassword }, ctx) => {
+      if (confirmPassword !== password) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('auth.register.passwordsDontMatch'),
+          path: ['confirmPassword'],
+        })
+      }
+    })
+
   const form = useForm({
     defaultValues: {
       name: '',
@@ -61,7 +67,7 @@ export function RegisterForm({
         {
           onSuccess: () => {
             toast.add({
-              title: 'Account created',
+              title: t('auth.register.accountCreatedToast'),
               type: 'success',
             })
             navigate({ to: '/dashboard' })
@@ -88,7 +94,7 @@ export function RegisterForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Create your account on LifeOS</h1>
+          <h1 className="text-2xl font-bold">{t('auth.register.title')}</h1>
         </div>
         <form.Field
           name="name"
@@ -97,7 +103,9 @@ export function RegisterForm({
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  {t('auth.register.name')}
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -105,7 +113,7 @@ export function RegisterForm({
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
-                  placeholder="John Doe"
+                  placeholder={t('auth.register.namePlaceholder')}
                   autoComplete="off"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -120,7 +128,9 @@ export function RegisterForm({
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  {t('auth.fields.email')}
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -129,7 +139,7 @@ export function RegisterForm({
                   type="email"
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
-                  placeholder="example@email.com"
+                  placeholder={t('auth.register.emailPlaceholder')}
                   autoComplete="off"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -144,7 +154,9 @@ export function RegisterForm({
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  {t('auth.fields.password')}
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -166,7 +178,9 @@ export function RegisterForm({
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  {t('auth.register.confirmPassword')}
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -182,15 +196,15 @@ export function RegisterForm({
           }}
         />
         <Field>
-          <Button type="submit">Create your account</Button>
+          <Button type="submit">{t('auth.register.submit')}</Button>
         </Field>
         <FieldSeparator />
         <div className="flex items-center justify-center gap-2 text-sm">
           <span className="text-muted-foreground">
-            Already have an account?
+            {t('auth.register.haveAccount')}
           </span>
           <Button variant="secondary" size="sm" render={<Link to="/login" />}>
-            Login
+            {t('auth.register.loginLink')}
           </Button>
         </div>
       </FieldGroup>

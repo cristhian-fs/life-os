@@ -1,15 +1,23 @@
+import i18n from '#/i18n'
 import { HabitGoalPeriod, HabitType } from '#/types/api'
 import type { Habit } from '#/types/api'
 
-export const goalPeriodLabel: Record<HabitGoalPeriod, string> = {
-  [HabitGoalPeriod.DAILY]: 'Daily',
-  [HabitGoalPeriod.WEEKLY]: 'Weekly',
-  [HabitGoalPeriod.MONTHLY]: 'Monthly',
+// A Record<HabitGoalPeriod, string> lookup would widen the key to `string`,
+// which i18next's typed t() rejects — a switch keeps each call site literal.
+export function goalPeriodLabel(period: HabitGoalPeriod): string {
+  switch (period) {
+    case HabitGoalPeriod.DAILY:
+      return i18n.t('habits.form.periodDaily')
+    case HabitGoalPeriod.WEEKLY:
+      return i18n.t('habits.form.periodWeekly')
+    case HabitGoalPeriod.MONTHLY:
+      return i18n.t('habits.form.periodMonthly')
+  }
 }
 
 /** Short goal line shown on a habit card, e.g. "Daily · 30 min" or "Weekly". */
 export function formatGoal(habit: Habit): string {
-  const period = goalPeriodLabel[habit.goal_period]
+  const period = goalPeriodLabel(habit.goal_period)
   if (habit.type !== HabitType.NUMERIC) return period
   const unit = habit.unit ? ` ${habit.unit}` : ''
   return `${period} · ${habit.goal_value ?? '—'}${unit}`

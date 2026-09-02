@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PlusIcon } from '@phosphor-icons/react'
 import { createFileRoute } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/dashboard/habits/')({
   component: RouteComponent,
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/dashboard/habits/')({
 
 function RouteComponent() {
   const habits = useHabits({})
+  const { t } = useTranslation('translations')
   const active =
     habits.data?.filter((h) => h.status === HabitStatus.ACTIVE) ?? []
   const archived =
@@ -28,14 +30,18 @@ function RouteComponent() {
         <Tabs defaultValue="active" className="flex-1">
           <div className="flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="archived">Archived</TabsTrigger>
+              <TabsTrigger value="active">
+                {t('habits.status.active')}
+              </TabsTrigger>
+              <TabsTrigger value="archived">
+                {t('habits.status.archived')}
+              </TabsTrigger>
             </TabsList>
             <HabitFormDialog
               trigger={
                 <Button>
                   <PlusIcon />
-                  New habit
+                  {t('habits.form.newTitle')}
                 </Button>
               }
             />
@@ -60,7 +66,7 @@ function RouteComponent() {
               <HabitGridSkeleton />
             ) : archived.length === 0 ? (
               <p className="py-12 text-center text-xs text-muted-foreground">
-                No archived habits.
+                {t('habits.emptyState.noArchivedHabits')}
               </p>
             ) : (
               <div className="grid grid-cols-1 gap-4">

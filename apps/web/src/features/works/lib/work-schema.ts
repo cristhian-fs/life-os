@@ -16,7 +16,7 @@ const baseWorkFieldsSchema = z.object({
   external_url: z.url('Must be a valid URL').nullable(),
   started_at: z.string().nullable(),
   completed_at: z.string().nullable(),
-  // Upload via useUploadWorkImage (POST /uploads/images) first, then pass the url it returns here.
+  // Upload via useUploadImage (POST /uploads/images) first, then pass the url it returns here.
   image_url: z.string().nullable(),
 })
 
