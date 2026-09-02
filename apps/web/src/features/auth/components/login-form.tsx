@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,15 +15,19 @@ import { Input } from '@/components/ui/input'
 import { authClient } from '#/lib/auth-client'
 import { toast } from '#/components/ui/toast'
 
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, { message: 'A senha é obrigatória' }),
-})
-
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
+  const { t } = useTranslation()
+  // Rebuilt every render (not module-level) so its messages stay in the
+  // current language — a schema built once at import time would freeze
+  // its error strings at whichever language was active on first load.
+  const formSchema = z.object({
+    email: z.email(t('auth.emailInvalid')),
+    password: z.string().min(1, { message: t('auth.login.passwordRequired') }),
+  })
+
   const form = useForm({
     defaultValues: {
       email: '',
@@ -41,7 +46,7 @@ export function LoginForm({
         {
           onSuccess: () => {
             toast.add({
-              title: 'Logged in',
+              title: t('auth.login.loggedInToast'),
               type: 'success',
             })
           },
@@ -67,9 +72,9 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold">{t('auth.login.title')}</h1>
           <p className="text-sm text-balance text-muted-foreground">
-            Enter your email below to login to your account
+            {t('auth.login.subtitle')}
           </p>
         </div>
         <form.Field
@@ -79,7 +84,9 @@ export function LoginForm({
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  {t('auth.fields.email')}
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -88,7 +95,7 @@ export function LoginForm({
                   type="email"
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
-                  placeholder="m@example.com"
+                  placeholder={t('auth.login.emailPlaceholder')}
                   autoComplete="email"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -104,12 +111,14 @@ export function LoginForm({
             return (
               <Field data-invalid={isInvalid}>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    {t('auth.fields.password')}
+                  </FieldLabel>
                   <a
                     href="#"
                     className="ml-auto text-xs underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    {t('auth.login.forgotPassword')}
                   </a>
                 </div>
                 <Input
@@ -128,15 +137,19 @@ export function LoginForm({
           }}
         />
         <Field>
-          <Button type="submit">Login</Button>
+          <Button type="submit">{t('auth.login.submit')}</Button>
         </Field>
         <FieldSeparator />
         <div className="flex items-center justify-center gap-2 text-sm">
           <span className="text-muted-foreground">
-            Don&apos;t have an account?
+            {t('auth.login.noAccount')}
           </span>
-          <Button variant="secondary" size="sm" render={<Link to="/register" />}>
-            Register
+          <Button
+            variant="secondary"
+            size="sm"
+            render={<Link to="/register" />}
+          >
+            {t('auth.login.registerLink')}
           </Button>
         </div>
       </FieldGroup>

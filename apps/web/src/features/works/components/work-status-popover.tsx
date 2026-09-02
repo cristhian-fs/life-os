@@ -19,16 +19,20 @@ import {
 import { cn } from '@/lib/utils'
 import { StarIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-const STATUS_OPTIONS: QuickSelectOption<WorkStatus>[] = Object.values(
-  WorkStatus,
-).map((status) => ({
-  value: status,
-  label: workStatusLabel[status],
-  icon: (
-    <span className={cn('size-2 rounded-full', workStatusDotColor[status])} />
-  ),
-}))
+// Self-contained (calls useTranslation itself) so it re-renders on language
+// change regardless of what the caller happens to use translations for.
+function useStatusOptions(): QuickSelectOption<WorkStatus>[] {
+  useTranslation()
+  return Object.values(WorkStatus).map((status) => ({
+    value: status,
+    label: workStatusLabel(status),
+    icon: (
+      <span className={cn('size-2 rounded-full', workStatusDotColor[status])} />
+    ),
+  }))
+}
 
 const TERMINAL_STATUSES: WorkStatus[] = [
   WorkStatus.COMPLETED,
@@ -43,8 +47,10 @@ const TERMINAL_STATUSES: WorkStatus[] = [
  * nothing to position itself against once the first one's trigger unmounts).
  */
 export function WorkStatusPopover({ work }: { work: Work }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [phase, setPhase] = useState<'status' | 'rating'>('status')
+  const statusOptions = useStatusOptions()
 
   const updateWork = useUpdateWork({
     mutationConfig: {
@@ -88,7 +94,7 @@ export function WorkStatusPopover({ work }: { work: Work }) {
       variant={workStatusBadgeVariant[work.status]}
       className="cursor-pointer"
     >
-      {workStatusLabel[work.status]}
+      {workStatusLabel(work.status)}
     </Badge>
   )
 
@@ -98,14 +104,14 @@ export function WorkStatusPopover({ work }: { work: Work }) {
         <PopoverTrigger render={trigger} />
         <PopoverContent align="start" className="w-auto">
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium">Rate it?</p>
+            <p className="text-xs font-medium">{t('work.progress.rateIt')}</p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => handleSelectRating(n)}
-                  aria-label={`${n} star${n > 1 ? 's' : ''}`}
+                  aria-label={t('work.progress.star', { count: n })}
                   className="rounded-sm text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <StarIcon weight="fill" className="size-4" />
@@ -119,7 +125,7 @@ export function WorkStatusPopover({ work }: { work: Work }) {
               className="w-fit self-end"
               onClick={close}
             >
-              Skip
+              {t('work.progress.skip')}
             </Button>
           </div>
         </PopoverContent>
@@ -130,7 +136,7 @@ export function WorkStatusPopover({ work }: { work: Work }) {
   return (
     <QuickSelectPopover
       trigger={trigger}
-      options={STATUS_OPTIONS}
+      options={statusOptions}
       value={work.status}
       onSelect={handleSelectStatus}
       open={open}

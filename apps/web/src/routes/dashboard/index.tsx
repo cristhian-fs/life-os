@@ -4,15 +4,38 @@ import { usePendingWishlistSummary } from '#/features/purchase-wishlist/api/get-
 import { useWorkConsumptionSummary } from '#/features/works/api/get-work-consumption-summary'
 import { WorkInProgressList } from '#/features/works/components/work-in-progress-list'
 import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { StatTile } from '@/components/stat-tile'
+import {
+  ListBulletsIcon,
+  ListChecksIcon,
+  VaultIcon,
+} from '@phosphor-icons/react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
 })
 
+// Same icon each domain already uses in the sidebar — one glance ties this
+// section back to where it lives in the nav, no separate legend needed.
+function SectionHeading({
+  icon: Icon,
+  children,
+}: {
+  icon: typeof ListChecksIcon
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className="size-4 text-muted-foreground" />
+      <h3 className="text-sm font-semibold">{children}</h3>
+    </div>
+  )
+}
+
 function RouteComponent() {
+  const { t } = useTranslation()
   const progress = useHabitsProgressSummary()
   const consumption = useWorkConsumptionSummary()
   const wishlist = usePendingWishlistSummary()
@@ -24,49 +47,117 @@ function RouteComponent() {
   return (
     <div className="px-2 py-6">
       <div className="mx-auto w-full max-w-4xl p-6">
-        <h2 className="text-2xl font-medium tracking-tight">Dashboard</h2>
+        <h2 className="text-2xl font-medium tracking-tight">
+          {t('dashboard.title')}
+        </h2>
         <p className="text-sm text-muted-foreground">
-          Where things stand today, across habits, the vault, and your wishlist.
+          {t('dashboard.description')}
         </p>
       </div>
 
+      {/* Each domain is its own group: heading, stats, then that domain's
+          lists — spacing alone (gap-12 between, gap-4/gap-3 within) marks
+          the boundaries, so no topic bleeds into its neighbor. */}
       <div className="rounded-xl bg-card ring-1 ring-foreground/10">
-        <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-6">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 p-6">
           <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-medium">Progress</h3>
-            <div className="px-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <SectionHeading icon={ListChecksIcon}>
+              {t('routes.habits')}
+            </SectionHeading>
+            <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
-                label="This week"
+                label={t('dashboard.stats.completedThisWeek')}
                 value={Math.round(progress.data?.week_conclusion_tax ?? 0)}
                 suffix="%"
                 loading={progress.isLoading}
               />
               <StatTile
-                label="This month"
+                label={t('dashboard.stats.completedThisMonth')}
                 value={Math.round(progress.data?.month_conclusion_tax ?? 0)}
                 suffix="%"
                 loading={progress.isLoading}
               />
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="flex flex-col gap-3">
+                <h4 className="text-xs font-medium text-muted-foreground">
+                  {t('dashboard.missingToday')}
+                </h4>
+                <HabitsMissingToday />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <h4 className="text-xs font-medium text-muted-foreground">
+                  {t('dashboard.currentStreaks')}
+                </h4>
+                {!progress.isLoading && streaksWithProgress?.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {t('dashboard.noStreak')}
+                  </p>
+                )}
+                <div className="flex flex-col gap-2">
+                  {streaksWithProgress?.map((entry) => (
+                    <Card key={entry.habit_id} size="sm">
+                      <CardContent className="flex items-center justify-between">
+                        <Link
+                          to="/dashboard/habits/$habitId"
+                          params={{ habitId: entry.habit_id }}
+                          className="text-sm hover:underline"
+                        >
+                          {entry.habit_name}
+                        </Link>
+                        <span className="text-sm tabular-nums text-muted-foreground">
+                          {t('dashboard.streakDays', {
+                            count: entry.streak?.streak_num ?? 0,
+                          })}
+                        </span>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <SectionHeading icon={VaultIcon}>
+              {t('routes.vault.index')}
+            </SectionHeading>
+            <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
-                label="Consumed"
+                label={t('dashboard.stats.consumed')}
                 value={consumption.data?.consumed_this_month ?? 0}
-                suffix="this month"
+                suffix={t('dashboard.stats.consumedSuffix')}
                 loading={consumption.isLoading}
               />
               <StatTile
-                label="Backlog"
+                label={t('dashboard.stats.backlog')}
                 value={consumption.data?.backlog_now ?? 0}
-                suffix="items"
+                suffix={t('dashboard.stats.itemsSuffix')}
                 loading={consumption.isLoading}
               />
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-medium text-muted-foreground">
+                {t('dashboard.inProgress')}
+              </h4>
+              <WorkInProgressList />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <SectionHeading icon={ListBulletsIcon}>
+              {t('routes.purchaseWishlist')}
+            </SectionHeading>
+            <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
-                label="Wishlist pending"
+                label={t('dashboard.stats.pending')}
                 value={wishlist.data?.pending_count ?? 0}
-                suffix="items"
+                suffix={t('dashboard.stats.itemsSuffix')}
                 loading={wishlist.isLoading}
               />
               <StatTile
-                label="Wishlist total"
+                label={t('dashboard.stats.estimatedTotal')}
                 value={(
                   (wishlist.data?.pending_total_estimated_cents ?? 0) / 100
                 ).toLocaleString(undefined, {
@@ -76,50 +167,6 @@ function RouteComponent() {
                 suffix=""
                 loading={wishlist.isLoading}
               />
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-medium">In progress</h3>
-            <WorkInProgressList />
-          </div>
-
-          <Separator />
-
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-medium">Missing today</h3>
-              <HabitsMissingToday />
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-medium">Current streaks</h3>
-              {!progress.isLoading && streaksWithProgress?.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  No habit is on a streak right now.
-                </p>
-              )}
-              <div className="flex flex-col gap-2">
-                {streaksWithProgress?.map((entry) => (
-                  <Card key={entry.habit_id} size="sm">
-                    <CardContent className="flex items-center justify-between">
-                      <Link
-                        to="/dashboard/habits/$habitId"
-                        params={{ habitId: entry.habit_id }}
-                        className="text-sm hover:underline"
-                      >
-                        {entry.habit_name}
-                      </Link>
-                      <span className="text-sm tabular-nums text-muted-foreground">
-                        {entry.streak?.streak_num} day
-                        {entry.streak?.streak_num === 1 ? '' : 's'}
-                      </span>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
             </div>
           </div>
         </div>

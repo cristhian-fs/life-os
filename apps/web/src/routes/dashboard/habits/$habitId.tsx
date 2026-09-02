@@ -34,25 +34,45 @@ import { StatTile } from '@/components/stat-tile'
 import { CheckCircleIcon } from '@phosphor-icons/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/dashboard/habits/$habitId')({
   component: RouteComponent,
 })
 
-const periodLabel: Record<HabitPeriodRequest, string> = {
-  week: 'Last 7 days',
-  month: 'Last 30 days',
-  '3months': 'Last 3 months',
-  '6months': 'Last 6 months',
-  year: 'Last year',
-  all: 'All time',
-}
+// Plain array since HabitPeriodRequest has no runtime enum to enumerate.
+const PERIODS: HabitPeriodRequest[] = [
+  'week',
+  'month',
+  '3months',
+  '6months',
+  'year',
+  'all',
+]
 
 function RouteComponent() {
   const { habitId } = Route.useParams()
   const navigate = useNavigate()
   const [period, setPeriod] = useState<HabitPeriodRequest>('month')
 
+  const { t } = useTranslation('translations')
+
+  function periodLabel(value: HabitPeriodRequest): string {
+    switch (value) {
+      case 'week':
+        return t('habits.detail.period.week')
+      case 'month':
+        return t('habits.detail.period.month')
+      case '3months':
+        return t('habits.detail.period.3months')
+      case '6months':
+        return t('habits.detail.period.6months')
+      case 'year':
+        return t('habits.detail.period.year')
+      case 'all':
+        return t('habits.detail.period.all')
+    }
+  }
   const habit = useHabit({ habitId })
   const bestStreaks = useHabitBestStreaks({ habitId })
   const scoreHistory = useHabitScoreHistory({ params: { id: habitId, period } })
@@ -86,7 +106,9 @@ function RouteComponent() {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-medium">{h.name}</h2>
-            {!isActive && <Badge variant="warning">Archived</Badge>}
+            {!isActive && (
+              <Badge variant="warning">{t('habits.status.archived')}</Badge>
+            )}
           </div>
           {h.description && (
             <p className="text-xs text-muted-foreground">{h.description}</p>
@@ -101,7 +123,7 @@ function RouteComponent() {
               onClick={() => checkIn.checkIn({ value_boolean: !done })}
             >
               <CheckCircleIcon weight={done ? 'fill' : 'regular'} />
-              {done ? 'Done today' : 'Mark done'}
+              {done ? t('habits.card.doneToday') : t('habits.card.markDone')}
             </Button>
           )}
           <HabitActionsMenu
@@ -119,13 +141,17 @@ function RouteComponent() {
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
           <div className="grid grid-cols-3">
             <StatTile
-              label="Current streak"
+              label={t('habits.detail.currentStreak')}
               value={currentStreak}
               suffix="days"
             />
-            <StatTile label="Best streak" value={bestStreak} suffix="days" />
             <StatTile
-              label={periodLabel[period]}
+              label={t('habits.detail.bestStreak')}
+              value={bestStreak}
+              suffix="days"
+            />
+            <StatTile
+              label={periodLabel(period)}
               value={avgCompletion}
               suffix="% completion"
               loading={scoreHistory.isLoading}
@@ -136,20 +162,22 @@ function RouteComponent() {
 
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium">History</h3>
+              <h3 className="text-sm font-medium">
+                {t('habits.detail.history')}
+              </h3>
               <Select
                 value={period}
                 onValueChange={(v) => setPeriod(v as HabitPeriodRequest)}
               >
                 <SelectTrigger size="sm">
                   <SelectValue>
-                    {(value: HabitPeriodRequest) => periodLabel[value]}
+                    {(value: HabitPeriodRequest) => periodLabel(value)}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(periodLabel).map(([value, label]) => (
+                  {PERIODS.map((value) => (
                     <SelectItem key={value} value={value}>
-                      {label}
+                      {periodLabel(value)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -170,7 +198,9 @@ function RouteComponent() {
           <Separator />
 
           <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-medium">Best streaks</h3>
+            <h3 className="text-sm font-medium">
+              {t('habits.detail.bestStreaks')}
+            </h3>
             {bestStreaks.isLoading ? (
               <Skeleton className="h-24 w-full" />
             ) : (
@@ -181,7 +211,9 @@ function RouteComponent() {
           <Separator />
 
           <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-medium">Lifetime</h3>
+            <h3 className="text-sm font-medium">
+              {t('habits.detail.lifetime')}
+            </h3>
             {calendarMap.isLoading ? (
               <Skeleton className="h-24 w-full" />
             ) : (

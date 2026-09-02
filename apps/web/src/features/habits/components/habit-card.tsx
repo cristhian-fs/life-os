@@ -15,10 +15,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { CheckIcon, ListChecksIcon } from '@phosphor-icons/react'
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { HabitActionsMenu } from './habit-actions-menu'
 import { HabitCalendarHeatmap } from './habit-calendar-heatmap'
 
 export function HabitCard({ habit }: { habit: Habit }) {
+  const { t } = useTranslation()
   const isActive = habit.status === HabitStatus.ACTIVE
   const checkIn = useCheckInHabit(habit.id)
   const bestStreaks = useHabitBestStreaks({ habitId: habit.id })
@@ -49,7 +51,9 @@ export function HabitCard({ habit }: { habit: Habit }) {
               )}
               disabled={checkIn.isLoading || checkIn.isSaving}
               aria-pressed={done}
-              aria-label={done ? 'Done today' : 'Mark done'}
+              aria-label={
+                done ? t('habits.card.doneToday') : t('habits.card.markDone')
+              }
               onClick={() => checkIn.checkIn({ value_boolean: !done })}
             >
               <CheckIcon weight="bold" />
@@ -82,15 +86,21 @@ export function HabitCard({ habit }: { habit: Habit }) {
               {formatGoal(habit)}
             </p>
           </div>
-          {!isActive && <Badge variant="warning">Archived</Badge>}
+          {!isActive && (
+            <Badge variant="warning">{t('habits.status.archived')}</Badge>
+          )}
           <HabitActionsMenu habit={habit} />
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
           <Badge variant={currentStreak > 0 ? 'default' : 'secondary'}>
-            {currentStreak > 0 ? `${currentStreak}-day streak` : 'No streak'}
+            {currentStreak > 0
+              ? t('habits.card.streak', { count: currentStreak })
+              : t('habits.card.noStreak')}
           </Badge>
-          <Badge variant="secondary">Best: {bestStreak}</Badge>
+          <Badge variant="secondary">
+            {t('habits.card.best', { count: bestStreak })}
+          </Badge>
           <Badge variant="secondary">{avgCompletion}%</Badge>
         </div>
 

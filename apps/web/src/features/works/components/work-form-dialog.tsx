@@ -4,7 +4,14 @@ import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
 import { useUpdateWork } from '#/features/works/api/update-work'
 import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
 import { fetchIsbnCover } from '#/features/works/lib/cover-fetch'
-import { workStatusLabel, workTypeLabel } from '#/features/works/lib/format'
+import {
+  workFormEditDescription,
+  workFormEditTitle,
+  workFormNewDescription,
+  workFormNewTitle,
+  workStatusLabel,
+  workTypeSingular,
+} from '#/features/works/lib/format'
 import { WorkStatus, WorkType } from '#/types/api'
 import type { Work } from '#/types/api'
 import { toast } from '#/components/ui/toast'
@@ -33,8 +40,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { QuestionIcon } from '@phosphor-icons/react'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as z from 'zod'
 import { WorkDatePickerField } from './work-date-picker-field'
 import { WorkImageField } from './work-image-field'
@@ -102,16 +116,19 @@ export function WorkFormDialog({
   type,
   work,
 }: WorkFormDialogProps) {
+  const { t } = useTranslation()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
   const isEdit = !!work
-  const typeLabel = workTypeLabel[type]
 
   const createWork = useCreateWork({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: `${typeLabel} added`, type: 'success' })
+        toast.add({
+          title: t('work.dialog.addedToast', { label: workTypeSingular(type) }),
+          type: 'success',
+        })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -120,7 +137,12 @@ export function WorkFormDialog({
   const updateWork = useUpdateWork({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: `${typeLabel} updated`, type: 'success' })
+        toast.add({
+          title: t('work.dialog.updatedToast', {
+            label: workTypeSingular(type),
+          }),
+          type: 'success',
+        })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -131,7 +153,8 @@ export function WorkFormDialog({
   // a different field (image_url) via the form, not a local <img>.
   const autoOgImage = useFetchOgImage({
     mutationConfig: {
-      onSuccess: (data) => data.url && form.setFieldValue('image_url', data.url),
+      onSuccess: (data) =>
+        data.url && form.setFieldValue('image_url', data.url),
     },
   })
   // Same idea for books: Open Library's cover-by-ISBN endpoint fetched
@@ -180,9 +203,7 @@ export function WorkFormDialog({
           (detail && 'duration_hours' in detail && detail.duration_hours) ||
           null,
         duration_minutes:
-          (detail &&
-            'duration_minutes' in detail &&
-            detail.duration_minutes) ||
+          (detail && 'duration_minutes' in detail && detail.duration_minutes) ||
           null,
       } satisfies DetailValues,
     },
@@ -227,14 +248,12 @@ export function WorkFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEdit
-              ? `Edit ${typeLabel.toLowerCase()}`
-              : `New ${typeLabel.toLowerCase()}`}
+            {isEdit ? workFormEditTitle(type) : workFormNewTitle(type)}
           </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Update details, status, rating, or notes.'
-              : `Add a ${typeLabel.toLowerCase()} to your vault.`}
+              ? workFormEditDescription(type)
+              : workFormNewDescription(type)}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -246,14 +265,18 @@ export function WorkFormDialog({
           <FieldGroup>
             <form.Field
               name="title"
-              validators={{ onBlur: z.string().min(1, 'Title required') }}
+              validators={{
+                onBlur: z.string().min(1, t('work.fields.titleRequired')),
+              }}
             >
               {(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('work.fields.title')}
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
@@ -273,7 +296,25 @@ export function WorkFormDialog({
             <form.Field name="image_url">
               {(field) => (
                 <Field>
-                  <FieldLabel>Cover image</FieldLabel>
+                  <FieldLabel className="flex items-center gap-1.5">
+                    {t('work.fields.coverImage')}
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <button
+                            type="button"
+                            aria-label={t('work.fields.coverImageHelpLabel')}
+                            className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                          />
+                        }
+                      >
+                        <QuestionIcon className="size-3.5" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {t('work.fields.coverImageHelp')}
+                      </TooltipContent>
+                    </Tooltip>
+                  </FieldLabel>
                   <WorkImageField
                     value={field.state.value}
                     onChange={field.handleChange}
@@ -284,7 +325,9 @@ export function WorkFormDialog({
 
             <form.Field
               name="creator"
-              validators={{ onBlur: z.string().min(1, 'Required') }}
+              validators={{
+                onBlur: z.string().min(1, t('work.fields.creatorRequired')),
+              }}
             >
               {(field) => {
                 const isInvalid =
@@ -293,12 +336,12 @@ export function WorkFormDialog({
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
                       {type === WorkType.MOVIE
-                        ? 'Director'
+                        ? t('work.fields.creatorDirector')
                         : type === WorkType.COURSE
-                          ? 'Instructor'
+                          ? t('work.fields.creatorInstructor')
                           : type === WorkType.VIDEO
-                            ? 'Creator'
-                            : 'Author'}
+                            ? t('work.fields.creatorCreator')
+                            : t('work.fields.creatorAuthor')}
                     </FieldLabel>
                     <Input
                       id={field.name}
@@ -321,7 +364,7 @@ export function WorkFormDialog({
                 {(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>
-                      ISBN (optional)
+                      {t('work.fields.isbn')}
                     </FieldLabel>
                     <Input
                       id={field.name}
@@ -341,7 +384,7 @@ export function WorkFormDialog({
                           (file) => file && autoIsbnCover.mutate({ file }),
                         )
                       }}
-                      placeholder="e.g. 9780132350884"
+                      placeholder={t('books.form.isbnPlaceholder')}
                     />
                   </Field>
                 )}
@@ -353,7 +396,9 @@ export function WorkFormDialog({
                 <form.Field name="detail.publisher">
                   {(field) => (
                     <Field className="flex-1">
-                      <FieldLabel htmlFor={field.name}>Publisher</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('work.fields.publisher')}
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         value={field.state.value ?? ''}
@@ -367,7 +412,9 @@ export function WorkFormDialog({
                 <form.Field name="detail.pages">
                   {(field) => (
                     <Field className="flex-1">
-                      <FieldLabel htmlFor={field.name}>Pages</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('work.fields.pages')}
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         type="number"
@@ -391,7 +438,7 @@ export function WorkFormDialog({
                 {(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>
-                      Runtime (minutes)
+                      {t('work.fields.runtimeMinutes')}
                     </FieldLabel>
                     <Input
                       id={field.name}
@@ -412,21 +459,25 @@ export function WorkFormDialog({
               <div className="flex gap-3">
                 <form.Field
                   name="detail.source_name"
-                  validators={{ onBlur: z.string().min(1, 'Source required') }}
+                  validators={{
+                    onBlur: z.string().min(1, t('work.fields.sourceRequired')),
+                  }}
                 >
                   {(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid
                     return (
                       <Field data-invalid={isInvalid} className="flex-1">
-                        <FieldLabel htmlFor={field.name}>Source</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>
+                          {t('work.fields.source')}
+                        </FieldLabel>
                         <Input
                           id={field.name}
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
                           aria-invalid={isInvalid}
-                          placeholder="e.g. The Atlantic"
+                          placeholder={t('articles.form.sourcePlaceholder')}
                         />
                         {isInvalid && (
                           <FieldError errors={field.state.meta.errors} />
@@ -438,7 +489,9 @@ export function WorkFormDialog({
                 <form.Field name="detail.reading_time_minutes">
                   {(field) => (
                     <Field className="flex-1">
-                      <FieldLabel htmlFor={field.name}>Reading time</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('work.fields.readingTime')}
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         type="number"
@@ -462,14 +515,16 @@ export function WorkFormDialog({
                 <form.Field name="detail.platform">
                   {(field) => (
                     <Field className="flex-1">
-                      <FieldLabel htmlFor={field.name}>Platform</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('work.fields.platform')}
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         value={field.state.value ?? ''}
                         onChange={(e) =>
                           field.handleChange(e.target.value || null)
                         }
-                        placeholder="e.g. Coursera"
+                        placeholder={t('courses.form.platformPlaceholder')}
                       />
                     </Field>
                   )}
@@ -478,7 +533,7 @@ export function WorkFormDialog({
                   {(field) => (
                     <Field className="flex-1">
                       <FieldLabel htmlFor={field.name}>
-                        Duration (hours)
+                        {t('work.fields.durationHours')}
                       </FieldLabel>
                       <Input
                         id={field.name}
@@ -503,14 +558,16 @@ export function WorkFormDialog({
                 <form.Field name="detail.platform">
                   {(field) => (
                     <Field className="flex-1">
-                      <FieldLabel htmlFor={field.name}>Platform</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('work.fields.platform')}
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         value={field.state.value ?? ''}
                         onChange={(e) =>
                           field.handleChange(e.target.value || null)
                         }
-                        placeholder="e.g. YouTube"
+                        placeholder={t('videos.form.platformPlaceholder')}
                       />
                     </Field>
                   )}
@@ -519,7 +576,7 @@ export function WorkFormDialog({
                   {(field) => (
                     <Field className="flex-1">
                       <FieldLabel htmlFor={field.name}>
-                        Duration (minutes)
+                        {t('work.fields.durationMinutes')}
                       </FieldLabel>
                       <Input
                         id={field.name}
@@ -542,20 +599,22 @@ export function WorkFormDialog({
             <form.Field name="status">
               {(field) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    {t('work.fields.status')}
+                  </FieldLabel>
                   <Select
                     value={field.state.value}
                     onValueChange={(v) => field.handleChange(v as WorkStatus)}
                   >
                     <SelectTrigger id={field.name} className="w-full">
                       <SelectValue>
-                        {(value: WorkStatus) => workStatusLabel[value]}
+                        {(value: WorkStatus) => workStatusLabel(value)}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {Object.values(WorkStatus).map((status) => (
                         <SelectItem key={status} value={status}>
-                          {workStatusLabel[status]}
+                          {workStatusLabel(status)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -569,7 +628,7 @@ export function WorkFormDialog({
                 {(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>
-                      Started at (optional)
+                      {t('work.fields.startedAt')}
                     </FieldLabel>
                     <WorkDatePickerField
                       id={field.name}
@@ -588,7 +647,7 @@ export function WorkFormDialog({
                     const startedAt = fieldApi.form.getFieldValue('started_at')
                     if (!value || !startedAt) return undefined
                     return new Date(value) < new Date(startedAt)
-                      ? { message: "Can't be before started at" }
+                      ? { message: t('work.fields.completedBeforeStarted') }
                       : undefined
                   },
                 }}
@@ -598,7 +657,7 @@ export function WorkFormDialog({
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>
-                        Completed at (optional)
+                        {t('work.fields.completedAt')}
                       </FieldLabel>
                       <WorkDatePickerField
                         id={field.name}
@@ -618,7 +677,9 @@ export function WorkFormDialog({
               <form.Field name="rating">
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Rating (0-5)</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('work.fields.rating')}
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       type="number"
@@ -639,7 +700,7 @@ export function WorkFormDialog({
             <form.Field
               name="external_url"
               validators={{
-                onBlur: z.string().url('Must be a valid URL').nullable(),
+                onBlur: z.string().url(t('work.fields.linkInvalid')).nullable(),
               }}
             >
               {(field) => {
@@ -647,7 +708,9 @@ export function WorkFormDialog({
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Link</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('work.fields.link')}
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       type="url"
@@ -681,7 +744,9 @@ export function WorkFormDialog({
               <form.Field name="summary">
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Notes</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('work.fields.notes')}
+                    </FieldLabel>
                     <Textarea
                       id={field.name}
                       value={field.state.value ?? ''}
@@ -700,7 +765,7 @@ export function WorkFormDialog({
                 type="submit"
                 disabled={createWork.isPending || updateWork.isPending}
               >
-                {isEdit ? 'Save changes' : `Add ${typeLabel.toLowerCase()}`}
+                {isEdit ? t('work.dialog.saveChanges') : workFormNewTitle(type)}
               </Button>
             </DialogFooter>
           </FieldGroup>

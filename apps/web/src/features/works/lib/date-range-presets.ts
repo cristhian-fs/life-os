@@ -1,3 +1,4 @@
+import i18n from '#/i18n'
 import type { WorkAnalyticsBacklogRequest } from '#/types/api'
 import {
   endOfMonth,
@@ -17,13 +18,24 @@ export const DATE_RANGE_PRESETS = [
 ] as const
 export type DateRangePreset = (typeof DATE_RANGE_PRESETS)[number]
 
-export const dateRangePresetLabel: Record<DateRangePreset, string> = {
-  MTD: 'Month to date',
-  LM: 'Last month',
-  '30D': 'Last 30 days',
-  '90D': 'Last 90 days',
-  YTD: 'Year to date',
-  '365D': 'Last 365 days',
+// Switch, not a Record<DateRangePreset, string> — a Record's value type
+// widens to `string` on access, which i18next's typed t() rejects (same fix
+// as goalPeriodLabel in features/habits/lib/format.ts).
+export function dateRangePresetLabel(preset: DateRangePreset): string {
+  switch (preset) {
+    case 'MTD':
+      return i18n.t('work.dateRangePreset.MTD')
+    case 'LM':
+      return i18n.t('work.dateRangePreset.LM')
+    case '30D':
+      return i18n.t('work.dateRangePreset.30D')
+    case '90D':
+      return i18n.t('work.dateRangePreset.90D')
+    case 'YTD':
+      return i18n.t('work.dateRangePreset.YTD')
+    case '365D':
+      return i18n.t('work.dateRangePreset.365D')
+  }
 }
 
 /** Coarser bucket for a wider range so the backlog chart doesn't render hundreds of bars. */

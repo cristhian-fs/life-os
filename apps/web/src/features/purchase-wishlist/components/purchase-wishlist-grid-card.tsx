@@ -9,13 +9,13 @@ import {
 import type { PurchaseWishlist } from '#/types/api'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { useTranslation } from 'react-i18next'
 
 /** Poster-style card for grid view — vertical, cover art up top. */
-export function PurchaseWishlistGridCard({
-  item,
-}: {
-  item: PurchaseWishlist
-}) {
+export function PurchaseWishlistGridCard({ item }: { item: PurchaseWishlist }) {
+  // Subscribes to language changes so formatPurchasedAt()/formatMoney()
+  // (which read the global i18n singleton, not this hook) re-render on switch.
+  useTranslation()
   const Icon = purchaseWishlistIcon(item)
 
   return (

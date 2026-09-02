@@ -5,9 +5,13 @@ import { WorkActionsMenu } from './work-actions-menu'
 import { WorkProgressActions } from './work-progress-actions'
 import { WorkStatusPopover } from './work-status-popover'
 import { cn } from '#/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 /** Poster-style card for grid view — vertical, cover art up top. */
 export function WorkGridCard({ work }: { work: Work }) {
+  // Subscribes to language changes so formatWorkDetail() (which reads the
+  // global i18n singleton, not this hook) re-renders correctly on switch.
+  useTranslation()
   const Icon = workTypeIcon[work.type]
   const detailLine = formatWorkDetail(work)
 

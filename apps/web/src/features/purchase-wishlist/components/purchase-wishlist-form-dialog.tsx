@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as z from 'zod'
 
 const NO_WORK = 'none'
@@ -50,6 +51,7 @@ export function PurchaseWishlistFormDialog({
   onOpenChange,
   item,
 }: PurchaseWishlistFormDialogProps) {
+  const { t } = useTranslation()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
@@ -60,7 +62,10 @@ export function PurchaseWishlistFormDialog({
   const createItem = useCreatePurchaseWishlist({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: 'Added to wishlist', type: 'success' })
+        toast.add({
+          title: t('purchaseWishlist.form.addedToast'),
+          type: 'success',
+        })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -69,7 +74,10 @@ export function PurchaseWishlistFormDialog({
   const updateItem = useUpdatePurchaseWishlist({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: 'Wishlist item updated', type: 'success' })
+        toast.add({
+          title: t('purchaseWishlist.form.updatedToast'),
+          type: 'success',
+        })
         setOpen(false)
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -105,11 +113,15 @@ export function PurchaseWishlistFormDialog({
       {trigger && <DialogTrigger render={trigger} />}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit item' : 'New wishlist item'}</DialogTitle>
+          <DialogTitle>
+            {isEdit
+              ? t('purchaseWishlist.form.editTitle')
+              : t('purchaseWishlist.form.newTitle')}
+          </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Update the store, title, price, or linked work.'
-              : "Add something you're planning to buy."}
+              ? t('purchaseWishlist.form.editDescription')
+              : t('purchaseWishlist.form.newDescription')}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -121,7 +133,9 @@ export function PurchaseWishlistFormDialog({
           <FieldGroup>
             <form.Field
               name="store_or_url"
-              validators={{ onBlur: z.string().min(1, 'Required') }}
+              validators={{
+                onBlur: z.string().min(1, t('purchaseWishlist.form.required')),
+              }}
             >
               {(field) => {
                 const isInvalid =
@@ -129,7 +143,7 @@ export function PurchaseWishlistFormDialog({
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Store or URL
+                      {t('purchaseWishlist.form.storeOrUrl')}
                     </FieldLabel>
                     <Input
                       id={field.name}
@@ -151,7 +165,7 @@ export function PurchaseWishlistFormDialog({
               {(field) => (
                 <Field>
                   <FieldLabel htmlFor={field.name}>
-                    Linked work (optional)
+                    {t('purchaseWishlist.form.linkedWork')}
                   </FieldLabel>
                   <Select
                     value={field.state.value ?? NO_WORK}
@@ -165,16 +179,18 @@ export function PurchaseWishlistFormDialog({
                         {(value: string) => {
                           const work = candidates.find((w) => w.id === value)
                           return work
-                            ? `${work.title} · ${workTypeLabel[work.type]}`
-                            : 'No work linked'
+                            ? `${work.title} · ${workTypeLabel(work.type)}`
+                            : t('purchaseWishlist.noWorkLinked')
                         }}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NO_WORK}>No work linked</SelectItem>
+                      <SelectItem value={NO_WORK}>
+                        {t('purchaseWishlist.noWorkLinked')}
+                      </SelectItem>
                       {candidates.map((work) => (
                         <SelectItem key={work.id} value={work.id}>
-                          {work.title} · {workTypeLabel[work.type]}
+                          {work.title} · {workTypeLabel(work.type)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -187,7 +203,7 @@ export function PurchaseWishlistFormDialog({
               {(field) => (
                 <Field>
                   <FieldLabel htmlFor={field.name}>
-                    Title (optional)
+                    {t('purchaseWishlist.form.title')}
                   </FieldLabel>
                   <Input
                     id={field.name}
@@ -203,7 +219,9 @@ export function PurchaseWishlistFormDialog({
               <form.Field name="currency">
                 {(field) => (
                   <Field className="w-28 shrink-0">
-                    <FieldLabel htmlFor={field.name}>Currency</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('purchaseWishlist.form.currency')}
+                    </FieldLabel>
                     <Select
                       value={field.state.value}
                       onValueChange={(v) => field.handleChange(v as string)}
@@ -227,7 +245,7 @@ export function PurchaseWishlistFormDialog({
                 {(field) => (
                   <Field className="flex-1">
                     <FieldLabel htmlFor={field.name}>
-                      Estimated price (optional)
+                      {t('purchaseWishlist.form.estimatedPrice')}
                     </FieldLabel>
                     <form.Subscribe selector={(state) => state.values.currency}>
                       {(currency) => (
@@ -249,7 +267,9 @@ export function PurchaseWishlistFormDialog({
                 type="submit"
                 disabled={createItem.isPending || updateItem.isPending}
               >
-                {isEdit ? 'Save changes' : 'Add item'}
+                {isEdit
+                  ? t('purchaseWishlist.form.saveChanges')
+                  : t('purchaseWishlist.form.addItem')}
               </Button>
             </DialogFooter>
           </FieldGroup>

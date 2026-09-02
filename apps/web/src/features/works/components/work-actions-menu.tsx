@@ -2,7 +2,10 @@ import { useDeleteWork } from '#/features/works/api/delete-work'
 import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
 import { useUpdateWork } from '#/features/works/api/update-work'
 import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
-import { fetchIsbnCover, getCoverSource } from '#/features/works/lib/cover-fetch'
+import {
+  fetchIsbnCover,
+  getCoverSource,
+} from '#/features/works/lib/cover-fetch'
 import { toast } from '#/components/ui/toast'
 import type { Work } from '#/types/api'
 import {
@@ -30,22 +33,29 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { WorkFormDialog } from './work-form-dialog'
 
 /** Edit/Delete for one work item — the overflow menu shared by every vault card. */
 export function WorkActionsMenu({ work }: { work: Work }) {
+  const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const deleteWork = useDeleteWork({
     mutationConfig: {
-      onSuccess: () => toast.add({ title: 'Deleted', type: 'success' }),
+      onSuccess: () =>
+        toast.add({ title: t('work.actions.deletedToast'), type: 'success' }),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
   const updateWork = useUpdateWork({
     mutationConfig: {
-      onSuccess: () => toast.add({ title: 'Cover updated', type: 'success' }),
+      onSuccess: () =>
+        toast.add({
+          title: t('work.actions.coverUpdatedToast'),
+          type: 'success',
+        }),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
@@ -72,13 +82,16 @@ export function WorkActionsMenu({ work }: { work: Work }) {
       }
 
       if (!url) {
-        toast.add({ title: 'No cover image found', type: 'error' })
+        toast.add({ title: t('work.actions.noCoverFound'), type: 'error' })
         return
       }
       updateWork.mutate({ id: work.id, data: { image_url: url } })
     } catch (error) {
       toast.add({
-        title: error instanceof Error ? error.message : 'Fetch failed',
+        title:
+          error instanceof Error
+            ? error.message
+            : t('work.actions.fetchFailed'),
         type: 'error',
       })
     }
@@ -89,12 +102,12 @@ export function WorkActionsMenu({ work }: { work: Work }) {
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
           <DotsThreeOutlineIcon />
-          <span className="sr-only">More options</span>
+          <span className="sr-only">{t('work.actions.moreOptions')}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <PencilSimpleIcon />
-            Edit
+            {t('work.actions.edit')}
           </DropdownMenuItem>
           {coverSource && (
             <DropdownMenuItem
@@ -102,7 +115,7 @@ export function WorkActionsMenu({ work }: { work: Work }) {
               disabled={isFetchingCover}
             >
               <DownloadSimpleIcon />
-              Fetch cover
+              {t('work.actions.fetchCover')}
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
@@ -111,7 +124,7 @@ export function WorkActionsMenu({ work }: { work: Work }) {
             onClick={() => setDeleteOpen(true)}
           >
             <TrashIcon />
-            Delete
+            {t('work.actions.delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -126,19 +139,21 @@ export function WorkActionsMenu({ work }: { work: Work }) {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{work.title}"?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('work.actions.deleteConfirmTitle', { title: work.title })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently deletes it from your vault.
+              {t('work.actions.deleteConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('work.actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => deleteWork.mutate({ id: work.id })}
               disabled={deleteWork.isPending}
             >
-              Delete
+              {t('work.actions.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

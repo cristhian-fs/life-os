@@ -16,6 +16,7 @@ import {
   XCircleIcon,
 } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Primary start/finish workflow for a work item — sets started_at/completed_at,
@@ -24,6 +25,7 @@ import { useState } from 'react'
  * outcome, not a peer action to "finished".
  */
 export function WorkProgressActions({ work }: { work: Work }) {
+  const { t } = useTranslation()
   const [abandonOpen, setAbandonOpen] = useState(false)
 
   const updateWork = useUpdateWork({
@@ -73,7 +75,7 @@ export function WorkProgressActions({ work }: { work: Work }) {
         onClick={markStarted}
       >
         <PlayIcon />
-        Mark as started
+        {t('work.progress.markStarted')}
       </Button>
     )
   }
@@ -90,7 +92,7 @@ export function WorkProgressActions({ work }: { work: Work }) {
         onClick={markFinished}
       >
         <CheckIcon />
-        Mark as finished
+        {t('work.progress.markFinished')}
       </Button>
       <Popover open={abandonOpen} onOpenChange={setAbandonOpen}>
         <PopoverTrigger
@@ -104,7 +106,9 @@ export function WorkProgressActions({ work }: { work: Work }) {
           }
         >
           <CaretDownIcon />
-          <span className="sr-only">More finish options</span>
+          <span className="sr-only">
+            {t('work.progress.moreFinishOptions')}
+          </span>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-auto p-1">
           <Button
@@ -115,7 +119,7 @@ export function WorkProgressActions({ work }: { work: Work }) {
             onClick={markAbandoned}
           >
             <XCircleIcon />
-            Mark as abandoned
+            {t('work.progress.markAbandoned')}
           </Button>
         </PopoverContent>
       </Popover>

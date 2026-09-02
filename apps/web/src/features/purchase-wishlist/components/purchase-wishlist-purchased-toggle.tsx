@@ -7,6 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useTranslation } from 'react-i18next'
 
 /** Quick purchased/not-purchased toggle for a wishlist card — sets or clears purchased_at. */
 export function PurchaseWishlistPurchasedToggle({
@@ -14,6 +15,7 @@ export function PurchaseWishlistPurchasedToggle({
 }: {
   item: PurchaseWishlist
 }) {
+  const { t } = useTranslation()
   const updateItem = useUpdatePurchaseWishlist({
     mutationConfig: {
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -38,13 +40,17 @@ export function PurchaseWishlistPurchasedToggle({
             }
             disabled={updateItem.isPending}
             aria-label={
-              purchased ? 'Mark as not purchased' : 'Mark as purchased'
+              purchased
+                ? t('purchaseWishlist.markNotPurchased')
+                : t('purchaseWishlist.markPurchased')
             }
           />
         }
       />
       <TooltipContent>
-        {purchased ? 'Mark as not purchased' : 'Mark as purchased'}
+        {purchased
+          ? t('purchaseWishlist.markNotPurchased')
+          : t('purchaseWishlist.markPurchased')}
       </TooltipContent>
     </Tooltip>
   )

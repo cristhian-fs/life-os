@@ -28,6 +28,7 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { HabitFormDialog } from './habit-form-dialog'
 
 /** Edit/Archive/Delete for one habit — the overflow menu shared by the card and the detail page. */
@@ -39,6 +40,7 @@ export function HabitActionsMenu({
   /** Detail page navigates away after a delete; the card just lets the list re-render. */
   onDeleted?: () => void
 }) {
+  const { t } = useTranslation()
   const isActive = habit.status === HabitStatus.ACTIVE
   const [editOpen, setEditOpen] = useState(false)
   const [archiveOpen, setArchiveOpen] = useState(false)
@@ -46,14 +48,18 @@ export function HabitActionsMenu({
 
   const archiveHabit = useArchiveHabit({
     mutationConfig: {
-      onSuccess: () => toast.add({ title: 'Habit archived', type: 'success' }),
+      onSuccess: () =>
+        toast.add({
+          title: t('habits.actions.archivedToast'),
+          type: 'success',
+        }),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
   const deleteHabit = useDeleteHabit({
     mutationConfig: {
       onSuccess: () => {
-        toast.add({ title: 'Habit deleted', type: 'success' })
+        toast.add({ title: t('habits.actions.deletedToast'), type: 'success' })
         onDeleted?.()
       },
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
@@ -65,17 +71,17 @@ export function HabitActionsMenu({
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
           <DotsThreeOutlineIcon />
-          <span className="sr-only">More options</span>
+          <span className="sr-only">{t('habits.actions.moreOptions')}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <PencilSimpleIcon />
-            Edit
+            {t('habits.actions.edit')}
           </DropdownMenuItem>
           {isActive && (
             <DropdownMenuItem onClick={() => setArchiveOpen(true)}>
               <ArchiveIcon />
-              Archive
+              {t('habits.actions.archive')}
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
@@ -84,7 +90,7 @@ export function HabitActionsMenu({
             onClick={() => setDeleteOpen(true)}
           >
             <TrashIcon />
-            Delete
+            {t('habits.actions.delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -98,19 +104,20 @@ export function HabitActionsMenu({
       <AlertDialog open={archiveOpen} onOpenChange={setArchiveOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Archive "{habit.name}"?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('habits.actions.archiveConfirmTitle', { name: habit.name })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone — archived habits can&apos;t be
-              reactivated yet.
+              {t('habits.actions.archiveConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('habits.actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => archiveHabit.mutate({ id: habit.id })}
               disabled={archiveHabit.isPending}
             >
-              Archive
+              {t('habits.actions.archive')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -119,19 +126,21 @@ export function HabitActionsMenu({
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{habit.name}"?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('habits.actions.deleteConfirmTitle', { name: habit.name })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently deletes the habit and every entry logged for it.
+              {t('habits.actions.deleteConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('habits.actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => deleteHabit.mutate({ id: habit.id })}
               disabled={deleteHabit.isPending}
             >
-              Delete
+              {t('habits.actions.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
