@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 
 // Language names shown as endonyms (each in its own language), not
 // translated — that's the standard convention, same as any OS language menu.
-const LANGUAGES = [
+export const LANGUAGES = [
   { code: 'en-US', label: 'English' },
   { code: 'pt-BR', label: 'Português (Brasil)' },
 ] as const

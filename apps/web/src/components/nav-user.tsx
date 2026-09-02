@@ -15,12 +15,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SignOutIcon } from '@phosphor-icons/react'
+import { GearSixIcon, SignOutIcon } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './language-switcher'
 import { useTheme } from './theme-provider'
 import { getInitials } from '#/lib/utils'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 
 export function NavUser({
   user,
@@ -68,7 +68,7 @@ export function NavUser({
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar>
                 <AvatarImage src={user.image ?? ''} alt={user.name} />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -79,6 +79,10 @@ export function NavUser({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link to="/dashboard/settings" />}>
+            <GearSixIcon />
+            {t('settings.title')}
+          </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               {t('navUser.theme')}

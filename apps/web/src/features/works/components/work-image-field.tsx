@@ -1,4 +1,4 @@
-import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { useUploadImage } from '#/features/uploads/api/upload-image'
 import { toast } from '#/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -16,7 +16,7 @@ export function WorkImageField({
 }) {
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
-  const upload = useUploadWorkImage({
+  const upload = useUploadImage({
     mutationConfig: {
       onSuccess: (data) => onChange(data.url),
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
