@@ -6,9 +6,9 @@ type UploadImageResponse = {
   url: string
 }
 
-// Generic upload endpoint (not scoped to works) — lives here since works is
-// its only caller so far. Move to a shared features/uploads if that changes.
-export const uploadWorkImage = ({
+// Generic upload endpoint, shared by anything that needs an image hosted on
+// R2 — work covers and the user's profile picture today.
+export const uploadImage = ({
   file,
 }: {
   file: File
@@ -18,15 +18,15 @@ export const uploadWorkImage = ({
   return api.post('/uploads/images', formData)
 }
 
-type UseUploadWorkImageOptions = {
-  mutationConfig?: MutationConfig<typeof uploadWorkImage>
+type UseUploadImageOptions = {
+  mutationConfig?: MutationConfig<typeof uploadImage>
 }
 
-export const useUploadWorkImage = ({
+export const useUploadImage = ({
   mutationConfig,
-}: UseUploadWorkImageOptions = {}) => {
+}: UseUploadImageOptions = {}) => {
   return useMutation({
     ...mutationConfig,
-    mutationFn: uploadWorkImage,
+    mutationFn: uploadImage,
   })
 }

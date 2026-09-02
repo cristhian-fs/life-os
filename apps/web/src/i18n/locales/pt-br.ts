@@ -387,5 +387,32 @@ export default {
       streakDays_other: '{{count}} dias',
       noActiveProgress: 'Nada em andamento por agora.',
     },
+    settings: {
+      title: 'Configurações',
+      account: {
+        heading: 'Conta',
+        profilePicture: 'Foto de perfil',
+        uploadImage: 'Enviar imagem',
+        remove: 'Remover',
+        fullName: 'Nome completo',
+        email: 'Email',
+        imageUpdatedToast: 'Foto de perfil atualizada',
+        imageRemovedToast: 'Foto de perfil removida',
+        nameUpdatedToast: 'Nome atualizado',
+      },
+      security: {
+        heading: 'Segurança',
+        currentPassword: 'Senha atual',
+        newPassword: 'Nova senha',
+        passwordHint: 'Deve ter pelo menos 8 caracteres.',
+        changePassword: 'Alterar senha',
+        passwordUpdatedToast: 'Senha atualizada',
+        showPassword: 'Mostrar senha',
+        hidePassword: 'Ocultar senha',
+      },
+      preferences: {
+        heading: 'Preferências',
+      },
+    },
   },
 }

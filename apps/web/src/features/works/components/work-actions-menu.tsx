@@ -1,7 +1,7 @@
 import { useDeleteWork } from '#/features/works/api/delete-work'
 import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
 import { useUpdateWork } from '#/features/works/api/update-work'
-import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { useUploadImage } from '#/features/uploads/api/upload-image'
 import {
   fetchIsbnCover,
   getCoverSource,
@@ -59,7 +59,7 @@ export function WorkActionsMenu({ work }: { work: Work }) {
       onError: (error) => toast.add({ title: error.message, type: 'error' }),
     },
   })
-  const uploadImage = useUploadWorkImage()
+  const uploadImage = useUploadImage()
   const fetchOgImage = useFetchOgImage()
 
   // Dispatches to whichever source applies: ISBN for books, og:image scrape

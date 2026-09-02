@@ -1,8 +1,7 @@
 import {
-  LifebuoyIcon,
+  GearSixIcon,
   ListBulletsIcon,
   ListChecksIcon,
-  PaperPlaneTiltIcon,
   SquaresFourIcon,
   VaultIcon,
 } from '@phosphor-icons/react'
@@ -50,14 +49,9 @@ export function useNavRoutes() {
 
   const navSecondary = [
     {
-      title: 'Support',
-      url: '#',
-      icon: <LifebuoyIcon />,
-    },
-    {
-      title: 'Feedback',
-      url: '#',
-      icon: <PaperPlaneTiltIcon />,
+      title: t('settings.title'),
+      url: '/dashboard/settings',
+      icon: <GearSixIcon />,
     },
   ]
 
