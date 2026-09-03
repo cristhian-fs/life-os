@@ -30,6 +30,7 @@ export function makeHabit(
     unit: null,
     goal_value: randomInt(100),
     goal_period: pick(Object.values(HabitGoalPeriod)),
+    active_weekdays: null,
     ...overrides,
   };
 }

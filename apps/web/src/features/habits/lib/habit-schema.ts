@@ -15,6 +15,7 @@ export const habitFieldsSchema = z.object({
   type: z.enum(HabitType),
   // Only numeric habits track a unit/goal value — a boolean habit is just done-or-not.
   unit: z.string().nullable(),
+  active_weekdays: z.array(z.number().min(1).max(7)).nullable(),
 })
 
 type HabitNumericFields = Pick<

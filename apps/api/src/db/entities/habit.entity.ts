@@ -60,6 +60,9 @@ export class Habit {
   @Column({ type: "enum", enum: HabitStatus, name: "status" })
   status: HabitStatus;
 
+  @Column({ type: "int", array: true, nullable: true, name: "active_weekdays" })
+  active_weekdays: number[] | null;
+
   @CreateDateColumn({
     type: "timestamptz",
     name: "created_at",

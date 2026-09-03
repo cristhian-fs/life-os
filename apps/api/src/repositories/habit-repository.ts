@@ -12,6 +12,7 @@ export type CreateHabitInput = {
   unit?: string | null;
   goal_value?: number | null;
   goal_period: HabitGoalPeriod;
+  active_weekdays: number[] | null;
 };
 
 export interface HabitRepository {

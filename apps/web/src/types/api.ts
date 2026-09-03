@@ -27,6 +27,7 @@ export type Habit = {
   goal_value: number | null
   goal_period: HabitGoalPeriod
   status: HabitStatus
+  active_weekdays: number[] | null
   created_at: string
   updated_at: string
   archived_at: string | null

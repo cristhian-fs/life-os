@@ -22,6 +22,7 @@ describe("Create User Habit Use Case", () => {
         type: HabitType.NUMERIC,
         unit: "ml",
         description: "Drink water description",
+        active_weekdays: null,
       },
     });
 

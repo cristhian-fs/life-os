@@ -12,6 +12,7 @@ export const updateHabitInputSchema = habitFieldsSchema.pick({
   description: true,
   goal_value: true,
   goal_period: true,
+  active_weekdays: true,
 })
 
 export type UpdateHabitInput = z.infer<typeof updateHabitInputSchema>

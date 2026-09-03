@@ -1,6 +1,11 @@
 import { Entry } from "@/db/entities/entry.entity";
 import { HabitType, type Habit } from "@/db/entities/habit.entity";
-import { addUTCDays, diffInUTCDays, utcDateKey } from "./date-buckets";
+import {
+  addUTCDays,
+  diffInUTCDays,
+  utcDateKey,
+  utcISODay,
+} from "./date-buckets";
 
 export type Streak = {
   from: Date;
@@ -19,7 +24,6 @@ export const isSuccess = (entry: Entry, habit: Habit): boolean => {
 
   return false;
 };
-
 export function buildBestStreaks(
   entries: Entry[],
   habit: Habit,
@@ -35,19 +39,27 @@ export function buildBestStreaks(
   let currentStreakStart: Date | null = null;
   let currentStreakLength: number = 0;
   let streaks: Streak[] = [];
-  // The streak still open at endDate, if any — captured before streaks gets
-  // sorted below, since sorting loses which entry was last.
   let currentStreak: Streak | null = null;
 
   const totalDays = diffInUTCDays(startDate, endDate);
   for (let i = 0; i <= totalDays; i++) {
     const day = addUTCDays(startDate, i);
+    const dayIndex = utcISODay(day);
+
+    const isDayApplicable =
+      habit.active_weekdays === null ||
+      habit.active_weekdays.includes(dayIndex);
+
+    if (!isDayApplicable) {
+      continue;
+    }
+
     const entry = mapEntries.get(utcDateKey(day));
     const success = Boolean(entry && isSuccess(entry, habit));
 
     if (success) {
       if (currentStreakLength === 0) {
-        currentStreakStart = entry.date;
+        currentStreakStart = day;
       }
       currentStreakLength += 1;
     } else {
@@ -73,6 +85,7 @@ export function buildBestStreaks(
   }
 
   streaks.sort((a, b) => b.streak_num - a.streak_num);
+  streaks = streaks.slice(0, 5);
 
   return { streaks, currentStreak };
 }

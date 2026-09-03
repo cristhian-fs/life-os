@@ -18,7 +18,8 @@ export class InMemoryHabitsRepository implements HabitRepository {
       entries: [],
       goal_period: data.goal_period,
       goal_value: data.goal_value ?? null,
-      status: HabitStatus.ACTIVE, // sempre ativo na criação — não devia vir de fora
+      status: HabitStatus.ACTIVE,
+      active_weekdays: data.active_weekdays,
       created_at: new Date(),
       updated_at: new Date(),
       archived_at: null,

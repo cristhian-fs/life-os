@@ -8,10 +8,24 @@ import { StatTile } from '@/components/stat-tile'
 import {
   ListBulletsIcon,
   ListChecksIcon,
+  PlusIcon,
   VaultIcon,
 } from '@phosphor-icons/react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { HabitFormDialog } from '#/features/habits/components/habit-form-dialog'
+import { Button } from '#/components/ui/button'
+import { ButtonGroup } from '#/components/ui/button-group'
+import { WorkFormDialog } from '#/features/works/components/work-form-dialog'
+import { workFormNewTitle } from '#/features/works/lib/format'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '#/components/ui/dropdown-menu'
+import { WorkType } from '#/types/api'
+import { PurchaseWishlistFormDialog } from '#/features/purchase-wishlist/components/purchase-wishlist-form-dialog'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
@@ -61,9 +75,19 @@ function RouteComponent() {
       <div className="rounded-xl bg-card ring-1 ring-foreground/10">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 p-6">
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={ListChecksIcon}>
-              {t('routes.habits')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={ListChecksIcon}>
+                {t('routes.habits')}
+              </SectionHeading>
+              <HabitFormDialog
+                trigger={
+                  <Button>
+                    <PlusIcon />
+                    {t('habits.emptyState.newHabit')}
+                  </Button>
+                }
+              />
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.completedThisWeek')}
@@ -120,9 +144,106 @@ function RouteComponent() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={VaultIcon}>
-              {t('routes.vault.index')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={VaultIcon}>
+                {t('routes.vault.index')}
+              </SectionHeading>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline">
+                      {t('dashboard.newItem')}
+                      <div className="h-full flex items-center justify-center pl-1 border-l">
+                        <PlusIcon />
+                      </div>
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent
+                  side="bottom"
+                  align="end"
+                  className="min-w-56"
+                >
+                  <ButtonGroup orientation="vertical" className="w-full">
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.ARTICLE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.ARTICLE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.BOOK}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.BOOK)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.COURSE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.COURSE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.MOVIE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.MOVIE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.VIDEO}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.VIDEO)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                  </ButtonGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.consumed')}
@@ -146,9 +267,19 @@ function RouteComponent() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={ListBulletsIcon}>
-              {t('routes.purchaseWishlist')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={ListBulletsIcon}>
+                {t('routes.purchaseWishlist')}
+              </SectionHeading>
+              <PurchaseWishlistFormDialog
+                trigger={
+                  <Button>
+                    <PlusIcon />
+                    {t('purchaseWishlist.newItem')}
+                  </Button>
+                }
+              />
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.pending')}

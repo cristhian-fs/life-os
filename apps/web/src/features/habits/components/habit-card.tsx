@@ -2,7 +2,7 @@ import { useHabitBestStreaks } from '#/features/habits/api/get-habit-best-streak
 import { useHabitCalendarMap } from '#/features/habits/api/get-habit-calendar-map'
 import { useCheckInHabit } from '#/features/habits/api/use-check-in-habit'
 import { NumericCheckIn } from '#/features/habits/components/numeric-check-in'
-import { formatGoal } from '#/features/habits/lib/format'
+import { formatGoal, formatWeekdays } from '#/features/habits/lib/format'
 import {
   deriveStreaks,
   isDoneToday,
@@ -102,6 +102,7 @@ export function HabitCard({ habit }: { habit: Habit }) {
             {t('habits.card.best', { count: bestStreak })}
           </Badge>
           <Badge variant="secondary">{avgCompletion}%</Badge>
+          <Badge variant="secondary">{formatWeekdays(habit)}</Badge>
         </div>
 
         <HabitCalendarHeatmap

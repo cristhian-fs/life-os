@@ -34,6 +34,8 @@ import { toast } from '#/components/ui/toast'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useWeekDays } from '#/hooks/use-weekdays'
+import { cn } from '#/lib/utils'
 
 type HabitFormDialogProps = {
   // Provide `trigger` for an uncontrolled dialog (e.g. the page-level "New
@@ -53,6 +55,7 @@ export function HabitFormDialog({
   habit,
 }: HabitFormDialogProps) {
   const { t } = useTranslation()
+  const { WEEKDAYS } = useWeekDays()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
@@ -85,6 +88,7 @@ export function HabitFormDialog({
       unit: habit?.unit ?? null,
       goal_value: habit?.goal_value ?? null,
       goal_period: habit?.goal_period ?? HabitGoalPeriod.DAILY,
+      active_weekdays: habit?.active_weekdays ?? null,
     },
     validators: { onSubmit: habitSchema },
     onSubmit: async ({ value }) => {
@@ -96,6 +100,7 @@ export function HabitFormDialog({
             description: value.description,
             goal_value: value.goal_value,
             goal_period: value.goal_period,
+            active_weekdays: value.active_weekdays,
           },
         })
       } else {
@@ -107,6 +112,7 @@ export function HabitFormDialog({
             unit: value.unit,
             goal_value: value.goal_value,
             goal_period: value.goal_period,
+            active_weekdays: value.active_weekdays,
           },
         })
       }
@@ -315,6 +321,45 @@ export function HabitFormDialog({
                       ))}
                     </SelectContent>
                   </Select>
+                </Field>
+              )}
+            </form.Field>
+
+            <form.Field name="active_weekdays">
+              {(field) => (
+                <Field aria-labelledby={`${field.name}-label`}>
+                  <FieldLabel id={`${field.name}-label`}>
+                    {t('habits.form.weekDaysLabel')}
+                  </FieldLabel>
+                  <div className="flex flex-wrap gap-2">
+                    {WEEKDAYS.map((day) => {
+                      const value = Number(day.value)
+                      const isSelected = field.state.value?.includes(value)
+
+                      return (
+                        <Button
+                          key={day.value}
+                          type="button"
+                          variant={isSelected ? 'default' : 'outline'}
+                          aria-pressed={isSelected}
+                          aria-label={day.label}
+                          className={cn(
+                            'size-10',
+                            isSelected && 'font-semibold',
+                          )}
+                          onClick={() =>
+                            field.handleChange((prev) =>
+                              isSelected
+                                ? (prev?.filter((d) => d !== value) ?? null)
+                                : [...(prev ?? []), value],
+                            )
+                          }
+                        >
+                          {day.label.slice(0, 3)}
+                        </Button>
+                      )
+                    })}
+                  </div>
                 </Field>
               )}
             </form.Field>

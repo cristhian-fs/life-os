@@ -7,6 +7,9 @@ export default {
         streak: '{{count}}-day streak',
         noStreak: 'No streak',
         best: 'Best: {{count}}',
+        allDays: 'All days',
+        daysPerWeek_one: '{{count}} day/week',
+        daysPerWeek_other: '{{count}} days/week',
       },
       form: {
         editTitle: 'Edit habit',
@@ -30,10 +33,20 @@ export default {
         periodDaily: 'Daily',
         periodWeekly: 'Weekly',
         periodMonthly: 'Monthly',
+        weekDaysLabel: 'Week days',
         saveChanges: 'Save changes',
         createHabit: 'Create habit',
         created: 'Habit created',
         updated: 'Habit updated',
+        week_days: {
+          mon: 'Monday',
+          tue: 'Tuesday',
+          wed: 'Wednesday',
+          thu: 'Thursday',
+          fri: 'Friday',
+          sat: 'Saturday',
+          sun: 'Sunday',
+        },
       },
       emptyState: {
         title: 'No habits yet',
@@ -383,6 +396,7 @@ export default {
       streakDays_one: '{{count}} day',
       streakDays_other: '{{count}} days',
       noActiveProgress: 'Nothing in progress right now.',
+			newItem: 'New'
     },
   },
 }

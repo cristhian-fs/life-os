@@ -26,7 +26,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-w-4xl w-full mx-auto">
         <Tabs defaultValue="active" className="flex-1">
           <div className="flex items-center justify-between">
             <TabsList>
@@ -53,7 +53,7 @@ function RouteComponent() {
             ) : active.length === 0 ? (
               <EmptyHabits />
             ) : (
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {active.map((habit) => (
                   <HabitCard key={habit.id} habit={habit} />
                 ))}
