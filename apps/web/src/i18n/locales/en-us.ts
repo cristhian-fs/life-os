@@ -398,5 +398,32 @@ export default {
       noActiveProgress: 'Nothing in progress right now.',
 			newItem: 'New'
     },
+    settings: {
+      title: 'Settings',
+      account: {
+        heading: 'Account',
+        profilePicture: 'Profile picture',
+        uploadImage: 'Upload image',
+        remove: 'Remove',
+        fullName: 'Full name',
+        email: 'Email',
+        imageUpdatedToast: 'Profile picture updated',
+        imageRemovedToast: 'Profile picture removed',
+        nameUpdatedToast: 'Name updated',
+      },
+      security: {
+        heading: 'Security',
+        currentPassword: 'Current password',
+        newPassword: 'New password',
+        passwordHint: 'Must be at least 8 characters.',
+        changePassword: 'Change password',
+        passwordUpdatedToast: 'Password updated',
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
+      },
+      preferences: {
+        heading: 'Preferences',
+      },
+    },
   },
 }

@@ -26,7 +26,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center justify-between max-w-4xl w-full mx-auto">
+      <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
         <Tabs defaultValue="active" className="flex-1">
           <div className="flex items-center justify-between">
             <TabsList>

@@ -2,7 +2,7 @@ import { useCreateWork } from '#/features/works/api/create-work'
 import type { CreateWorkInput } from '#/features/works/api/create-work'
 import { useFetchOgImage } from '#/features/works/api/fetch-og-image'
 import { useUpdateWork } from '#/features/works/api/update-work'
-import { useUploadWorkImage } from '#/features/works/api/upload-work-image'
+import { useUploadImage } from '#/features/uploads/api/upload-image'
 import { fetchIsbnCover } from '#/features/works/lib/cover-fetch'
 import {
   workFormEditDescription,
@@ -159,7 +159,7 @@ export function WorkFormDialog({
   })
   // Same idea for books: Open Library's cover-by-ISBN endpoint fetched
   // client-side, then re-hosted via the same upload mutation WorkImageField uses.
-  const autoIsbnCover = useUploadWorkImage({
+  const autoIsbnCover = useUploadImage({
     mutationConfig: {
       onSuccess: (data) => form.setFieldValue('image_url', data.url),
     },

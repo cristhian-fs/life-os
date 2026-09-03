@@ -178,7 +178,7 @@ function DayCell({
     cell,
     'rounded-xs outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed',
     canLog && 'cursor-pointer hover:ring-1 hover:ring-foreground/30',
-    point ? 'bg-primary' : 'bg-muted/40',
+    point ? 'bg-primary' : 'bg-muted',
     point && point.percentage === 0 && 'bg-muted',
   )
   const swatchStyle =
