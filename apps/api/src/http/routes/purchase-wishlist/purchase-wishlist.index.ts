@@ -9,6 +9,7 @@ router.use("*", loggedIn);
 export default router
   .openapi(routes.list, handlers.list)
   .openapi(routes.summary, handlers.summary)
+  .openapi(routes.monthlyCounts, handlers.monthlyCounts)
   .openapi(routes.get, handlers.get)
   .openapi(routes.create, handlers.create)
   .openapi(routes.update, handlers.update)

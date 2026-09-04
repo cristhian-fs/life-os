@@ -6,6 +6,8 @@ import { NotFoundSchema } from "@/schemas/common.schema";
 import {
   CreatePurchaseWishlistSchema,
   DeletePurchaseWishlistResponseSchema,
+  MonthlyPurchaseCountsQuerySchema,
+  MonthlyPurchaseCountsResponseSchema,
   PendingWishlistSummaryResponseSchema,
   PurchaseWishlistResponseSchema,
   UpdatePurchaseWishlistSchema,
@@ -67,6 +69,22 @@ export const summary = createRoute({
 });
 
 export type PendingWishlistSummaryRoute = typeof summary;
+
+export const monthlyCounts = createRoute({
+  tags,
+  method: "get",
+  path: "/purchase-wishlist/monthly-counts",
+  summary: "Items created and purchased per month for a given year",
+  request: { query: MonthlyPurchaseCountsQuerySchema },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      MonthlyPurchaseCountsResponseSchema,
+      "Created/purchased counts, one entry per month of the year",
+    ),
+  },
+});
+
+export type MonthlyPurchaseCountsRoute = typeof monthlyCounts;
 
 export const get = createRoute({
   tags,

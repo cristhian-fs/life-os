@@ -15,6 +15,16 @@ export interface PendingWishlistSummary {
   totalEstimatedCents: number;
 }
 
+export type CreatedByMonthCount = Array<{
+  month: Date;
+  count: number;
+}>;
+
+export type PurchasedByMonthCount = Array<{
+  month: Date;
+  count: number;
+}>;
+
 export interface PurchaseWishlistRepository {
   create(habit: CreatePurchaseWishlistInput): Promise<PurchaseWishlist>;
   findById(habitId: string): Promise<PurchaseWishlist | null>;
@@ -23,4 +33,12 @@ export interface PurchaseWishlistRepository {
   delete(habitId: string): Promise<void>;
   // Dashboard: count + summed estimated price of items with purchased_at IS NULL
   getPendingSummary(userId: string): Promise<PendingWishlistSummary>;
+  countCreatedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<CreatedByMonthCount>;
+  countPurchasedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<PurchasedByMonthCount>;
 }

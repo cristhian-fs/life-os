@@ -78,3 +78,15 @@ export const PendingWishlistSummaryResponseSchema = z.object({
   pending_count: z.number(),
   pending_total_estimated_cents: z.number(),
 });
+
+export const MonthlyPurchaseCountsQuerySchema = z.object({
+  year: z.coerce.number().int(),
+});
+
+export const MonthlyPurchaseCountsResponseSchema = z.array(
+  z.object({
+    month: z.string().datetime(),
+    created: z.number(),
+    purchased: z.number(),
+  }),
+);

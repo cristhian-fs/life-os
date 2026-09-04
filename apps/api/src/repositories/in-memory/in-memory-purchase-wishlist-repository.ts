@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { type PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import type {
+  CreatedByMonthCount,
   CreatePurchaseWishlistInput,
   PendingWishlistSummary,
+  PurchasedByMonthCount,
   PurchaseWishlistRepository,
 } from "@/repositories/purchase-wishlist-repository";
 
@@ -80,5 +82,45 @@ export class InMemoryPurchaseWishlistRepository implements PurchaseWishlistRepos
         0,
       ),
     };
+  }
+
+  async countCreatedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<CreatedByMonthCount> {
+    return this.countByMonth(userId, year, (item) => item.created_at);
+  }
+
+  async countPurchasedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<PurchasedByMonthCount> {
+    return this.countByMonth(userId, year, (item) => item.purchased_at);
+  }
+
+  // Mirrors the typeorm repo's date_trunc('month', ...) grouping: only months
+  // with at least one row are returned, gaps are filled later by buildPurchaseTimeline.
+  private countByMonth(
+    userId: string,
+    year: number,
+    dateOf: (item: PurchaseWishlist) => Date | null,
+  ): CreatedByMonthCount {
+    const counts = new Map<number, number>();
+
+    for (const item of this.items) {
+      if (item.user_id !== userId) continue;
+      const date = dateOf(item);
+      if (!date || date.getUTCFullYear() !== year) continue;
+
+      const monthIndex = date.getUTCMonth();
+      counts.set(monthIndex, (counts.get(monthIndex) ?? 0) + 1);
+    }
+
+    return Array.from(counts.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([monthIndex, count]) => ({
+        month: new Date(Date.UTC(year, monthIndex, 1)),
+        count,
+      }));
   }
 }
