@@ -8,6 +8,7 @@ export class HabitPresenter {
       user_id: habit.user_id,
       name: habit.name,
       description: habit.description,
+      icon: habit.icon,
       type: habit.type,
       unit: habit.unit,
       goal_value: habit.goal_value,

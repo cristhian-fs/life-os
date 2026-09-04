@@ -19,6 +19,7 @@ export default {
           'Hábitos que você marca diariamente, semanalmente ou mensalmente.',
         name: 'Nome',
         namePlaceholder: 'Ler 20 páginas',
+        iconPicker: 'Escolher um ícone',
         description: 'Descrição',
         descriptionPlaceholder: 'Por que esse hábito importa',
         type: 'Tipo',

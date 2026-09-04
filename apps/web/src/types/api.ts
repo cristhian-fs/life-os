@@ -22,6 +22,7 @@ export type Habit = {
   user_id: string
   name: string
   description: string | null
+  icon: string | null
   type: HabitType
   unit: string | null
   goal_value: number | null

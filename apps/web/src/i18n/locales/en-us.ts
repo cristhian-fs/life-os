@@ -18,6 +18,7 @@ export default {
         newDescription: 'Habits you check in on daily, weekly, or monthly.',
         name: 'Name',
         namePlaceholder: 'Read 20 pages',
+        iconPicker: 'Pick an icon',
         description: 'Description',
         descriptionPlaceholder: 'Why this habit matters',
         type: 'Type',

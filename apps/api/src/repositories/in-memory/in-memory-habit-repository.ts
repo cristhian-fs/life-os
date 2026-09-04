@@ -14,6 +14,7 @@ export class InMemoryHabitsRepository implements HabitRepository {
       user_id: data.user_id,
       name: data.name,
       description: data.description ?? null,
+      icon: data.icon ?? null,
       unit: data.unit ?? null,
       entries: [],
       goal_period: data.goal_period,

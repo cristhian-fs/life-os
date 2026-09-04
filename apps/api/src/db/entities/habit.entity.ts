@@ -45,6 +45,10 @@ export class Habit {
   @Column({ type: "text", nullable: true })
   description: string | null;
 
+  // A single emoji character, picked via the frimousse emoji picker.
+  @Column({ type: "text", nullable: true })
+  icon: string | null;
+
   @Column({ type: "enum", enum: HabitType, name: "type" })
   type: HabitType;
 

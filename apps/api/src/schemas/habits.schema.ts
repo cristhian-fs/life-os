@@ -11,6 +11,7 @@ export const HabitsResponseSchema = z.object({
   user_id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
+  icon: z.string().nullable(),
   type: z.enum(HabitType),
   unit: z.string().nullable(),
   goal_value: z.number().nullable(),
@@ -32,6 +33,7 @@ export type HabitResponse = z.infer<typeof HabitsResponseSchema>;
 export const CreateHabitSchema = HabitsResponseSchema.pick({
   name: true,
   description: true,
+  icon: true,
   goal_period: true,
   goal_value: true,
   type: true,
@@ -42,6 +44,7 @@ export const CreateHabitSchema = HabitsResponseSchema.pick({
 export const UpdateHabitSchema = HabitsResponseSchema.pick({
   name: true,
   description: true,
+  icon: true,
   goal_value: true,
   goal_period: true,
   active_weekdays: true,

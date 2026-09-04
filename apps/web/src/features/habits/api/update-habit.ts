@@ -6,10 +6,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type z from 'zod'
 import { getHabitDetailQueryOptions } from './get-habit'
 
-// The API can only patch these 4 fields — type/unit are fixed at creation.
+// The API can only patch these fields — type/unit are fixed at creation.
 export const updateHabitInputSchema = habitFieldsSchema.pick({
   name: true,
   description: true,
+  icon: true,
   goal_value: true,
   goal_period: true,
   active_weekdays: true,

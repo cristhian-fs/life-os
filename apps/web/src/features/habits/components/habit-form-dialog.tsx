@@ -2,6 +2,7 @@ import { useCreateHabit } from '#/features/habits/api/create-habit'
 import { useUpdateHabit } from '#/features/habits/api/update-habit'
 import { goalPeriodLabel } from '#/features/habits/lib/format'
 import { habitSchema } from '#/features/habits/lib/habit-schema'
+import { IconPicker } from '#/features/habits/components/icon-picker'
 import { HabitGoalPeriod, HabitType } from '#/types/api'
 import type { Habit } from '#/types/api'
 import { Button } from '@/components/ui/button'
@@ -84,6 +85,7 @@ export function HabitFormDialog({
     defaultValues: {
       name: habit?.name ?? '',
       description: habit?.description ?? '',
+      icon: habit?.icon ?? null,
       type: habit?.type ?? HabitType.BOOLEAN,
       unit: habit?.unit ?? null,
       goal_value: habit?.goal_value ?? null,
@@ -98,6 +100,7 @@ export function HabitFormDialog({
           data: {
             name: value.name,
             description: value.description,
+            icon: value.icon,
             goal_value: value.goal_value,
             goal_period: value.goal_period,
             active_weekdays: value.active_weekdays,
@@ -108,6 +111,7 @@ export function HabitFormDialog({
           data: {
             name: value.name,
             description: value.description,
+            icon: value.icon,
             type: value.type,
             unit: value.unit,
             goal_value: value.goal_value,
@@ -149,15 +153,26 @@ export function HabitFormDialog({
                     <FieldLabel htmlFor={field.name}>
                       {t('habits.form.name')}
                     </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder={t('habits.form.namePlaceholder')}
-                    />
+                    <div className="flex gap-2">
+                      <form.Field name="icon">
+                        {(iconField) => (
+                          <IconPicker
+                            value={iconField.state.value}
+                            onChange={iconField.handleChange}
+                          />
+                        )}
+                      </form.Field>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder={t('habits.form.namePlaceholder')}
+                        className="flex-1"
+                      />
+                    </div>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

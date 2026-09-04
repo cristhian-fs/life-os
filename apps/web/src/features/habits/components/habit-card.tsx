@@ -44,10 +44,10 @@ export function HabitCard({ habit }: { habit: Habit }) {
               variant="ghost"
               size="icon"
               className={cn(
-                'size-9 shrink-0 rounded-full',
+                'size-9 shrink-0 rounded-full text-base',
                 done
                   ? 'bg-primary text-primary-foreground hover:bg-primary/80'
-                  : 'bg-muted text-transparent hover:text-muted-foreground',
+                  : 'bg-muted text-muted-foreground hover:bg-muted/70',
               )}
               disabled={checkIn.isLoading || checkIn.isSaving}
               aria-pressed={done}
@@ -56,19 +56,19 @@ export function HabitCard({ habit }: { habit: Habit }) {
               }
               onClick={() => checkIn.checkIn({ value_boolean: !done })}
             >
-              <CheckIcon weight="bold" />
+              {habit.icon ?? <CheckIcon weight="bold" />}
             </Button>
           ) : (
             <div
               className={cn(
-                'flex size-9 shrink-0 items-center justify-center rounded-full',
+                'flex size-9 shrink-0 items-center justify-center rounded-full text-base',
                 done
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-transparent',
+                  : 'bg-muted text-muted-foreground',
               )}
               aria-hidden
             >
-              <CheckIcon weight="bold" />
+              {habit.icon ?? <CheckIcon weight="bold" />}
             </div>
           )}
           <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">

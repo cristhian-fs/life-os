@@ -23,19 +23,19 @@ function MissingTodayCard({ habit }: { habit: Habit }) {
             <Button
               variant="ghost"
               size="icon"
-              className="size-9 shrink-0 rounded-full bg-muted text-transparent hover:text-muted-foreground"
+              className="size-9 shrink-0 rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/70"
               disabled={checkIn.isLoading || checkIn.isSaving}
               aria-label="Mark done"
               onClick={() => checkIn.checkIn({ value_boolean: true })}
             >
-              <CheckIcon weight="bold" />
+              {habit.icon ?? <CheckIcon weight="bold" />}
             </Button>
           ) : (
             <div
-              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-base text-muted-foreground"
               aria-hidden
             >
-              <ListChecksIcon className="size-4" />
+              {habit.icon ?? <ListChecksIcon className="size-4" />}
             </div>
           )}
           <div className="min-w-0 flex-1">
