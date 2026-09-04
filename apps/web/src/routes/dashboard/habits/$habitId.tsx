@@ -76,7 +76,15 @@ function RouteComponent() {
   const habit = useHabit({ habitId })
   const bestStreaks = useHabitBestStreaks({ habitId })
   const scoreHistory = useHabitScoreHistory({ params: { id: habitId, period } })
-  const historyBar = useHabitHistoryBar({ params: { id: habitId, period } })
+  // The bar chart counts accomplished days per bucket — only informative
+  // once a bucket spans more than a day (the API buckets 'week'/'month' by
+  // day, same as the line chart above, so "count" there can only ever be 0
+  // or 1: a duplicate of the completion line with less resolution).
+  const showHistoryBar = period !== 'week' && period !== 'month'
+  const historyBar = useHabitHistoryBar({
+    params: { id: habitId, period },
+    queryConfig: { enabled: showHistoryBar },
+  })
   const calendarMap = useHabitCalendarMap({ habitId })
   const checkIn = useCheckInHabit(habitId)
 
@@ -102,40 +110,41 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-6 p-2 py-8">
-      <div className="mx-auto max-w-4xl w-full flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-medium">{h.name}</h2>
-            {!isActive && (
-              <Badge variant="warning">{t('habits.status.archived')}</Badge>
+      <div className="mx-auto max-w-4xl w-full flex flex-col gap-4">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-medium">{h.name}</h2>
+              {!isActive && (
+                <Badge variant="warning">{t('habits.status.archived')}</Badge>
+              )}
+            </div>
+            {h.description && (
+              <p className="text-xs text-muted-foreground">{h.description}</p>
             )}
+            <p className="text-xs text-muted-foreground">{formatGoal(h)}</p>
           </div>
-          {h.description && (
-            <p className="text-xs text-muted-foreground">{h.description}</p>
-          )}
-          <p className="text-xs text-muted-foreground">{formatGoal(h)}</p>
+          <div className="flex items-center gap-2">
+            {isActive && h.type === HabitType.BOOLEAN && (
+              <Button
+                variant={done ? 'default' : 'secondary'}
+                disabled={checkIn.isLoading || checkIn.isSaving}
+                onClick={() => checkIn.checkIn({ value_boolean: !done })}
+              >
+                <CheckCircleIcon weight={done ? 'fill' : 'regular'} />
+                {done ? t('habits.card.doneToday') : t('habits.card.markDone')}
+              </Button>
+            )}
+            <HabitActionsMenu
+              habit={h}
+              onDeleted={() => navigate({ to: '/dashboard/habits' })}
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {isActive && h.type === HabitType.BOOLEAN && (
-            <Button
-              variant={done ? 'default' : 'secondary'}
-              disabled={checkIn.isLoading || checkIn.isSaving}
-              onClick={() => checkIn.checkIn({ value_boolean: !done })}
-            >
-              <CheckCircleIcon weight={done ? 'fill' : 'regular'} />
-              {done ? t('habits.card.doneToday') : t('habits.card.markDone')}
-            </Button>
-          )}
-          <HabitActionsMenu
-            habit={h}
-            onDeleted={() => navigate({ to: '/dashboard/habits' })}
-          />
-        </div>
+        {isActive && h.type === HabitType.NUMERIC && (
+          <NumericCheckIn habit={h} checkIn={checkIn} variant="row" />
+        )}
       </div>
-
-      {isActive && h.type === HabitType.NUMERIC && (
-        <NumericCheckIn habit={h} checkIn={checkIn} variant="row" />
-      )}
 
       <div className="rounded-xl bg-card p-6 ring-1 ring-foreground/10">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
@@ -186,13 +195,18 @@ function RouteComponent() {
             {scoreHistory.isLoading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
-              <HabitScoreHistoryChart data={scoreHistory.data ?? []} />
+              <div className="h-48 w-full">
+                <HabitScoreHistoryChart data={scoreHistory.data ?? []} />
+              </div>
             )}
-            {historyBar.isLoading ? (
-              <Skeleton className="h-48 w-full" />
-            ) : (
-              <HabitHistoryBarChart data={historyBar.data ?? []} />
-            )}
+            {showHistoryBar &&
+              (historyBar.isLoading ? (
+                <Skeleton className="h-48 w-full" />
+              ) : (
+                <div className="h-48 w-full">
+                  <HabitHistoryBarChart data={historyBar.data ?? []} />
+                </div>
+              ))}
           </div>
 
           <Separator />

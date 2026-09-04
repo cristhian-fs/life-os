@@ -40,6 +40,10 @@ export class PurchaseWishlist {
   @Column({ type: "text", name: "currency", nullable: true })
   currency: string | null;
 
+  // Only used when no work is linked — a linked work's own image_url is shown instead.
+  @Column({ type: "text", name: "image_url", nullable: true })
+  image_url: string | null;
+
   @Column({ type: "text" })
   store_or_url: string;
 

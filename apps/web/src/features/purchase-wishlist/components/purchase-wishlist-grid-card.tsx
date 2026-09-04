@@ -17,13 +17,14 @@ export function PurchaseWishlistGridCard({ item }: { item: PurchaseWishlist }) {
   // (which read the global i18n singleton, not this hook) re-render on switch.
   useTranslation()
   const Icon = purchaseWishlistIcon(item)
+  const imageUrl = item.work?.image_url ?? item.image_url
 
   return (
     <Card className="gap-0 overflow-hidden bg-transparent p-0">
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
-        {item.work?.image_url ? (
+        {imageUrl ? (
           <img
-            src={item.work.image_url}
+            src={imageUrl}
             alt=""
             className="absolute inset-0 size-full object-cover"
           />

@@ -1,12 +1,11 @@
 import type { WorkAnalyticsBacklogResponse } from '#/types/api'
+import { EvilBarChart } from '#/components/evilcharts/charts/recharts-bar-chart'
+import type { ChartConfig } from '#/components/evilcharts/ui/recharts-chart'
 import {
-  ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import type { ChartConfig } from '@/components/ui/chart'
+} from '#/components/evilcharts/ui/recharts-tooltip'
 import { format, parseISO } from 'date-fns'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { useTranslation } from 'react-i18next'
 
 function formatTick(date: string) {
@@ -23,36 +22,30 @@ export function WorkBacklogChart({
   const chartConfig = {
     count: {
       label: t('work.overview.toConsumeItemsSeries'),
-      color: 'var(--primary)',
+      colors: { light: ['var(--primary)'], dark: ['var(--primary)'] },
     },
   } satisfies ChartConfig
 
   return (
-    <ChartContainer config={chartConfig} className="aspect-auto h-48 w-full">
-      <BarChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="bucket_start"
-          tickFormatter={formatTick}
-          tickLine={false}
-          axisLine={false}
-          minTickGap={24}
-        />
-        <YAxis
-          allowDecimals={false}
-          tickLine={false}
-          axisLine={false}
-          width={32}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(v) => formatTick(String(v))}
-            />
-          }
-        />
-        <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-      </BarChart>
-    </ChartContainer>
+    <EvilBarChart
+      data={data}
+      config={chartConfig}
+      className="aspect-auto h-48 w-full"
+    >
+      <EvilBarChart.Grid />
+      <EvilBarChart.XAxis
+        dataKey="bucket_start"
+        tickFormatter={formatTick}
+        minTickGap={24}
+      />
+      <EvilBarChart.YAxis allowDecimals={false} width={32} />
+      <ChartTooltip
+        cursor={false}
+        content={
+          <ChartTooltipContent labelFormatter={(v) => formatTick(String(v))} />
+        }
+      />
+      <EvilBarChart.Bar dataKey="count" variant="gradient" />
+    </EvilBarChart>
   )
 }

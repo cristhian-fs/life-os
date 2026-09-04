@@ -17,7 +17,8 @@
     "test:e2e:watch": "vitest --project e2e",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "seed": "npx tsx src/scripts/seed-books.ts"
+    "seed": "npx tsx src/scripts/seed-books.ts",
+    "seed:demo": "npx tsx src/scripts/seed-demo-data.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1117.0",
@@ -42,6 +43,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
     "@types/node": "^26.2.0",
     "dotenv": "^17.4.2",
     "tsup": "^8.5.1",

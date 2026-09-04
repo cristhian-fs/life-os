@@ -2,6 +2,7 @@ import { useCreateHabit } from '#/features/habits/api/create-habit'
 import { useUpdateHabit } from '#/features/habits/api/update-habit'
 import { goalPeriodLabel } from '#/features/habits/lib/format'
 import { habitSchema } from '#/features/habits/lib/habit-schema'
+import { IconPicker } from '#/features/habits/components/icon-picker'
 import { HabitGoalPeriod, HabitType } from '#/types/api'
 import type { Habit } from '#/types/api'
 import { Button } from '@/components/ui/button'
@@ -34,6 +35,8 @@ import { toast } from '#/components/ui/toast'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useWeekDays } from '#/hooks/use-weekdays'
+import { cn } from '#/lib/utils'
 
 type HabitFormDialogProps = {
   // Provide `trigger` for an uncontrolled dialog (e.g. the page-level "New
@@ -53,6 +56,7 @@ export function HabitFormDialog({
   habit,
 }: HabitFormDialogProps) {
   const { t } = useTranslation()
+  const { WEEKDAYS } = useWeekDays()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
@@ -81,10 +85,12 @@ export function HabitFormDialog({
     defaultValues: {
       name: habit?.name ?? '',
       description: habit?.description ?? '',
+      icon: habit?.icon ?? null,
       type: habit?.type ?? HabitType.BOOLEAN,
       unit: habit?.unit ?? null,
       goal_value: habit?.goal_value ?? null,
       goal_period: habit?.goal_period ?? HabitGoalPeriod.DAILY,
+      active_weekdays: habit?.active_weekdays ?? null,
     },
     validators: { onSubmit: habitSchema },
     onSubmit: async ({ value }) => {
@@ -94,8 +100,10 @@ export function HabitFormDialog({
           data: {
             name: value.name,
             description: value.description,
+            icon: value.icon,
             goal_value: value.goal_value,
             goal_period: value.goal_period,
+            active_weekdays: value.active_weekdays,
           },
         })
       } else {
@@ -103,10 +111,12 @@ export function HabitFormDialog({
           data: {
             name: value.name,
             description: value.description,
+            icon: value.icon,
             type: value.type,
             unit: value.unit,
             goal_value: value.goal_value,
             goal_period: value.goal_period,
+            active_weekdays: value.active_weekdays,
           },
         })
       }
@@ -143,15 +153,26 @@ export function HabitFormDialog({
                     <FieldLabel htmlFor={field.name}>
                       {t('habits.form.name')}
                     </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder={t('habits.form.namePlaceholder')}
-                    />
+                    <div className="flex gap-2">
+                      <form.Field name="icon">
+                        {(iconField) => (
+                          <IconPicker
+                            value={iconField.state.value}
+                            onChange={iconField.handleChange}
+                          />
+                        )}
+                      </form.Field>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder={t('habits.form.namePlaceholder')}
+                        className="flex-1"
+                      />
+                    </div>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -315,6 +336,45 @@ export function HabitFormDialog({
                       ))}
                     </SelectContent>
                   </Select>
+                </Field>
+              )}
+            </form.Field>
+
+            <form.Field name="active_weekdays">
+              {(field) => (
+                <Field aria-labelledby={`${field.name}-label`}>
+                  <FieldLabel id={`${field.name}-label`}>
+                    {t('habits.form.weekDaysLabel')}
+                  </FieldLabel>
+                  <div className="flex flex-wrap gap-2">
+                    {WEEKDAYS.map((day) => {
+                      const value = Number(day.value)
+                      const isSelected = field.state.value?.includes(value)
+
+                      return (
+                        <Button
+                          key={day.value}
+                          type="button"
+                          variant={isSelected ? 'default' : 'outline'}
+                          aria-pressed={isSelected}
+                          aria-label={day.label}
+                          className={cn(
+                            'size-10',
+                            isSelected && 'font-semibold',
+                          )}
+                          onClick={() =>
+                            field.handleChange((prev) =>
+                              isSelected
+                                ? (prev?.filter((d) => d !== value) ?? null)
+                                : [...(prev ?? []), value],
+                            )
+                          }
+                        >
+                          {day.label.slice(0, 3)}
+                        </Button>
+                      )
+                    })}
+                  </div>
                 </Field>
               )}
             </form.Field>

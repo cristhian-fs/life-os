@@ -2,7 +2,7 @@ import { useHabitBestStreaks } from '#/features/habits/api/get-habit-best-streak
 import { useHabitCalendarMap } from '#/features/habits/api/get-habit-calendar-map'
 import { useCheckInHabit } from '#/features/habits/api/use-check-in-habit'
 import { NumericCheckIn } from '#/features/habits/components/numeric-check-in'
-import { formatGoal } from '#/features/habits/lib/format'
+import { formatGoal, formatWeekdays } from '#/features/habits/lib/format'
 import {
   deriveStreaks,
   isDoneToday,
@@ -44,10 +44,10 @@ export function HabitCard({ habit }: { habit: Habit }) {
               variant="ghost"
               size="icon"
               className={cn(
-                'size-9 shrink-0 rounded-full',
+                'size-9 shrink-0 rounded-full text-base',
                 done
                   ? 'bg-primary text-primary-foreground hover:bg-primary/80'
-                  : 'bg-muted text-transparent hover:text-muted-foreground',
+                  : 'bg-muted text-muted-foreground hover:bg-muted/70',
               )}
               disabled={checkIn.isLoading || checkIn.isSaving}
               aria-pressed={done}
@@ -56,19 +56,19 @@ export function HabitCard({ habit }: { habit: Habit }) {
               }
               onClick={() => checkIn.checkIn({ value_boolean: !done })}
             >
-              <CheckIcon weight="bold" />
+              {habit.icon ?? <CheckIcon weight="bold" />}
             </Button>
           ) : (
             <div
               className={cn(
-                'flex size-9 shrink-0 items-center justify-center rounded-full',
+                'flex size-9 shrink-0 items-center justify-center rounded-full text-base',
                 done
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-transparent',
+                  : 'bg-muted text-muted-foreground',
               )}
               aria-hidden
             >
-              <CheckIcon weight="bold" />
+              {habit.icon ?? <CheckIcon weight="bold" />}
             </div>
           )}
           <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
@@ -102,6 +102,7 @@ export function HabitCard({ habit }: { habit: Habit }) {
             {t('habits.card.best', { count: bestStreak })}
           </Badge>
           <Badge variant="secondary">{avgCompletion}%</Badge>
+          <Badge variant="secondary">{formatWeekdays(habit)}</Badge>
         </div>
 
         <HabitCalendarHeatmap

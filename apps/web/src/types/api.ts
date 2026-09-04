@@ -22,11 +22,13 @@ export type Habit = {
   user_id: string
   name: string
   description: string | null
+  icon: string | null
   type: HabitType
   unit: string | null
   goal_value: number | null
   goal_period: HabitGoalPeriod
   status: HabitStatus
+  active_weekdays: number[] | null
   created_at: string
   updated_at: string
   archived_at: string | null
@@ -208,6 +210,7 @@ export type PurchaseWishlist = {
   title: string | null
   estimated_price_in_cents: number | null
   currency: string | null
+  image_url: string | null
   store_or_url: string
   purchased_at: string | null
   created_at: string
@@ -221,6 +224,14 @@ export type PendingWishlistSummaryResponse = {
   pending_count: number
   pending_total_estimated_cents: number
 }
+
+export type MonthlyPurchaseCounts = {
+  month: string
+  created: number
+  purchased: number
+}
+
+export type MonthlyPurchaseCountsResponse = MonthlyPurchaseCounts[]
 
 // WORKS ANALYTICS
 // ====================

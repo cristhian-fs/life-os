@@ -26,10 +26,12 @@ export function makeHabit(
     user_id: randomUUID(),
     name: `Habit ${randomUUID().slice(0, 8)}`,
     description: null,
+    icon: null,
     type: pick(Object.values(HabitType)),
     unit: null,
     goal_value: randomInt(100),
     goal_period: pick(Object.values(HabitGoalPeriod)),
+    active_weekdays: null,
     ...overrides,
   };
 }

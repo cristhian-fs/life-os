@@ -10,11 +10,13 @@ import * as z from 'zod'
 export const habitFieldsSchema = z.object({
   name: z.string().min(1, 'Name required'),
   description: z.string().min(1, 'Description required'),
+  icon: z.string().nullable(),
   goal_value: z.number().nullable(),
   goal_period: z.enum(HabitGoalPeriod),
   type: z.enum(HabitType),
   // Only numeric habits track a unit/goal value — a boolean habit is just done-or-not.
   unit: z.string().nullable(),
+  active_weekdays: z.array(z.number().min(1).max(7)).nullable(),
 })
 
 type HabitNumericFields = Pick<

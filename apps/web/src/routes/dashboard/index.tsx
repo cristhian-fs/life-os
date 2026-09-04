@@ -1,17 +1,42 @@
 import { useHabitsProgressSummary } from '#/features/habits/api/get-habits-progress-summary'
 import { HabitsMissingToday } from '#/features/habits/components/habits-missing-today'
 import { usePendingWishlistSummary } from '#/features/purchase-wishlist/api/get-pending-wishlist-summary'
+import { usePurchaseWishlistMonthlyCounts } from '#/features/purchase-wishlist/api/get-purchase-wishlist-monthly-counts'
+import { PurchaseWishlistMonthlyChart } from '#/features/purchase-wishlist/components/purchase-wishlist-monthly-chart'
 import { useWorkConsumptionSummary } from '#/features/works/api/get-work-consumption-summary'
 import { WorkInProgressList } from '#/features/works/components/work-in-progress-list'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import { StatTile } from '@/components/stat-tile'
 import {
   ListBulletsIcon,
   ListChecksIcon,
+  PlusIcon,
   VaultIcon,
 } from '@phosphor-icons/react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { HabitFormDialog } from '#/features/habits/components/habit-form-dialog'
+import { Button } from '#/components/ui/button'
+import { ButtonGroup } from '#/components/ui/button-group'
+import { WorkFormDialog } from '#/features/works/components/work-form-dialog'
+import { workFormNewTitle } from '#/features/works/lib/format'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '#/components/ui/dropdown-menu'
+import { WorkType } from '#/types/api'
+import { PurchaseWishlistFormDialog } from '#/features/purchase-wishlist/components/purchase-wishlist-form-dialog'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
@@ -34,11 +59,24 @@ function SectionHeading({
   )
 }
 
+const CURRENT_YEAR = new Date().getFullYear()
+const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i)
+
 function RouteComponent() {
   const { t } = useTranslation()
   const progress = useHabitsProgressSummary()
   const consumption = useWorkConsumptionSummary()
   const wishlist = usePendingWishlistSummary()
+  const [wishlistYear, setWishlistYear] = useState(CURRENT_YEAR)
+  const monthlyCounts = usePurchaseWishlistMonthlyCounts({
+    year: wishlistYear,
+  })
+  // The API always returns 12 months for the year — for the current year,
+  // drop months that haven't happened yet instead of charting a flat zero tail.
+  const monthlyCountsToDate =
+    wishlistYear === CURRENT_YEAR
+      ? monthlyCounts.data?.slice(0, new Date().getMonth() + 1)
+      : monthlyCounts.data
 
   const streaksWithProgress = progress.data?.streaks.filter(
     (s) => s.streak !== null,
@@ -61,9 +99,19 @@ function RouteComponent() {
       <div className="rounded-xl bg-card ring-1 ring-foreground/10">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 p-6">
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={ListChecksIcon}>
-              {t('routes.habits')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={ListChecksIcon}>
+                {t('routes.habits')}
+              </SectionHeading>
+              <HabitFormDialog
+                trigger={
+                  <Button>
+                    <PlusIcon />
+                    {t('habits.emptyState.newHabit')}
+                  </Button>
+                }
+              />
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.completedThisWeek')}
@@ -120,9 +168,106 @@ function RouteComponent() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={VaultIcon}>
-              {t('routes.vault.index')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={VaultIcon}>
+                {t('routes.vault.index')}
+              </SectionHeading>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline">
+                      {t('dashboard.newItem')}
+                      <div className="h-full flex items-center justify-center pl-1 border-l">
+                        <PlusIcon />
+                      </div>
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent
+                  side="bottom"
+                  align="end"
+                  className="min-w-56"
+                >
+                  <ButtonGroup orientation="vertical" className="w-full">
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.ARTICLE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.ARTICLE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.BOOK}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.BOOK)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.COURSE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.COURSE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.MOVIE}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.MOVIE)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                    <DropdownMenuItem
+                      render={
+                        <WorkFormDialog
+                          type={WorkType.VIDEO}
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              className="w-full justify-start"
+                            >
+                              {workFormNewTitle(WorkType.VIDEO)}
+                            </Button>
+                          }
+                        />
+                      }
+                    />
+                  </ButtonGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.consumed')}
@@ -146,9 +291,19 @@ function RouteComponent() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <SectionHeading icon={ListBulletsIcon}>
-              {t('routes.purchaseWishlist')}
-            </SectionHeading>
+            <div className="flex items-center justify-between">
+              <SectionHeading icon={ListBulletsIcon}>
+                {t('routes.purchaseWishlist')}
+              </SectionHeading>
+              <PurchaseWishlistFormDialog
+                trigger={
+                  <Button>
+                    <PlusIcon />
+                    {t('purchaseWishlist.newItem')}
+                  </Button>
+                }
+              />
+            </div>
             <div className="px-2 grid grid-cols-2 gap-2">
               <StatTile
                 label={t('dashboard.stats.pending')}
@@ -167,6 +322,35 @@ function RouteComponent() {
                 suffix=""
                 loading={wishlist.isLoading}
               />
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-medium text-muted-foreground">
+                  {t('purchaseWishlist.chart.title')}
+                </h4>
+                <Select
+                  value={String(wishlistYear)}
+                  onValueChange={(v) => setWishlistYear(Number(v))}
+                >
+                  <SelectTrigger size="sm">
+                    <SelectValue>{(value: string) => value}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {YEAR_OPTIONS.map((year) => (
+                      <SelectItem key={year} value={String(year)}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {monthlyCounts.isLoading ? (
+                <Skeleton className="h-48 w-full" />
+              ) : (
+                <PurchaseWishlistMonthlyChart
+                  data={monthlyCountsToDate ?? []}
+                />
+              )}
             </div>
           </div>
         </div>

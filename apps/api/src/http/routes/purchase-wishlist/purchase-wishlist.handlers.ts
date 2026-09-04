@@ -7,6 +7,7 @@ import { TypeORMPurchaseWishlistRepository } from "@/repositories/typeorm/typeor
 import { TypeORMWorkRepository } from "@/repositories/typeorm/typeorm-work-repository";
 import { CreatePurchaseWishlistUseCase } from "@/use-cases/create-purchase-wishlist-use-case";
 import { DeletePurchaseWishlistUseCase } from "@/use-cases/delete-purchase-wishlist-use-case";
+import { GetPurchaseWishlistCountByMonthUseCase } from "@/use-cases/get-purchase-items-count-by-month";
 import { GetPurchaseWishlistUseCase } from "@/use-cases/get-purchase-wishlist-use-case";
 import { GetUserPurchaseWishlistUseCase } from "@/use-cases/get-user-purchase-wishlist-use-case";
 import { PendingWishlistSummaryUseCase } from "@/use-cases/pending-wishlist-summary-use-case";
@@ -16,6 +17,7 @@ import type {
   DeletePurchaseWishlistRoute,
   GetPurchaseWishlistRoute,
   ListPurchaseWishlistRoute,
+  MonthlyPurchaseCountsRoute,
   PendingWishlistSummaryRoute,
   UpdatePurchaseWishlistRoute,
 } from "./purchase-wishlist.routes";
@@ -103,6 +105,32 @@ export const summary: AppRouteHandler<PendingWishlistSummaryRoute> = async (
       pending_count: count,
       pending_total_estimated_cents: totalEstimatedCents,
     },
+    HttpStatusCodes.OK,
+  );
+};
+
+export const monthlyCounts: AppRouteHandler<
+  MonthlyPurchaseCountsRoute
+> = async (c) => {
+  const dataSource = await ensureInitialized();
+  const user = requireUser(c);
+  const { year } = c.req.valid("query");
+
+  const purchaseWishlistRepository = new TypeORMPurchaseWishlistRepository(
+    dataSource,
+  );
+  const useCase = new GetPurchaseWishlistCountByMonthUseCase(
+    purchaseWishlistRepository,
+  );
+
+  const data = await useCase.execute({ userId: user.id, year });
+
+  return c.json(
+    data.map((entry) => ({
+      month: entry.month.toISOString(),
+      created: entry.created,
+      purchased: entry.purchased,
+    })),
     HttpStatusCodes.OK,
   );
 };

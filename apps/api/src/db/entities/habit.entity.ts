@@ -45,6 +45,10 @@ export class Habit {
   @Column({ type: "text", nullable: true })
   description: string | null;
 
+  // A single emoji character, picked via the frimousse emoji picker.
+  @Column({ type: "text", nullable: true })
+  icon: string | null;
+
   @Column({ type: "enum", enum: HabitType, name: "type" })
   type: HabitType;
 
@@ -59,6 +63,9 @@ export class Habit {
 
   @Column({ type: "enum", enum: HabitStatus, name: "status" })
   status: HabitStatus;
+
+  @Column({ type: "int", array: true, nullable: true, name: "active_weekdays" })
+  active_weekdays: number[] | null;
 
   @CreateDateColumn({
     type: "timestamptz",

@@ -2,26 +2,29 @@ import type {
   HabitHistoryBarGraphResponse,
   HabitScoreHistoryResponse,
 } from '#/types/api'
+import { EvilLineChart } from '#/components/evilcharts/charts/recharts-line-chart'
+import { EvilBarChart } from '#/components/evilcharts/charts/recharts-bar-chart'
+import type { ChartConfig } from '#/components/evilcharts/ui/recharts-chart'
 import {
-  ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import type { ChartConfig } from '@/components/ui/chart'
+} from '#/components/evilcharts/ui/recharts-tooltip'
 import { format, parseISO } from 'date-fns'
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from 'recharts'
 import { useTranslation } from 'react-i18next'
 
 function formatTick(date: string) {
   return format(parseISO(date), 'MMM d')
+}
+
+function DateTooltip() {
+  return (
+    <ChartTooltip
+      cursor={false}
+      content={
+        <ChartTooltipContent labelFormatter={(v) => formatTick(String(v))} />
+      }
+    />
+  )
 }
 
 export function HabitScoreHistoryChart({
@@ -33,38 +36,22 @@ export function HabitScoreHistoryChart({
   const scoreConfig = {
     percentage: {
       label: t('habits.detail.completion'),
-      color: 'var(--primary)',
+      colors: { light: ['var(--primary)'], dark: ['var(--primary)'] },
     },
   } satisfies ChartConfig
 
   return (
-    <ChartContainer config={scoreConfig} className="aspect-auto h-48 w-full">
-      <LineChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="date"
-          tickFormatter={formatTick}
-          tickLine={false}
-          axisLine={false}
-          minTickGap={24}
-        />
-        <YAxis domain={[0, 100]} tickLine={false} axisLine={false} width={32} />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(v) => formatTick(String(v))}
-            />
-          }
-        />
-        <Line
-          dataKey="percentage"
-          type="monotone"
-          stroke="var(--color-percentage)"
-          strokeWidth={2}
-          dot={false}
-        />
-      </LineChart>
-    </ChartContainer>
+    <EvilLineChart data={data} config={scoreConfig} className="h-full w-full">
+      <EvilLineChart.Grid />
+      <EvilLineChart.XAxis
+        dataKey="date"
+        tickFormatter={formatTick}
+        minTickGap={24}
+      />
+      <EvilLineChart.YAxis domain={[0, 100]} width={32} />
+      <DateTooltip />
+      <EvilLineChart.Line dataKey="percentage" curveType="monotone" />
+    </EvilLineChart>
   )
 }
 
@@ -75,35 +62,23 @@ export function HabitHistoryBarChart({
 }) {
   const { t } = useTranslation()
   const countConfig = {
-    count: { label: t('habits.detail.daysDone'), color: 'var(--primary)' },
+    count: {
+      label: t('habits.detail.daysDone'),
+      colors: { light: ['var(--primary)'], dark: ['var(--primary)'] },
+    },
   } satisfies ChartConfig
 
   return (
-    <ChartContainer config={countConfig} className="aspect-auto h-48 w-full">
-      <BarChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="date"
-          tickFormatter={formatTick}
-          tickLine={false}
-          axisLine={false}
-          minTickGap={24}
-        />
-        <YAxis
-          allowDecimals={false}
-          tickLine={false}
-          axisLine={false}
-          width={32}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(v) => formatTick(String(v))}
-            />
-          }
-        />
-        <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-      </BarChart>
-    </ChartContainer>
+    <EvilBarChart data={data} config={countConfig} className="h-full w-full">
+      <EvilBarChart.Grid />
+      <EvilBarChart.XAxis
+        dataKey="date"
+        tickFormatter={formatTick}
+        minTickGap={24}
+      />
+      <EvilBarChart.YAxis allowDecimals={false} width={32} />
+      <DateTooltip />
+      <EvilBarChart.Bar dataKey="count" variant="gradient" />
+    </EvilBarChart>
   )
 }

@@ -7,6 +7,9 @@ export default {
         streak: '{{count}}-day streak',
         noStreak: 'No streak',
         best: 'Best: {{count}}',
+        allDays: 'All days',
+        daysPerWeek_one: '{{count}} day/week',
+        daysPerWeek_other: '{{count}} days/week',
       },
       form: {
         editTitle: 'Edit habit',
@@ -15,6 +18,7 @@ export default {
         newDescription: 'Habits you check in on daily, weekly, or monthly.',
         name: 'Name',
         namePlaceholder: 'Read 20 pages',
+        iconPicker: 'Pick an icon',
         description: 'Description',
         descriptionPlaceholder: 'Why this habit matters',
         type: 'Type',
@@ -30,10 +34,20 @@ export default {
         periodDaily: 'Daily',
         periodWeekly: 'Weekly',
         periodMonthly: 'Monthly',
+        weekDaysLabel: 'Week days',
         saveChanges: 'Save changes',
         createHabit: 'Create habit',
         created: 'Habit created',
         updated: 'Habit updated',
+        week_days: {
+          mon: 'Monday',
+          tue: 'Tuesday',
+          wed: 'Wednesday',
+          thu: 'Thursday',
+          fri: 'Friday',
+          sat: 'Saturday',
+          sun: 'Sunday',
+        },
       },
       emptyState: {
         title: 'No habits yet',
@@ -286,6 +300,11 @@ export default {
       markPurchased: 'Mark as purchased',
       markNotPurchased: 'Mark as not purchased',
       noWorkLinked: 'No work linked',
+      chart: {
+        title: 'Monthly activity',
+        created: 'Added',
+        purchased: 'Purchased',
+      },
       emptyState: {
         title: 'Nothing on your wishlist yet',
         description: "Add something you're planning to buy.",
@@ -309,6 +328,7 @@ export default {
         required: 'Required',
         linkedWork: 'Linked work (optional)',
         title: 'Title (optional)',
+        image: 'Image (optional)',
         currency: 'Currency',
         estimatedPrice: 'Estimated price (optional)',
         saveChanges: 'Save changes',
@@ -383,6 +403,7 @@ export default {
       streakDays_one: '{{count}} day',
       streakDays_other: '{{count}} days',
       noActiveProgress: 'Nothing in progress right now.',
+			newItem: 'New'
     },
     settings: {
       title: 'Settings',

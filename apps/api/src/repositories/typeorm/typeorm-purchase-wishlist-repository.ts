@@ -1,8 +1,10 @@
 import type { DataSource, DeepPartial, Repository } from "typeorm";
 import { PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import type {
+  CreatedByMonthCount,
   CreatePurchaseWishlistInput,
   PendingWishlistSummary,
+  PurchasedByMonthCount,
   PurchaseWishlistRepository,
 } from "@/repositories/purchase-wishlist-repository";
 
@@ -67,5 +69,39 @@ export class TypeORMPurchaseWishlistRepository implements PurchaseWishlistReposi
       count: Number(row?.count ?? 0),
       totalEstimatedCents: Number(row?.total ?? 0),
     };
+  }
+
+  async countCreatedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<CreatedByMonthCount> {
+    const rows = await this.repo
+      .createQueryBuilder("pw")
+      .select("date_trunc('month', pw.created_at)", "month")
+      .addSelect("COUNT(*)", "count")
+      .where("pw.user_id = :userId", { userId })
+      .andWhere("EXTRACT(YEAR FROM pw.created_at) = :year", { year })
+      .groupBy("date_trunc('month', pw.created_at)")
+      .orderBy("month", "ASC")
+      .getRawMany<{ month: Date; count: string }>();
+
+    return rows.map((row) => ({ month: row.month, count: Number(row.count) }));
+  }
+
+  async countPurchasedByMonth(
+    userId: string,
+    year: number,
+  ): Promise<PurchasedByMonthCount> {
+    const rows = await this.repo
+      .createQueryBuilder("pw")
+      .select("date_trunc('month', pw.purchased_at)", "month")
+      .addSelect("COUNT(*)", "count")
+      .where("pw.user_id = :userId", { userId })
+      .andWhere("EXTRACT(YEAR FROM pw.purchased_at) = :year", { year })
+      .groupBy("date_trunc('month', pw.purchased_at)")
+      .orderBy("month", "ASC")
+      .getRawMany<{ month: Date; count: string }>();
+
+    return rows.map((row) => ({ month: row.month, count: Number(row.count) }));
   }
 }

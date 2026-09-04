@@ -11,11 +11,13 @@ export const HabitsResponseSchema = z.object({
   user_id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
+  icon: z.string().nullable(),
   type: z.enum(HabitType),
   unit: z.string().nullable(),
   goal_value: z.number().nullable(),
   goal_period: z.enum(HabitGoalPeriod),
   status: z.enum(HabitStatus),
+  active_weekdays: z.array(z.number().min(1).max(7)).nullable().optional(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
   archived_at: z.string().datetime().nullable(),
@@ -31,17 +33,21 @@ export type HabitResponse = z.infer<typeof HabitsResponseSchema>;
 export const CreateHabitSchema = HabitsResponseSchema.pick({
   name: true,
   description: true,
+  icon: true,
   goal_period: true,
   goal_value: true,
   type: true,
   unit: true,
+  active_weekdays: true,
 });
 
 export const UpdateHabitSchema = HabitsResponseSchema.pick({
   name: true,
   description: true,
+  icon: true,
   goal_value: true,
   goal_period: true,
+  active_weekdays: true,
 }).partial();
 
 export type UpdateHabitInput = z.infer<typeof UpdateHabitSchema>;

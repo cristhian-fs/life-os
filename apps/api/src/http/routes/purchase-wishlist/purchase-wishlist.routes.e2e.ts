@@ -464,4 +464,80 @@ describe("[E2E] Purchase Wishlist Routes", () => {
 
     await test.deleteUser(user.id);
   });
+
+  it("should return created/purchased counts per month on GET /purchase-wishlist/monthly-counts", async () => {
+    const user = test.createUser({ email: "test@example.com" });
+    await test.saveUser(user);
+
+    const repo = TestDataSource.getRepository(PurchaseWishlist);
+    await repo.save(
+      repo.create({
+        user_id: user.id,
+        store_or_url: "https://amazon.com",
+        created_at: new Date(Date.UTC(2026, 0, 15)),
+      }),
+    );
+    await repo.save(
+      repo.create({
+        user_id: user.id,
+        store_or_url: "https://amazon.com",
+        created_at: new Date(Date.UTC(2026, 2, 1)),
+        purchased_at: new Date(Date.UTC(2026, 2, 20)),
+      }),
+    );
+
+    const headers = await test.getAuthHeaders({ userId: user.id });
+
+    const res = await app.request(
+      "/api/purchase-wishlist/monthly-counts?year=2026",
+      { headers },
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toHaveLength(12);
+    expect(body[0]).toEqual(
+      expect.objectContaining({ created: 1, purchased: 0 }),
+    );
+    expect(body[2]).toEqual(
+      expect.objectContaining({ created: 1, purchased: 1 }),
+    );
+    expect(body[1]).toEqual(
+      expect.objectContaining({ created: 0, purchased: 0 }),
+    );
+
+    await test.deleteUser(user.id);
+  });
+
+  it("should not count another user's items in monthly-counts", async () => {
+    const owner = test.createUser({ email: "owner@example.com" });
+    await test.saveUser(owner);
+    const other = test.createUser({ email: "other@example.com" });
+    await test.saveUser(other);
+
+    const repo = TestDataSource.getRepository(PurchaseWishlist);
+    await repo.save(
+      repo.create({
+        user_id: owner.id,
+        store_or_url: "https://amazon.com",
+        created_at: new Date(Date.UTC(2026, 0, 1)),
+      }),
+    );
+
+    const headers = await test.getAuthHeaders({ userId: other.id });
+
+    const res = await app.request(
+      "/api/purchase-wishlist/monthly-counts?year=2026",
+      { headers },
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.every((entry: { created: number }) => entry.created === 0)).toBe(
+      true,
+    );
+
+    await test.deleteUser(owner.id);
+    await test.deleteUser(other.id);
+  });
 });
