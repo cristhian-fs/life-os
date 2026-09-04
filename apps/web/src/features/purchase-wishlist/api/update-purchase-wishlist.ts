@@ -11,6 +11,7 @@ export const updatePurchaseWishlistInputSchema = z.object({
   title: z.string().nullable().optional(),
   estimated_price_in_cents: z.number().int().nonnegative().nullable().optional(),
   currency: z.string().max(10).nullable().optional(),
+  image_url: z.string().url().nullable().optional(),
   store_or_url: z.string().min(1).optional(),
   purchased_at: z.string().nullable().optional(),
 })

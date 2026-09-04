@@ -17,6 +17,7 @@ export class InMemoryPurchaseWishlistRepository implements PurchaseWishlistRepos
       title: data.title ?? null,
       estimated_price_in_cents: data.estimated_price_in_cents ?? null,
       currency: data.currency ?? null,
+      image_url: data.image_url ?? null,
       purchased_at: data.purchased_at ?? null,
       store_or_url: data.store_or_url,
       created_at: new Date(),

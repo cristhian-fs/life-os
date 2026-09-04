@@ -14,6 +14,7 @@ export const CreatePurchaseWishlistSchema = z.object({
     .nullable()
     .optional(),
   currency: currencySchema,
+  image_url: z.string().url().nullable().optional(),
   store_or_url: z.string().min(1),
 });
 
@@ -31,6 +32,7 @@ export const UpdatePurchaseWishlistSchema = z.object({
     .nullable()
     .optional(),
   currency: currencySchema,
+  image_url: z.string().url().nullable().optional(),
   store_or_url: z.string().min(1).optional(),
   purchased_at: z.string().datetime().nullable().optional(),
 });
@@ -57,6 +59,7 @@ export const PurchaseWishlistResponseSchema = z.object({
   title: z.string().nullable(),
   estimated_price_in_cents: z.number().nullable(),
   currency: z.string().nullable(),
+  image_url: z.string().nullable(),
   store_or_url: z.string(),
   purchased_at: z.string().datetime().nullable(),
   created_at: z.string().datetime(),

@@ -323,6 +323,7 @@ export default {
         required: 'Required',
         linkedWork: 'Linked work (optional)',
         title: 'Title (optional)',
+        image: 'Image (optional)',
         currency: 'Currency',
         estimatedPrice: 'Estimated price (optional)',
         saveChanges: 'Save changes',

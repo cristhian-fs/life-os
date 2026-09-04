@@ -46,6 +46,7 @@ export class CreatePurchaseWishlistUseCase {
       title: payload.title,
       estimated_price_in_cents: payload.estimated_price_in_cents,
       currency: payload.currency,
+      image_url: payload.image_url,
       store_or_url: payload.store_or_url,
     });
 

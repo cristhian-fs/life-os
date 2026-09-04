@@ -20,6 +20,7 @@ export class PurchaseWishlistPresenter {
       title: item.title,
       estimated_price_in_cents: item.estimated_price_in_cents,
       currency: item.currency,
+      image_url: item.image_url,
       store_or_url: item.store_or_url,
       purchased_at: item.purchased_at?.toISOString() ?? null,
       created_at: item.created_at.toISOString(),

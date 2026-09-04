@@ -16,13 +16,14 @@ export function PurchaseWishlistCard({ item }: { item: PurchaseWishlist }) {
   const { t } = useTranslation()
   const isUrl = /^https?:\/\//.test(item.store_or_url)
   const Icon = purchaseWishlistIcon(item)
+  const imageUrl = item.work?.image_url ?? item.image_url
 
   return (
     <Card className="bg-transparent">
       <CardContent className="flex items-center gap-3">
-        {item.work?.image_url ? (
+        {imageUrl ? (
           <img
-            src={item.work.image_url}
+            src={imageUrl}
             alt=""
             className="size-9 shrink-0 rounded-md object-cover"
           />

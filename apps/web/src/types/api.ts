@@ -210,6 +210,7 @@ export type PurchaseWishlist = {
   title: string | null
   estimated_price_in_cents: number | null
   currency: string | null
+  image_url: string | null
   store_or_url: string
   purchased_at: string | null
   created_at: string

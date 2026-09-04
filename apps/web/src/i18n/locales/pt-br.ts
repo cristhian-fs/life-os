@@ -326,6 +326,7 @@ export default {
         required: 'Obrigatório',
         linkedWork: 'Item vinculado (opcional)',
         title: 'Título (opcional)',
+        image: 'Imagem (opcional)',
         currency: 'Moeda',
         estimatedPrice: 'Preço estimado (opcional)',
         saveChanges: 'Salvar alterações',

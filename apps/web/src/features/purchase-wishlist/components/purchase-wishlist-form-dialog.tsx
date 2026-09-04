@@ -4,6 +4,7 @@ import { MoneyInput } from '#/features/purchase-wishlist/components/money-input'
 import { CURRENCY_PRESETS } from '#/features/purchase-wishlist/lib/currency'
 import { linkableWorks } from '#/features/purchase-wishlist/lib/linkable-works'
 import { useWorks } from '#/features/works/api/get-works'
+import { WorkImageField } from '#/features/works/components/work-image-field'
 import { workTypeLabel } from '#/features/works/lib/format'
 import type { PurchaseWishlist } from '#/types/api'
 import { toast } from '#/components/ui/toast'
@@ -91,6 +92,7 @@ export function PurchaseWishlistFormDialog({
       currency: item?.currency ?? 'USD',
       estimated_price_in_cents: item?.estimated_price_in_cents ?? null,
       work_id: item?.work_id ?? null,
+      image_url: item?.image_url ?? null,
     },
     onSubmit: async ({ value }) => {
       const data = {
@@ -99,6 +101,7 @@ export function PurchaseWishlistFormDialog({
         currency: value.currency,
         estimated_price_in_cents: value.estimated_price_in_cents,
         work_id: value.work_id,
+        image_url: value.image_url,
       }
       if (isEdit) {
         updateItem.mutate({ id: item.id, data })
@@ -210,6 +213,18 @@ export function PurchaseWishlistFormDialog({
                     name={field.name}
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </Field>
+              )}
+            </form.Field>
+
+            <form.Field name="image_url">
+              {(field) => (
+                <Field>
+                  <FieldLabel>{t('purchaseWishlist.form.image')}</FieldLabel>
+                  <WorkImageField
+                    value={field.state.value}
+                    onChange={field.handleChange}
                   />
                 </Field>
               )}
