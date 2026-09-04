@@ -300,6 +300,11 @@ export default {
       markPurchased: 'Mark as purchased',
       markNotPurchased: 'Mark as not purchased',
       noWorkLinked: 'No work linked',
+      chart: {
+        title: 'Monthly activity',
+        created: 'Added',
+        purchased: 'Purchased',
+      },
       emptyState: {
         title: 'Nothing on your wishlist yet',
         description: "Add something you're planning to buy.",

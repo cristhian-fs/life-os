@@ -1,9 +1,19 @@
 import { useHabitsProgressSummary } from '#/features/habits/api/get-habits-progress-summary'
 import { HabitsMissingToday } from '#/features/habits/components/habits-missing-today'
 import { usePendingWishlistSummary } from '#/features/purchase-wishlist/api/get-pending-wishlist-summary'
+import { usePurchaseWishlistMonthlyCounts } from '#/features/purchase-wishlist/api/get-purchase-wishlist-monthly-counts'
+import { PurchaseWishlistMonthlyChart } from '#/features/purchase-wishlist/components/purchase-wishlist-monthly-chart'
 import { useWorkConsumptionSummary } from '#/features/works/api/get-work-consumption-summary'
 import { WorkInProgressList } from '#/features/works/components/work-in-progress-list'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import { StatTile } from '@/components/stat-tile'
 import {
   ListBulletsIcon,
@@ -12,6 +22,7 @@ import {
   VaultIcon,
 } from '@phosphor-icons/react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HabitFormDialog } from '#/features/habits/components/habit-form-dialog'
 import { Button } from '#/components/ui/button'
@@ -48,11 +59,24 @@ function SectionHeading({
   )
 }
 
+const CURRENT_YEAR = new Date().getFullYear()
+const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i)
+
 function RouteComponent() {
   const { t } = useTranslation()
   const progress = useHabitsProgressSummary()
   const consumption = useWorkConsumptionSummary()
   const wishlist = usePendingWishlistSummary()
+  const [wishlistYear, setWishlistYear] = useState(CURRENT_YEAR)
+  const monthlyCounts = usePurchaseWishlistMonthlyCounts({
+    year: wishlistYear,
+  })
+  // The API always returns 12 months for the year — for the current year,
+  // drop months that haven't happened yet instead of charting a flat zero tail.
+  const monthlyCountsToDate =
+    wishlistYear === CURRENT_YEAR
+      ? monthlyCounts.data?.slice(0, new Date().getMonth() + 1)
+      : monthlyCounts.data
 
   const streaksWithProgress = progress.data?.streaks.filter(
     (s) => s.streak !== null,
@@ -298,6 +322,35 @@ function RouteComponent() {
                 suffix=""
                 loading={wishlist.isLoading}
               />
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-medium text-muted-foreground">
+                  {t('purchaseWishlist.chart.title')}
+                </h4>
+                <Select
+                  value={String(wishlistYear)}
+                  onValueChange={(v) => setWishlistYear(Number(v))}
+                >
+                  <SelectTrigger size="sm">
+                    <SelectValue>{(value: string) => value}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {YEAR_OPTIONS.map((year) => (
+                      <SelectItem key={year} value={String(year)}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {monthlyCounts.isLoading ? (
+                <Skeleton className="h-48 w-full" />
+              ) : (
+                <PurchaseWishlistMonthlyChart
+                  data={monthlyCountsToDate ?? []}
+                />
+              )}
             </div>
           </div>
         </div>

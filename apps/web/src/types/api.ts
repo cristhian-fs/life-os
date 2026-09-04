@@ -225,6 +225,14 @@ export type PendingWishlistSummaryResponse = {
   pending_total_estimated_cents: number
 }
 
+export type MonthlyPurchaseCounts = {
+  month: string
+  created: number
+  purchased: number
+}
+
+export type MonthlyPurchaseCountsResponse = MonthlyPurchaseCounts[]
+
 // WORKS ANALYTICS
 // ====================
 

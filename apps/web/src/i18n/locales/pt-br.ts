@@ -302,6 +302,11 @@ export default {
       markPurchased: 'Marcar como comprado',
       markNotPurchased: 'Marcar como não comprado',
       noWorkLinked: 'Nenhum item vinculado',
+      chart: {
+        title: 'Atividade mensal',
+        created: 'Adicionados',
+        purchased: 'Comprados',
+      },
       emptyState: {
         title: 'Ainda nada na sua lista de compras',
         description: 'Adicione algo que você está planejando comprar.',
