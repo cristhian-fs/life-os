@@ -83,8 +83,8 @@ function RouteComponent() {
   )
 
   return (
-    <div className="px-2 py-6">
-      <div className="mx-auto w-full max-w-4xl p-6">
+    <div className="px-2 py-3">
+      <div className="mx-auto w-full max-w-4xl px-6 pb-3">
         <h2 className="text-2xl font-medium tracking-tight">
           {t('dashboard.title')}
         </h2>
@@ -93,9 +93,6 @@ function RouteComponent() {
         </p>
       </div>
 
-      {/* Each domain is its own group: heading, stats, then that domain's
-          lists — spacing alone (gap-12 between, gap-4/gap-3 within) marks
-          the boundaries, so no topic bleeds into its neighbor. */}
       <div className="rounded-xl bg-card ring-1 ring-foreground/10">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 p-6">
           <div className="flex flex-col gap-4">
@@ -126,42 +123,51 @@ function RouteComponent() {
                 loading={progress.isLoading}
               />
             </div>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="flex flex-col gap-3">
-                <h4 className="text-xs font-medium text-muted-foreground">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="flex flex-col bg-muted rounded-lg p-0.5 self-start">
+                <h4 className="text-xs font-medium text-muted-foreground py-1 p-2">
                   {t('dashboard.missingToday')}
                 </h4>
-                <HabitsMissingToday />
+                <div className="p-1 rounded-md bg-card">
+                  <HabitsMissingToday />
+                </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <h4 className="text-xs font-medium text-muted-foreground">
+              <div className="flex flex-col bg-muted rounded-lg p-0.5 self-start">
+                <h4 className="text-xs font-medium text-muted-foreground py-1 p-2">
                   {t('dashboard.currentStreaks')}
                 </h4>
-                {!progress.isLoading && streaksWithProgress?.length === 0 && (
-                  <p className="text-sm text-muted-foreground">
-                    {t('dashboard.noStreak')}
-                  </p>
-                )}
-                <div className="flex flex-col gap-2">
-                  {streaksWithProgress?.map((entry) => (
-                    <Card key={entry.habit_id} size="sm">
-                      <CardContent className="flex items-center justify-between">
-                        <Link
-                          to="/dashboard/habits/$habitId"
-                          params={{ habitId: entry.habit_id }}
-                          className="text-sm hover:underline"
+                <div className="p-1 rounded-md bg-card">
+                  {!progress.isLoading && streaksWithProgress?.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      {t('dashboard.noStreak')}
+                    </p>
+                  ) : (
+                    <div className="flex flex-col divide-y">
+                      {streaksWithProgress?.map((entry) => (
+                        <Card
+                          key={entry.habit_id}
+                          size="sm"
+                          className="bg-transparent ring-0 rounded-none"
                         >
-                          {entry.habit_name}
-                        </Link>
-                        <span className="text-sm tabular-nums text-muted-foreground">
-                          {t('dashboard.streakDays', {
-                            count: entry.streak?.streak_num ?? 0,
-                          })}
-                        </span>
-                      </CardContent>
-                    </Card>
-                  ))}
+                          <CardContent className="flex items-center justify-between">
+                            <Link
+                              to="/dashboard/habits/$habitId"
+                              params={{ habitId: entry.habit_id }}
+                              className="text-sm hover:underline"
+                            >
+                              {entry.habit_name}
+                            </Link>
+                            <span className="text-sm tabular-nums text-muted-foreground">
+                              {t('dashboard.streakDays', {
+                                count: entry.streak?.streak_num ?? 0,
+                              })}
+                            </span>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -282,11 +288,13 @@ function RouteComponent() {
                 loading={consumption.isLoading}
               />
             </div>
-            <div className="flex flex-col gap-3">
-              <h4 className="text-xs font-medium text-muted-foreground">
+            <div className="flex flex-col bg-muted rounded-lg p-0.5">
+              <h4 className="text-xs font-medium text-muted-foreground py-1 p-2">
                 {t('dashboard.inProgress')}
               </h4>
-              <WorkInProgressList />
+              <div className="p-1 rounded-md bg-card">
+                <WorkInProgressList />
+              </div>
             </div>
           </div>
 
@@ -347,9 +355,11 @@ function RouteComponent() {
               {monthlyCounts.isLoading ? (
                 <Skeleton className="h-48 w-full" />
               ) : (
-                <PurchaseWishlistMonthlyChart
-                  data={monthlyCountsToDate ?? []}
-                />
+                <div className="h-48 w-full">
+                  <PurchaseWishlistMonthlyChart
+                    data={monthlyCountsToDate ?? []}
+                  />
+                </div>
               )}
             </div>
           </div>

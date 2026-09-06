@@ -18,8 +18,8 @@ export function PurchaseWishlistPage() {
   const [prefs, setPrefs] = usePurchaseWishlistDisplayPrefs()
 
   return (
-    <div className="flex h-full flex-col gap-6 px-2 py-6">
-      <div className="mx-auto w-full max-w-4xl px-4">
+    <div className="flex h-full flex-col gap-6 px-2 py-3">
+      <div className="mx-auto w-full max-w-4xl px-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-medium tracking-tight">

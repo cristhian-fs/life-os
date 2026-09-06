@@ -16,7 +16,7 @@ function MissingTodayCard({ habit }: { habit: Habit }) {
   const checkIn = useCheckInHabit(habit.id)
 
   return (
-    <Card size="sm" className="bg-transparent">
+    <Card size="sm" className="bg-transparent ring-0 rounded-none">
       <CardContent className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
           {habit.type === HabitType.BOOLEAN ? (
@@ -70,7 +70,7 @@ export function HabitsMissingToday() {
     return (
       <div className="flex flex-col gap-2">
         {Array.from({ length: 2 }, (_, i) => (
-          <Skeleton key={i} className="h-[52px] rounded-lg" />
+          <Skeleton key={i} className="h-13 rounded-lg" />
         ))}
       </div>
     )
@@ -85,7 +85,7 @@ export function HabitsMissingToday() {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col divide-y">
       {habitsToday.data?.map((habit) => (
         <MissingTodayCard key={habit.id} habit={habit} />
       ))}

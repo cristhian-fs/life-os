@@ -22,7 +22,10 @@ export function PurchaseWishlistMonthlyChart({
   const chartConfig = {
     created: {
       label: t('purchaseWishlist.chart.created'),
-      colors: { light: ['var(--muted-foreground)'], dark: ['var(--muted-foreground)'] },
+      colors: {
+        light: ['var(--muted-foreground)'],
+        dark: ['var(--muted-foreground)'],
+      },
     },
     purchased: {
       label: t('purchaseWishlist.chart.purchased'),
@@ -31,7 +34,7 @@ export function PurchaseWishlistMonthlyChart({
   } satisfies ChartConfig
 
   return (
-    <EvilLineChart data={data} config={chartConfig} className="h-48 w-full">
+    <EvilLineChart data={data} config={chartConfig} className="h-full w-full">
       <EvilLineChart.Grid />
       <EvilLineChart.XAxis
         dataKey="month"

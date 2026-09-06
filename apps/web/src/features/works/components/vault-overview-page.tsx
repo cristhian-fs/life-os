@@ -40,8 +40,8 @@ export function VaultOverviewPage() {
   const avgWait = useWorkAvgWishlistWait({ params: { from, to } })
 
   return (
-    <div className="px-2 py-6">
-      <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 p-6">
+    <div className="px-2 py-3">
+      <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 px-6 pb-3">
         <div>
           <h2 className="text-2xl font-medium tracking-tight">
             {t('work.overview.title')}
@@ -98,7 +98,9 @@ export function VaultOverviewPage() {
               {backlog.isLoading ? (
                 <Skeleton className="h-48 w-full" />
               ) : (
-                <WorkBacklogChart data={backlog.data ?? []} />
+                <div className="h-48 w-full">
+                  <WorkBacklogChart data={backlog.data ?? []} />
+                </div>
               )}
             </div>
 
