@@ -14,7 +14,7 @@ export function WorkInProgressList() {
     return (
       <div className="flex flex-col gap-2">
         {Array.from({ length: 2 }, (_, i) => (
-          <Skeleton key={i} className="h-[68px] rounded-lg" />
+          <Skeleton key={i} className="h-17 rounded-lg" />
         ))}
       </div>
     )
@@ -34,9 +34,13 @@ export function WorkInProgressList() {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col divide-y">
       {inProgress.map((work) => (
-        <WorkCard key={work.id} work={work} />
+        <WorkCard
+          key={work.id}
+          work={work}
+          className="ring-0 rounded-none"
+        />
       ))}
     </div>
   )

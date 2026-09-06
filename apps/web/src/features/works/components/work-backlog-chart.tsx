@@ -30,7 +30,7 @@ export function WorkBacklogChart({
     <EvilBarChart
       data={data}
       config={chartConfig}
-      className="aspect-auto h-48 w-full"
+      className="aspect-auto h-full w-full"
     >
       <EvilBarChart.Grid />
       <EvilBarChart.XAxis

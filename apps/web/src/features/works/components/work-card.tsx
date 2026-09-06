@@ -1,19 +1,26 @@
 import { formatWorkDetail, workTypeIcon } from '#/features/works/lib/format'
 import type { Work } from '#/types/api'
 import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { ArrowSquareOutIcon, StarIcon } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { WorkActionsMenu } from './work-actions-menu'
 import { WorkProgressActions } from './work-progress-actions'
 import { WorkStatusPopover } from './work-status-popover'
 
-export function WorkCard({ work }: { work: Work }) {
+export function WorkCard({
+  work,
+  className,
+}: {
+  work: Work
+  className?: string
+}) {
   const { t } = useTranslation()
   const Icon = workTypeIcon[work.type]
   const detailLine = formatWorkDetail(work)
 
   return (
-    <Card className="bg-transparent">
+    <Card className={cn('bg-transparent', className)}>
       <CardContent className="flex items-center gap-3">
         {work.image_url ? (
           <img

@@ -29,8 +29,8 @@ export function VaultTypePage({ type, icon }: { type: WorkType; icon: Icon }) {
   const [prefs, setPrefs] = useVaultDisplayPrefs(type)
 
   return (
-    <div className="flex flex-col gap-6 py-6 px-2 h-full">
-      <div className="mx-auto w-full max-w-4xl px-4">
+    <div className="flex flex-col gap-6 py-3 px-2 h-full">
+      <div className="mx-auto w-full max-w-4xl px-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl tracking-tight font-medium">
