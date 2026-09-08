@@ -1,5 +1,7 @@
 import { useNavRoutes } from '#/hooks/use-nav-routes'
 import { useLocation } from '@tanstack/react-router'
+import { SidebarTrigger } from './ui/sidebar'
+import { Separator } from './ui/separator'
 
 export function DashboardHeader() {
   const { pathname } = useLocation()
@@ -18,13 +20,17 @@ export function DashboardHeader() {
       )
 
   return (
-    <header className="flex items-center gap-2 border-b px-6 py-4">
-      <span className="text-muted-foreground [&_svg]:size-4">
-        {route?.icon}
-      </span>
-      <h1 className="text-sm font-medium">
-        {route?.title ?? dashboardRoute.title}
-      </h1>
+    <header className="flex items-center justify-start border-b px-6 py-4">
+      <SidebarTrigger className="-ml-1" />
+      <Separator orientation="vertical" className="mx-2" />
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground [&_svg]:size-4">
+          {route?.icon}
+        </span>
+        <h1 className="text-sm font-medium">
+          {route?.title ?? dashboardRoute.title}
+        </h1>
+      </div>
     </header>
   )
 }

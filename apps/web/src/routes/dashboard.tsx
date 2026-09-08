@@ -24,7 +24,7 @@ export const Route = createFileRoute('/dashboard')({
 function RouteComponent() {
   return (
     <SidebarProvider>
-      <AppSidebar variant="sidebar" />
+      <AppSidebar />
       <SidebarInset>
         <DashboardHeader />
         <Outlet />

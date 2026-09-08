@@ -383,6 +383,7 @@ export default {
       themeLight: 'Claro',
       themeDark: 'Escuro',
       themeSystem: 'Sistema',
+      colorTheme: 'Tema de cor',
       logOut: 'Sair',
     },
     dashboard: {
