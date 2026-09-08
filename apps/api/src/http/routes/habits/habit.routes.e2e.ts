@@ -552,7 +552,11 @@ describe("[E2E] Habits Routes", () => {
       Habit,
     ).save(
       TestDataSource.getRepository(Habit).create([
-        makeHabitEntity({ user_id: user.id, name: "Done today" }),
+        makeHabitEntity({
+          user_id: user.id,
+          name: "Done today",
+          type: HabitType.BOOLEAN,
+        }),
         makeHabitEntity({ user_id: user.id, name: "Not done today" }),
         {
           ...makeHabitEntity({ user_id: user.id, name: "Archived" }),
@@ -566,6 +570,7 @@ describe("[E2E] Habits Routes", () => {
           user_id: user.id,
           habit_id: done.id,
           date: new Date(),
+          value_boolean: true,
         }),
       ),
     );

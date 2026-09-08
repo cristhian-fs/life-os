@@ -46,7 +46,20 @@ export function resolveDateRange(
   };
 }
 
+// Matches youtube.com/watch?v=<id> (in any query position) and youtu.be/<id>.
+const YOUTUBE_ID_REGEX = /(?:youtube\.com\/watch\?(?:[^#]*&)?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+
+export function extractYoutubeThumbnail(url: string): string | null {
+  const id = url.match(YOUTUBE_ID_REGEX)?.[1];
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+}
+
 export async function fetchOgImage(url: string): Promise<string | null> {
+  // YouTube's own thumbnail CDN is direct and stable — skip scraping the
+  // page (og:image there is flaky behind consent redirects) when we can.
+  const youtubeThumbnail = extractYoutubeThumbnail(url);
+  if (youtubeThumbnail) return youtubeThumbnail;
+
   const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0" } });
   if (!res.ok) return null;
   const html = await res.text();
