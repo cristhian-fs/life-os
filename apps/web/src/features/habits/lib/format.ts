@@ -23,9 +23,9 @@ export function formatGoal(habit: Habit): string {
   return `${period} · ${habit.goal_value ?? '—'}${unit}`
 }
 
-/** "All days" when unrestricted (or all 7 picked), else "N days/week". */
+/** "All days" when unrestricted (null, empty, or all 7 picked), else "N days/week". */
 export function formatWeekdays(habit: Habit): string {
   const days = habit.active_weekdays
-  if (!days || days.length === 7) return i18n.t('habits.card.allDays')
+  if (!days?.length || days.length === 7) return i18n.t('habits.card.allDays')
   return i18n.t('habits.card.daysPerWeek', { count: days.length })
 }
