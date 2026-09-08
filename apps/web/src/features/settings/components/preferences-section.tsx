@@ -1,4 +1,5 @@
 import { LANGUAGES } from '#/components/language-switcher'
+import { ColorThemePicker } from '#/components/color-theme-picker'
 import { useTheme } from '#/components/theme-provider'
 import type { Theme } from '#/components/theme-provider'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -63,6 +64,10 @@ export function PreferencesSection() {
               ))}
             </SelectContent>
           </Select>
+        </Field>
+        <Field>
+          <FieldLabel>{t('navUser.colorTheme')}</FieldLabel>
+          <ColorThemePicker />
         </Field>
       </FieldGroup>
     </div>

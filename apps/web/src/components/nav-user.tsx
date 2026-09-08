@@ -18,9 +18,11 @@ import {
 import { GearSixIcon, SignOutIcon } from '@phosphor-icons/react'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './language-switcher'
+import { ColorThemeSwitcher } from './color-theme-switcher'
 import { useTheme } from './theme-provider'
 import { getInitials } from '#/lib/utils'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { Button } from './ui/button'
 
 export function NavUser({
   user,
@@ -98,16 +100,24 @@ export function NavUser({
                 <DropdownMenuItem onClick={() => setTheme('system')}>
                   {t('navUser.themeSystem')}
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <ColorThemeSwitcher />
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
           <LanguageSwitcher />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
-          <SignOutIcon />
-          {t('navUser.logOut')}
-        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={logout}
+          render={
+            <Button variant={'destructive'}>
+              <SignOutIcon />
+              {t('navUser.logOut')}
+            </Button>
+          }
+          className={'w-full justify-start bg-transparent dark:bg-transparent'}
+        ></DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -1,0 +1,469 @@
+/**
+ * Reference palette: named color themes (accent + surface variants) on top
+ * of the base light/dark tokens. Not wired into the app yet — see chat for
+ * how the keys map onto src/styles.css and how to hook this up.
+ */
+
+:root {
+  color-scheme: light;
+  --bg: oklch(94.31% 0.0006 286.15);
+  --chrome: var(--bg);
+  --panel: oklch(98.21% 0.0007 286.22);
+  --card: oklch(100% 0 0);
+  --card-hover: oklch(98.21% 0.0007 286.22);
+  --popover: oklch(100% 0 0);
+  --popover-hover: oklch(0% 0 0/0.04);
+  --input: oklch(100% 0 0);
+  --button: oklch(100% 0 0);
+  --button-hover: oklch(98.21% 0.0007 286.22);
+  --inverse: var(--fg);
+  --inverse-hover: color-mix(in oklch, var(--fg) 88%, var(--bg));
+  --inverse-text: var(--bg);
+  --secondary: oklch(0% 0 0/0.05);
+  --secondary-hover: oklch(0% 0 0/0.08);
+  --section: oklch(0% 0 0/0.04);
+  --muted: oklch(91.11% 0.0007 286.15);
+  --overlay: oklch(0% 0 0/0.4);
+  --overlay-fg: oklch(100% 0 0);
+  --fg: oklch(23.34% 0.0018 286.15);
+  --text: oklch(23.34% 0.0018 286.15);
+  --muted-foreground-1: color-mix(in oklch, var(--text) 62%, var(--bg));
+  --muted-foreground-2: color-mix(in oklch, var(--text) 48%, var(--bg));
+  --muted-foreground-3: color-mix(in oklch, var(--text) 36%, var(--bg));
+  --text-link: var(--primary);
+  --icon-muted: color-mix(in oklch, var(--text) 42%, var(--bg));
+  --border-1: oklch(0% 0 0/0.08);
+  --border-2: oklch(0% 0 0/0.11);
+  --border-3: oklch(0% 0 0/0.15);
+  --primary: oklch(63.3% 0.109 186.94);
+  --shader-ink: #4f9c8e;
+  --primary-soft: color-mix(in oklch, var(--primary) 20%, transparent);
+  --primary-soft-hover: color-mix(in oklch, var(--primary) 26%, transparent);
+  --primary-text: oklch(100% 0 0);
+  --ring: var(--primary);
+  --destructive: oklch(55% 0.185 27);
+  --destructive-soft: color-mix(in oklch, var(--destructive) 18%, transparent);
+  --destructive-soft-hover: color-mix(
+    in oklch,
+    var(--destructive) 24%,
+    transparent
+  );
+  --destructive-text: oklch(100% 0 0);
+  --warning: oklch(85% 0.155 96);
+  --warning-fg: oklch(62% 0.125 85);
+  --warning-subtle: color-mix(in oklch, var(--warning) 10%, transparent);
+  --success: oklch(61.7% 0.208 142.85);
+  --info: oklch(60% 0.2 250);
+  --complete: oklch(60% 0.19 300);
+  --attention: oklch(72% 0.19 41);
+  --progress: oklch(82.4% 0.179 91.3);
+  --purple: oklch(60% 0.21 292);
+  --pink: oklch(63% 0.2 355);
+  --orange: oklch(65% 0.17 55);
+  --lime: oklch(63% 0.18 128);
+  --diff-add: oklch(56% 0.15 142.85);
+  --diff-del: oklch(55% 0.15 27);
+  --diff-add-wash: color-mix(in lab, var(--card) 94%, var(--diff-add));
+  --diff-del-wash: color-mix(in lab, var(--card) 94%, var(--diff-del));
+  --diff-add-emphasis: color-mix(in oklch, var(--diff-add) 20%, transparent);
+  --diff-del-emphasis: color-mix(in oklch, var(--diff-del) 20%, transparent);
+  --chart-1: oklch(63% 0.12 187);
+  --chart-2: oklch(63% 0.16 20);
+  --chart-3: oklch(60% 0.14 245);
+  --chart-4: oklch(70% 0.14 75);
+  --chart-5: oklch(56% 0.17 285);
+  --chart-6: oklch(64% 0.13 155);
+  --chart-7: oklch(56% 0.17 330);
+  --chart-8: oklch(67% 0.12 220);
+  --chart-other: var(--muted-foreground-3);
+  --gradient-plan-lite: linear-gradient(165deg, #d6ecff 0%, #eef7ff 70%);
+  --gradient-plan-pro: linear-gradient(165deg, #c9f3e9 0%, #effcf8 70%);
+  --gradient-plan-max: linear-gradient(165deg, #ecdcff 0%, #faf3ff 70%);
+  --sh-plate: 0 1px 2px oklch(0% 0 0/0.05);
+  --highlight-top: transparent;
+  --card-hairline: transparent;
+  --sh-card:
+    0 0 0 0.5px oklch(0% 0 0/0.09), 0 3px 6px -2px oklch(0% 0 0/0.02),
+    0 1px 1px oklch(0% 0 0/0.04);
+  --sh-overlay:
+    0 6px 18px oklch(0% 0 0/0.03), 0 3px 9px oklch(0% 0 0/0.04),
+    0 1px 1px oklch(0% 0 0/0.05);
+  --sh-composer:
+    0 4px 12px oklch(0% 0 0/0.025), 0 2px 6px oklch(0% 0 0/0.03),
+    0 1px 1px oklch(0% 0 0/0.04);
+  --sh-sheet:
+    0 9px 48px oklch(0% 0 0/0.08), 0 6px 24px oklch(0% 0 0/0.1),
+    0 1px 1px oklch(0% 0 0/0.04);
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: oklch(14.66% 0.0015 286.15);
+  --chrome: var(--bg);
+  --panel: oklch(18.59% 0.0017 286.15);
+  --card: oklch(20.77% 0.0018 286.15);
+  --card-hover: oklch(23.34% 0.0019 286.15);
+  --popover: oklch(24.31% 0.0019 286.15);
+  --popover-hover: oklch(100% 0 0/0.065);
+  --input: oklch(20.77% 0.0018 286.15);
+  --button: color-mix(in srgb, white 7%, var(--bg));
+  --button-hover: color-mix(in srgb, white 10%, var(--bg));
+  --inverse: var(--fg);
+  --inverse-hover: color-mix(in oklch, var(--fg) 88%, var(--bg));
+  --inverse-text: var(--bg);
+  --secondary: oklch(100% 0 0/0.08);
+  --secondary-hover: oklch(100% 0 0/0.11);
+  --section: oklch(100% 0 0/0.035);
+  --muted: oklch(33.05% 0.0023 286.15);
+  --overlay: oklch(0% 0 0/0.55);
+  --overlay-fg: oklch(100% 0 0);
+  --fg: oklch(97.02% 0.0006 286.15);
+  --text: oklch(97.02% 0.0006 286.15);
+  --muted-foreground-1: color-mix(in oklch, var(--text) 68%, var(--bg));
+  --muted-foreground-2: color-mix(in oklch, var(--text) 52%, var(--bg));
+  --muted-foreground-3: color-mix(in oklch, var(--text) 38%, var(--bg));
+  --icon-muted: color-mix(in oklch, var(--text) 40%, var(--bg));
+  --border-1: oklch(100% 0 0/0.08);
+  --border-2: oklch(100% 0 0/0.12);
+  --border-3: oklch(100% 0 0/0.16);
+  --primary: oklch(60.59% 0.0937 186.94);
+  --shader-ink: #1e7c6e;
+  --primary-soft: color-mix(in oklch, var(--primary) 24%, transparent);
+  --primary-soft-hover: color-mix(in oklch, var(--primary) 30%, transparent);
+  --ring: var(--primary);
+  --destructive: oklch(55% 0.185 27);
+  --destructive-soft: color-mix(in oklch, var(--destructive) 22%, transparent);
+  --destructive-soft-hover: color-mix(
+    in oklch,
+    var(--destructive) 28%,
+    transparent
+  );
+  --warning-fg: oklch(87% 0.145 96);
+  --progress: oklch(85% 0.14 95);
+  --warning-subtle: color-mix(in oklch, var(--warning) 11%, transparent);
+  --diff-add: oklch(68% 0.14 142.85);
+  --diff-del: oklch(66% 0.14 25);
+  --diff-add-wash: color-mix(in lab, var(--card) 90%, var(--diff-add));
+  --diff-del-wash: color-mix(in lab, var(--card) 90%, var(--diff-del));
+  --diff-add-emphasis: color-mix(in oklch, var(--diff-add) 32%, transparent);
+  --diff-del-emphasis: color-mix(in oklch, var(--diff-del) 32%, transparent);
+  --chart-1: oklch(65% 0.12 187);
+  --chart-2: oklch(65% 0.15 20);
+  --chart-3: oklch(62% 0.14 245);
+  --chart-4: oklch(66% 0.14 75);
+  --chart-5: oklch(60% 0.16 285);
+  --chart-6: oklch(65% 0.13 155);
+  --chart-7: oklch(57.5% 0.16 330);
+  --chart-8: oklch(66.5% 0.12 220);
+  --gradient-plan-lite: linear-gradient(165deg, #10233d 0%, #0b1626 70%);
+  --gradient-plan-pro: linear-gradient(165deg, #0b2f28 0%, #0a1b17 70%);
+  --gradient-plan-max: linear-gradient(165deg, #2a1747 0%, #170d29 70%);
+  --sh-plate: 0 0.5px 1px 1px oklch(0% 0 0/0.3);
+  --highlight-top: oklch(100% 0 0/0.04);
+  --card-hairline: var(--border-1);
+  --sh-card: 0 0.5px 1px 1px oklch(0% 0 0/0.3);
+  --sh-overlay:
+    0 3px 8px oklch(0% 0 0/0.13), 0 2px 5px oklch(0% 0 0/0.13),
+    0 1px 1px oklch(0% 0 0/0.13);
+  --sh-composer:
+    0 3px 8px oklch(0% 0 0/0.09), 0 2px 5px oklch(0% 0 0/0.09),
+    0 1px 1px oklch(0% 0 0/0.1);
+  --sh-sheet: var(--sh-overlay);
+}
+
+[data-color-theme]:not(.dark) {
+  --chrome: color-mix(in oklab, var(--bg) 35%, oklch(94.31% 0.0006 286.15));
+  --panel: color-mix(in oklab, white 66%, var(--bg));
+  --card: color-mix(in oklab, white 90%, var(--bg));
+  --card-hover: var(--panel);
+  --popover: var(--card);
+  --input: var(--card);
+  --button: var(--card);
+  --button-hover: var(--panel);
+  --muted: color-mix(in oklab, black 3.5%, var(--bg));
+}
+
+.dark[data-color-theme] {
+  --chrome: color-mix(in oklab, var(--bg) 50%, oklch(14.66% 0.0015 286.15));
+  --panel: color-mix(in oklab, white 5%, var(--bg));
+  --card: color-mix(in oklab, white 7%, var(--bg));
+  --card-hover: color-mix(in oklab, white 10%, var(--bg));
+  --popover: color-mix(in oklab, white 11%, var(--bg));
+  --input: var(--card);
+  --muted: color-mix(in oklab, white 21.5%, var(--bg));
+}
+
+[data-color-theme="absolutely"] {
+  --bg: #f3f3f1;
+  --fg: #2d2d2b;
+  --text: #2d2d2b;
+  --primary: #c65b3a;
+  --primary-text: #160c08;
+  --shader-ink: #c65b3a;
+}
+
+.dark[data-color-theme="absolutely"] {
+  --bg: #252523;
+  --fg: #f9f9f7;
+  --text: #f9f9f7;
+  --primary: #e07a5f;
+  --primary-text: #151514;
+  --shader-ink: #e07a5f;
+}
+
+[data-color-theme="bearded-oled"] {
+  --primary: #688eff;
+  --primary-text: #000;
+  --shader-ink: #688eff;
+}
+
+.dark[data-color-theme="bearded-oled"] {
+  --bg: #000;
+  --chrome: #000;
+  --panel: #060606;
+  --card: #0d0d0d;
+  --card-hover: #121212;
+  --popover: #151515;
+  --input: var(--card);
+  --muted: #373737;
+  --fg: #b3b3b3;
+  --text: #b3b3b3;
+  --primary: #688eff;
+  --primary-text: #000;
+  --shader-ink: #688eff;
+}
+
+[data-color-theme="catppuccin"] {
+  --bg: #eff1f5;
+  --fg: #4c4f69;
+  --text: #4c4f69;
+  --primary: #8839ef;
+  --primary-text: #fff;
+  --shader-ink: #8839ef;
+}
+
+.dark[data-color-theme="catppuccin"] {
+  --bg: #11111b;
+  --chrome: #11111b;
+  --panel: #181825;
+  --card: #1e1e2e;
+  --card-hover: #252536;
+  --popover: #313244;
+  --input: var(--card);
+  --muted: #45475a;
+  --fg: #cdd6f4;
+  --text: #cdd6f4;
+  --muted-foreground-1: #bac2de;
+  --muted-foreground-2: #a6adc8;
+  --muted-foreground-3: #7f849c;
+  --icon-muted: #7f849c;
+  --primary: #cba6f7;
+  --primary-text: #1e1e2e;
+  --shader-ink: #cba6f7;
+}
+
+[data-color-theme="codex"] {
+  --bg: #f3f3f3;
+  --fg: #0d0d0d;
+  --text: #0d0d0d;
+  --primary: #0169cc;
+  --primary-text: #fff;
+  --shader-ink: #0169cc;
+}
+
+.dark[data-color-theme="codex"] {
+  --bg: #111;
+  --fg: #fcfcfc;
+  --text: #fcfcfc;
+  --primary: #0169cc;
+  --primary-text: #fff;
+  --shader-ink: #0169cc;
+}
+
+[data-color-theme="crimson-evernight"] {
+  --bg: #f4ebed;
+  --fg: #2a1e22;
+  --text: #2a1e22;
+  --primary: #aa194f;
+  --primary-text: #fff7f8;
+  --shader-ink: #aa194f;
+}
+
+.dark[data-color-theme="crimson-evernight"] {
+  --bg: #000;
+  --chrome: #000;
+  --panel: #0c0709;
+  --card: #170d12;
+  --card-hover: #1e1318;
+  --popover: #24161d;
+  --input: var(--card);
+  --button: #1e1318;
+  --button-hover: #26191f;
+  --muted: #442f38;
+  --fg: #ede3e6;
+  --text: #ede3e6;
+  --muted-foreground-1: #a2989c;
+  --muted-foreground-2: #7b7074;
+  --muted-foreground-3: #5a5154;
+  --icon-muted: #5f5659;
+  --primary: #e27284;
+  --primary-text: #270c11;
+  --shader-ink: #e27284;
+}
+
+[data-color-theme="everforest"] {
+  --bg: #f4f0d9;
+  --fg: #5c6a72;
+  --text: #5c6a72;
+  --muted-foreground-1: color-mix(in oklab, var(--text) 70%, var(--bg));
+  --primary: #8da101;
+  --primary-text: #101412;
+  --shader-ink: #8da101;
+}
+
+.dark[data-color-theme="everforest"] {
+  --bg: #252c30;
+  --fg: #d3c6aa;
+  --text: #d3c6aa;
+  --primary: #a7c080;
+  --primary-text: #2d353b;
+  --shader-ink: #a7c080;
+}
+
+[data-color-theme="github"] {
+  --bg: #f6f8fa;
+  --fg: #1f2328;
+  --text: #1f2328;
+  --primary: #0969da;
+  --primary-text: #fff;
+  --shader-ink: #0969da;
+}
+
+.dark[data-color-theme="github"] {
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --text: #e6edf3;
+  --primary: #58a6ff;
+  --primary-text: #0d1117;
+  --shader-ink: #58a6ff;
+}
+
+[data-color-theme="gruvbox"] {
+  --bg: #f2e5bc;
+  --fg: #3c3836;
+  --text: #3c3836;
+  --primary: #458588;
+  --primary-text: #080808;
+  --shader-ink: #458588;
+}
+
+.dark[data-color-theme="gruvbox"] {
+  --bg: #282828;
+  --chrome: #282828;
+  --panel: oklab(30.3736% 0.00174942 0.00197895);
+  --card: #32302f;
+  --card-hover: oklab(33.4112% 0.00373088 0.00422298);
+  --popover: #3c3836;
+  --input: var(--card);
+  --muted: #504945;
+  --fg: #ebdbb2;
+  --text: #ebdbb2;
+  --muted-foreground-1: #d5c4a1;
+  --muted-foreground-2: #bdae93;
+  --muted-foreground-3: #a89984;
+  --icon-muted: #a89984;
+  --primary: #458588;
+  --text-link: #83a598;
+  --primary-text: #080808;
+  --shader-ink: #458588;
+}
+
+[data-color-theme="hub"] {
+  --primary: #d97b00;
+  --primary-text: #170d00;
+  --shader-ink: #d97b00;
+}
+
+.dark[data-color-theme="hub"] {
+  --bg: #000;
+  --chrome: #000;
+  --fg: #fff;
+  --text: #fff;
+  --primary: #ff9000;
+  --primary-text: #000;
+  --shader-ink: #ff9000;
+}
+
+[data-color-theme="linear"] {
+  --bg: #f2f4f8;
+  --fg: #2a3140;
+  --text: #2a3140;
+  --primary: #5e6ad2;
+  --primary-text: #fff;
+  --shader-ink: #5e6ad2;
+}
+
+.dark[data-color-theme="linear"] {
+  --bg: #080a0f;
+  --fg: #e6e9ef;
+  --text: #e6e9ef;
+  --primary: #606acc;
+  --primary-text: #fff;
+  --shader-ink: #606acc;
+}
+
+[data-color-theme="notion"] {
+  --bg: #f7f6f3;
+  --fg: #37352f;
+  --text: #37352f;
+  --primary: #3183d8;
+  --primary-text: #0d1822;
+  --shader-ink: #3183d8;
+}
+
+.dark[data-color-theme="notion"] {
+  --bg: #151515;
+  --fg: #d9d9d8;
+  --text: #d9d9d8;
+  --primary: #3183d8;
+  --primary-text: #0d1822;
+  --shader-ink: #3183d8;
+}
+
+[data-color-theme="one"] {
+  --bg: #eaeaeb;
+  --fg: #383a42;
+  --text: #383a42;
+  --primary: #5871ef;
+  --primary-text: #0f1020;
+  --shader-ink: #5871ef;
+}
+
+.dark[data-color-theme="one"] {
+  --bg: #21252b;
+  --fg: #abb2bf;
+  --text: #abb2bf;
+  --primary: #70757f;
+  --primary-text: #fff;
+  --shader-ink: #70757f;
+}
+
+[data-color-theme-preview="default"] {
+  --primary: oklch(63.3% 0.109 186.94);
+  --primary-text: white;
+}
+
+.dark[data-color-theme-preview="default"] {
+  --primary: oklch(60.59% 0.0937 186.94);
+  --primary-text: white;
+}
+
+[data-diff-colors="blue-orange"] {
+  --diff-add: oklch(50% 0.17 254);
+  --diff-del: oklch(62% 0.16 55);
+}
+
+.dark[data-diff-colors="blue-orange"] {
+  --diff-add: oklch(68% 0.16 254);
+  --diff-del: oklch(71% 0.15 55);
+}

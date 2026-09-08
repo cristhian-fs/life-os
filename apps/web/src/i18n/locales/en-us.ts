@@ -380,6 +380,7 @@ export default {
       themeLight: 'Light',
       themeDark: 'Dark',
       themeSystem: 'System',
+      colorTheme: 'Color theme',
       logOut: 'Log out',
     },
     dashboard: {
@@ -403,7 +404,7 @@ export default {
       streakDays_one: '{{count}} day',
       streakDays_other: '{{count}} days',
       noActiveProgress: 'Nothing in progress right now.',
-			newItem: 'New'
+      newItem: 'New',
     },
     settings: {
       title: 'Settings',
