@@ -9,7 +9,7 @@ import * as z from 'zod'
  */
 export const habitFieldsSchema = z.object({
   name: z.string().min(1, 'Name required'),
-  description: z.string().min(1, 'Description required'),
+  description: z.string(),
   icon: z.string().nullable(),
   goal_value: z.number().nullable(),
   goal_period: z.enum(HabitGoalPeriod),

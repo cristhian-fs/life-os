@@ -363,11 +363,12 @@ export function HabitFormDialog({
                             isSelected && 'font-semibold',
                           )}
                           onClick={() =>
-                            field.handleChange((prev) =>
-                              isSelected
-                                ? (prev?.filter((d) => d !== value) ?? null)
-                                : [...(prev ?? []), value],
-                            )
+                            field.handleChange((prev) => {
+                              if (!isSelected) return [...(prev ?? []), value]
+                              const next = prev?.filter((d) => d !== value)
+                              // Empty selection means "every day" — same as never touching the field.
+                              return next?.length ? next : null
+                            })
                           }
                         >
                           {day.label.slice(0, 3)}
