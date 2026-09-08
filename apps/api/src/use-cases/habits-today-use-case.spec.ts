@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { HabitStatus } from "@/db/entities/habit.entity";
+import { HabitStatus, HabitType } from "@/db/entities/habit.entity";
 import { InMemoryEntryRepository } from "@/repositories/in-memory/in-memory-entry-repository";
 import { InMemoryHabitsRepository } from "@/repositories/in-memory/in-memory-habit-repository";
 import { makeEntry, makeHabit } from "@/test/factories";
@@ -18,7 +18,7 @@ describe("Habits Today Use Case", () => {
 
   it("returns active habits that have no entry today", async () => {
     const withEntry = await habitsRepository.create(
-      makeHabit({ user_id: "user_01" }),
+      makeHabit({ user_id: "user_01", type: HabitType.BOOLEAN }),
     );
     const withoutEntry = await habitsRepository.create(
       makeHabit({ user_id: "user_01" }),
@@ -28,6 +28,7 @@ describe("Habits Today Use Case", () => {
         user_id: "user_01",
         habit_id: withEntry.id,
         date: new Date(),
+        value_boolean: true,
       }),
     );
 
@@ -35,6 +36,43 @@ describe("Habits Today Use Case", () => {
 
     expect(habits).toHaveLength(1);
     expect(habits[0].id).toBe(withoutEntry.id);
+  });
+
+  it("still returns a numeric habit whose entry today falls short of the goal", async () => {
+    const habit = await habitsRepository.create(
+      makeHabit({ user_id: "user_01", type: HabitType.NUMERIC, goal_value: 8 }),
+    );
+    await entriesRepository.create(
+      makeEntry({
+        user_id: "user_01",
+        habit_id: habit.id,
+        date: new Date(),
+        value_numeric: 5,
+      }),
+    );
+
+    const { habits } = await sut.execute({ userId: "user_01" });
+
+    expect(habits).toHaveLength(1);
+    expect(habits[0].id).toBe(habit.id);
+  });
+
+  it("excludes a numeric habit once today's entry meets the goal", async () => {
+    const habit = await habitsRepository.create(
+      makeHabit({ user_id: "user_01", type: HabitType.NUMERIC, goal_value: 8 }),
+    );
+    await entriesRepository.create(
+      makeEntry({
+        user_id: "user_01",
+        habit_id: habit.id,
+        date: new Date(),
+        value_numeric: 8,
+      }),
+    );
+
+    const { habits } = await sut.execute({ userId: "user_01" });
+
+    expect(habits).toEqual([]);
   });
 
   it("excludes archived habits", async () => {

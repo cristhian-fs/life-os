@@ -1,5 +1,8 @@
+import { useHabits } from '#/features/habits/api/get-habits'
 import { useHabitsProgressSummary } from '#/features/habits/api/get-habits-progress-summary'
+import { useCheckInHabit } from '#/features/habits/api/use-check-in-habit'
 import { HabitsMissingToday } from '#/features/habits/components/habits-missing-today'
+import { isDoneToday } from '#/features/habits/lib/habit-progress'
 import { usePendingWishlistSummary } from '#/features/purchase-wishlist/api/get-pending-wishlist-summary'
 import { usePurchaseWishlistMonthlyCounts } from '#/features/purchase-wishlist/api/get-purchase-wishlist-monthly-counts'
 import { PurchaseWishlistMonthlyChart } from '#/features/purchase-wishlist/components/purchase-wishlist-monthly-chart'
@@ -16,6 +19,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { StatTile } from '@/components/stat-tile'
 import {
+  CheckIcon,
   ListBulletsIcon,
   ListChecksIcon,
   PlusIcon,
@@ -35,8 +39,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu'
-import { WorkType } from '#/types/api'
+import { HabitType, WorkType, type Habit } from '#/types/api'
 import { PurchaseWishlistFormDialog } from '#/features/purchase-wishlist/components/purchase-wishlist-form-dialog'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
@@ -59,12 +64,75 @@ function SectionHeading({
   )
 }
 
+// One row of the "current streaks" list — same round-icon toggle HabitCard
+// uses, so unchecking today's entry here works exactly the same way.
+function CurrentStreakCard({
+  habitId,
+  habitName,
+  streakLength,
+  habit,
+}: {
+  habitId: string
+  habitName: string
+  streakLength: number
+  habit: Habit | undefined
+}) {
+  const { t } = useTranslation()
+  const checkIn = useCheckInHabit(habitId)
+  const done = habit ? isDoneToday(habit, checkIn.todayEntry) : false
+
+  return (
+    <Card size="sm" className="bg-transparent ring-0 rounded-none">
+      <CardContent className="flex items-center gap-3">
+        {habit?.type === HabitType.BOOLEAN ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'size-8 shrink-0 rounded-full text-sm',
+              done
+                ? 'bg-primary text-primary-foreground hover:bg-primary/80'
+                : 'bg-muted text-muted-foreground hover:bg-muted/70',
+            )}
+            disabled={checkIn.isLoading || checkIn.isSaving}
+            aria-pressed={done}
+            aria-label={
+              done ? t('habits.card.doneToday') : t('habits.card.markDone')
+            }
+            onClick={() => checkIn.checkIn({ value_boolean: !done })}
+          >
+            {habit.icon ?? <CheckIcon weight="bold" />}
+          </Button>
+        ) : (
+          <div
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground"
+            aria-hidden
+          >
+            {habit?.icon ?? <CheckIcon weight="bold" />}
+          </div>
+        )}
+        <Link
+          to="/dashboard/habits/$habitId"
+          params={{ habitId }}
+          className="min-w-0 flex-1 truncate text-sm hover:underline"
+        >
+          {habitName}
+        </Link>
+        <span className="text-sm tabular-nums text-muted-foreground">
+          {t('dashboard.streakDays', { count: streakLength })}
+        </span>
+      </CardContent>
+    </Card>
+  )
+}
+
 const CURRENT_YEAR = new Date().getFullYear()
 const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i)
 
 function RouteComponent() {
   const { t } = useTranslation()
   const progress = useHabitsProgressSummary()
+  const habits = useHabits({})
   const consumption = useWorkConsumptionSummary()
   const wishlist = usePendingWishlistSummary()
   const [wishlistYear, setWishlistYear] = useState(CURRENT_YEAR)
@@ -145,26 +213,15 @@ function RouteComponent() {
                   ) : (
                     <div className="flex flex-col divide-y">
                       {streaksWithProgress?.map((entry) => (
-                        <Card
+                        <CurrentStreakCard
                           key={entry.habit_id}
-                          size="sm"
-                          className="bg-transparent ring-0 rounded-none"
-                        >
-                          <CardContent className="flex items-center justify-between">
-                            <Link
-                              to="/dashboard/habits/$habitId"
-                              params={{ habitId: entry.habit_id }}
-                              className="text-sm hover:underline"
-                            >
-                              {entry.habit_name}
-                            </Link>
-                            <span className="text-sm tabular-nums text-muted-foreground">
-                              {t('dashboard.streakDays', {
-                                count: entry.streak?.streak_num ?? 0,
-                              })}
-                            </span>
-                          </CardContent>
-                        </Card>
+                          habitId={entry.habit_id}
+                          habitName={entry.habit_name}
+                          streakLength={entry.streak?.streak_num ?? 0}
+                          habit={habits.data?.find(
+                            (h) => h.id === entry.habit_id,
+                          )}
+                        />
                       ))}
                     </div>
                   )}
