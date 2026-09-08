@@ -37,6 +37,9 @@ export function useCheckInHabit(habitId: string) {
     // Separate key (['habits', 'today'], no habitId) — checking in here can
     // drop this habit off that list, so any consumer of it needs a refetch.
     queryClient.invalidateQueries({ queryKey: ['habits', 'today'] })
+    // Progress summary (week/month tax + current streaks) also moves on
+    // every check-in/uncheck — same prefix rule, separate key.
+    queryClient.invalidateQueries({ queryKey: ['habits', 'progress-summary'] })
   }
 
   const createEntry = useCreateEntry({
