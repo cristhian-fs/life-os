@@ -63,6 +63,37 @@ describe("Fetch Og Image Use Case", () => {
     ]);
   });
 
+  it("resolves a youtube.com/watch?v= URL straight to the thumbnail CDN, skipping the page fetch", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(imageResponse("fake-image-bytes"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { url } = await sut.execute({
+      pageUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=30s",
+    });
+
+    expect(url).toBe("https://r2.example.com/og-image.jpg");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as URL).href).toBe(
+      "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+    );
+  });
+
+  it("resolves a youtu.be/ short link the same way", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(imageResponse("fake-image-bytes"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { url } = await sut.execute({
+      pageUrl: "https://youtu.be/dQw4w9WgXcQ",
+    });
+
+    expect(url).toBe("https://r2.example.com/og-image.jpg");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("returns null when the page has no og:image", async () => {
     vi.stubGlobal(
       "fetch",
