@@ -1,3 +1,4 @@
+import platosCave from '#/assets/platos-cave.png'
 import { LoginForm } from '#/features/auth/components/login-form'
 import { ActivityIcon } from '@phosphor-icons/react'
 import { createFileRoute } from '@tanstack/react-router'
@@ -11,9 +12,9 @@ function RouteComponent() {
     <div className="grid min-h-svh lg:grid-cols-6">
       <div className="relative hidden bg-muted lg:block lg:col-span-2">
         <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          src={platosCave}
+          alt="Plato's Cave"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
         />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10 lg:col-span-4">

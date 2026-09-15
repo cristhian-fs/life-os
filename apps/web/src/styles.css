@@ -312,7 +312,7 @@ body {
   --border: oklch(30.28% 0 0);
   --input: oklch(22.28% 0.02 284.2);
   --ring: oklch(78.71% 0.119 304.77);
-  --sidebar: oklch(24.29% 0.03 283.91);
+  --sidebar: oklch(18.28% 0.02 284.2);
   --sidebar-foreground: oklch(87.87% 0.043 272.28);
   --sidebar-primary: oklch(78.71% 0.119 304.77);
   --sidebar-primary-foreground: oklch(24.29% 0.03 283.91);
