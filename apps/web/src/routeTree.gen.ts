@@ -18,6 +18,8 @@ import { Route as DashboardPurchaseWishlistRouteImport } from './routes/dashboar
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardHabitsIndexRouteImport } from './routes/dashboard/habits/index'
 import { Route as DashboardHabitsHabitIdRouteImport } from './routes/dashboard/habits/$habitId'
+import { Route as DashboardStudyIndexRouteImport } from './routes/dashboard/study/index'
+import { Route as DashboardStudyTopicIdRouteImport } from './routes/dashboard/study/$topicId'
 import { Route as DashboardVaultIndexRouteImport } from './routes/dashboard/vault/index'
 import { Route as DashboardVaultArticlesIndexRouteImport } from './routes/dashboard/vault/articles/index'
 import { Route as DashboardVaultBooksIndexRouteImport } from './routes/dashboard/vault/books/index'
@@ -71,6 +73,16 @@ const DashboardHabitsHabitIdRoute = DashboardHabitsHabitIdRouteImport.update({
   path: '/habits/$habitId',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardStudyIndexRoute = DashboardStudyIndexRouteImport.update({
+  id: '/study/',
+  path: '/study/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardStudyTopicIdRoute = DashboardStudyTopicIdRouteImport.update({
+  id: '/study/$topicId',
+  path: '/study/$topicId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardVaultIndexRoute = DashboardVaultIndexRouteImport.update({
   id: '/vault/',
   path: '/vault/',
@@ -116,7 +128,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/study/$topicId': typeof DashboardStudyTopicIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
+  '/dashboard/study/': typeof DashboardStudyIndexRoute
   '/dashboard/vault/': typeof DashboardVaultIndexRoute
   '/dashboard/vault/articles/': typeof DashboardVaultArticlesIndexRoute
   '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
@@ -132,7 +146,9 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/study/$topicId': typeof DashboardStudyTopicIdRoute
   '/dashboard/habits': typeof DashboardHabitsIndexRoute
+  '/dashboard/study': typeof DashboardStudyIndexRoute
   '/dashboard/vault': typeof DashboardVaultIndexRoute
   '/dashboard/vault/articles': typeof DashboardVaultArticlesIndexRoute
   '/dashboard/vault/books': typeof DashboardVaultBooksIndexRoute
@@ -150,7 +166,9 @@ export interface FileRoutesById {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/habits/$habitId': typeof DashboardHabitsHabitIdRoute
+  '/dashboard/study/$topicId': typeof DashboardStudyTopicIdRoute
   '/dashboard/habits/': typeof DashboardHabitsIndexRoute
+  '/dashboard/study/': typeof DashboardStudyIndexRoute
   '/dashboard/vault/': typeof DashboardVaultIndexRoute
   '/dashboard/vault/articles/': typeof DashboardVaultArticlesIndexRoute
   '/dashboard/vault/books/': typeof DashboardVaultBooksIndexRoute
@@ -169,7 +187,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
+    | '/dashboard/study/$topicId'
     | '/dashboard/habits/'
+    | '/dashboard/study/'
     | '/dashboard/vault/'
     | '/dashboard/vault/articles/'
     | '/dashboard/vault/books/'
@@ -185,7 +205,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/habits/$habitId'
+    | '/dashboard/study/$topicId'
     | '/dashboard/habits'
+    | '/dashboard/study'
     | '/dashboard/vault'
     | '/dashboard/vault/articles'
     | '/dashboard/vault/books'
@@ -202,7 +224,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/habits/$habitId'
+    | '/dashboard/study/$topicId'
     | '/dashboard/habits/'
+    | '/dashboard/study/'
     | '/dashboard/vault/'
     | '/dashboard/vault/articles/'
     | '/dashboard/vault/books/'
@@ -283,6 +307,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardHabitsHabitIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/study/': {
+      id: '/dashboard/study/'
+      path: '/study'
+      fullPath: '/dashboard/study/'
+      preLoaderRoute: typeof DashboardStudyIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/study/$topicId': {
+      id: '/dashboard/study/$topicId'
+      path: '/study/$topicId'
+      fullPath: '/dashboard/study/$topicId'
+      preLoaderRoute: typeof DashboardStudyTopicIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/vault/': {
       id: '/dashboard/vault/'
       path: '/vault'
@@ -333,7 +371,9 @@ interface DashboardRouteChildren {
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardHabitsHabitIdRoute: typeof DashboardHabitsHabitIdRoute
+  DashboardStudyTopicIdRoute: typeof DashboardStudyTopicIdRoute
   DashboardHabitsIndexRoute: typeof DashboardHabitsIndexRoute
+  DashboardStudyIndexRoute: typeof DashboardStudyIndexRoute
   DashboardVaultIndexRoute: typeof DashboardVaultIndexRoute
   DashboardVaultArticlesIndexRoute: typeof DashboardVaultArticlesIndexRoute
   DashboardVaultBooksIndexRoute: typeof DashboardVaultBooksIndexRoute
@@ -347,7 +387,9 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardHabitsHabitIdRoute: DashboardHabitsHabitIdRoute,
+  DashboardStudyTopicIdRoute: DashboardStudyTopicIdRoute,
   DashboardHabitsIndexRoute: DashboardHabitsIndexRoute,
+  DashboardStudyIndexRoute: DashboardStudyIndexRoute,
   DashboardVaultIndexRoute: DashboardVaultIndexRoute,
   DashboardVaultArticlesIndexRoute: DashboardVaultArticlesIndexRoute,
   DashboardVaultBooksIndexRoute: DashboardVaultBooksIndexRoute,

@@ -8,6 +8,8 @@ import { WorkStatus, WorkType, type Work } from "@/db/entities/work.entity";
 import type { CreateEntryInput } from "@/repositories/entry-repository";
 import type { CreateHabitInput } from "@/repositories/habit-repository";
 import type { CreateWorkInput } from "@/repositories/work-repository";
+import type { CreateTopicInput } from "@/repositories/topic-repository";
+import { TopicStatus } from "@/db/entities/topic.entity";
 
 // ponytail: hand-rolled random picks instead of pulling in @faker-js/faker for two fields
 function pick<T>(values: T[]): T {
@@ -98,4 +100,29 @@ export function makeWorkEntity(overrides: Partial<Work> = {}): Work {
     updated_at: new Date(),
     ...overrides,
   } as Work;
+}
+
+/** Builds a valid CreateTopicInput with randomized data. Pass overrides for anything a test cares about. */
+export function makeTopic(
+  overrides: Partial<CreateTopicInput> = {},
+): CreateTopicInput {
+  return {
+    user_id: randomUUID(),
+    parent_topic_id: null,
+    title: `Topic ${randomUUID().slice(0, 8)}`,
+    description: null,
+    body: null,
+    order_index: null,
+    work_id: null,
+    ...overrides,
+  };
+}
+
+/** Builds row data for seeding the Topic table directly via TypeORM (bypassing the repository/use-case layer, which sets status itself). */
+export function makeTopicEntity(overrides: Partial<CreateTopicInput> = {}) {
+  return {
+    ...makeTopic(overrides),
+    status: TopicStatus.NOT_STARTED,
+    created_at: new Date(),
+  };
 }

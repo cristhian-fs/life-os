@@ -1,4 +1,5 @@
 import {
+  BookOpenIcon,
   GearSixIcon,
   ListBulletsIcon,
   ListChecksIcon,
@@ -44,6 +45,11 @@ export function useNavRoutes() {
       title: t('routes.purchaseWishlist'),
       url: '/dashboard/purchase-wishlist',
       icon: ListBulletsIcon,
+    },
+    {
+      title: t('routes.study'),
+      url: '/dashboard/study',
+      icon: BookOpenIcon,
     },
   ]
 
