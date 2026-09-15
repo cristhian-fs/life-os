@@ -20,7 +20,7 @@ export function DashboardHeader() {
       )
 
   return (
-    <header className="flex items-center justify-start border-b px-6 py-4">
+    <header className="flex items-center justify-start border-b border-border/50 px-6 py-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mx-2" />
       <div className="flex items-center gap-2">

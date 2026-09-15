@@ -13,6 +13,7 @@ import { MovieDetail } from "@/db/entities/movie-detail.entity";
 import { ArticleDetail } from "./entities/article-detail.entity";
 import { PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import { VideoDetail } from "@/db/entities/video-detail.entity";
+import { Topic } from "@/db/entities/topic.entity";
 
 export const TestDataSource = new DataSource({
   type: "postgres",
@@ -33,6 +34,7 @@ export const TestDataSource = new DataSource({
     ArticleDetail,
     PurchaseWishlist,
     VideoDetail,
+    Topic,
   ],
 });
 

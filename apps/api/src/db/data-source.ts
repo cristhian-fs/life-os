@@ -15,6 +15,7 @@ import { MovieDetail } from "@/db/entities/movie-detail.entity";
 import { ArticleDetail } from "./entities/article-detail.entity";
 import { PurchaseWishlist } from "@/db/entities/purchase-wishlist.entity";
 import { VideoDetail } from "@/db/entities/video-detail.entity";
+import { Topic } from "@/db/entities/topic.entity";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,5 +42,6 @@ export const AppDataSource = new DataSource({
     ArticleDetail,
     PurchaseWishlist,
     VideoDetail,
+    Topic,
   ],
 });

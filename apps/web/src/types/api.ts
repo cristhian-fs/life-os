@@ -282,3 +282,30 @@ export type WorkConsumptionSummaryResponse = {
   backlog_now: number
   in_progress_now: number
 }
+
+export enum TopicStatus {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress',
+  MASTERED = 'mastered',
+}
+
+export type Topic = {
+  id: string
+  user_id: string
+  parent_topic_id: string | null
+  title: string
+  description: string | null
+  body: string | null
+  status: TopicStatus
+  order_index: number | null
+  work_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type TopicTree = Topic & { children: TopicTree[] }
+
+export type DeleteTopicResponse = {
+  success: boolean
+  message: string
+}

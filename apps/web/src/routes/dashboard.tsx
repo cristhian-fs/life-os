@@ -25,7 +25,7 @@ function RouteComponent() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="border border-border/50">
         <DashboardHeader />
         <Outlet />
       </SidebarInset>
